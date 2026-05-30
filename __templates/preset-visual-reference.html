@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Betawi Heritage - Visual Reference</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .pattern-box {
+      border: 2px dashed #9ca3af;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 0.5rem;
+      background: #f9fafb;
+    }
+    .code-label {
+      font-size: 0.75rem;
+      color: #6b7280;
+      font-family: monospace;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-[#dc2626] to-[#b91c1c] text-white py-8">
+    <div class="container mx-auto px-6 max-w-6xl">
+      <h1 class="text-4xl font-bold mb-2" style="font-family: 'Playfair Display', serif;">
+        Betawi Heritage - Visual Reference
+      </h1>
+      <p class="text-white/80">Panduan visual untuk semua styling patterns</p>
+    </div>
+  </header>
+
+  <div class="container mx-auto px-6 max-w-6xl py-12">
+
+    <!-- Color Palette -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6" style="font-family: 'Playfair Display', serif;">
+        🎨 Color Palette
+      </h2>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="text-center">
+          <div class="w-full h-24 bg-[#dc2626] rounded-lg shadow-lg mb-2"></div>
+          <p class="font-mono text-sm">#dc2626</p>
+          <p class="text-xs text-gray-600">Primary Red</p>
+        </div>
+        <div class="text-center">
+          <div class="w-full h-24 bg-[#fbbf24] rounded-lg shadow-lg mb-2"></div>
+          <p class="font-mono text-sm">#fbbf24</p>
+          <p class="text-xs text-gray-600">Secondary Yellow</p>
+        </div>
+        <div class="text-center">
+          <div class="w-full h-24 bg-[#fef3c7] rounded-lg shadow-lg mb-2 border-2 border-gray-300"></div>
+          <p class="font-mono text-sm">#fef3c7</p>
+          <p class="text-xs text-gray-600">Background Cream</p>
+        </div>
+        <div class="text-center">
+          <div class="w-full h-24 bg-[#1f2937] rounded-lg shadow-lg mb-2"></div>
+          <p class="font-mono text-sm">#1f2937</p>
+          <p class="text-xs text-gray-600">Text Dark</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6" style="font-family: 'Playfair Display', serif;">
+        📦 Card Pattern
+      </h2>
+      
+      <div class="pattern-box">
+        <p class="code-label">Standard Card - Digunakan di semua section</p>
+        <div class="bg-white rounded-2xl shadow-xl p-8 border-2 border-[#fbbf24]">
+          <h3 class="text-2xl font-bold text-[#dc2626] mb-4" style="font-family: 'Playfair Display', serif;">
+            Card Title
+          </h3>
+          <p class="text-gray-700 leading-relaxed">
+            Ini adalah contoh card dengan styling konsisten. Border kuning 2px, rounded-2xl, shadow-xl, padding 8.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Buttons -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6" style="font-family: 'Playfair Display', serif;">
+        🔘 Button Patterns
+      </h2>
+      
+      <div class="pattern-box">
+        <p class="code-label">Primary Button</p>
+        <button class="inline-flex items-center gap-2 px-8 py-4 bg-[#dc2626] text-white rounded-full hover:bg-[#b91c1c] transition-all shadow-lg hover:scale-105">
+          <i class="fas fa-paper-plane"></i>
+          Primary Button
+        </button>
+      </div>
+
+      <div class="pattern-box">
+        <p class="code-label">Copy Button</p>
+        <button class="inline-flex items-center gap-2 px-6 py-3 bg-[#dc2626] text-white rounded-full hover:bg-[#b91c1c] transition-all shadow-lg">
+          <i class="fas fa-copy"></i>
+          Salin
+        </button>
+      </div>
+    </section>
+
+    <!-- Forms -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6" style="font-family: 'Playfair Display', serif;">
+        📝 Form Patterns
+      </h2>
+      
+      <div class="pattern-box">
+        <p class="code-label">Label + Input</p>
+        <label class="block text-gray-800 font-semibold mb-2 uppercase text-sm tracking-wider">
+          Nama Lengkap <span class="text-[#dc2626]">*</span>
+        </label>
+        <input 
+          type="text" 
+          class="w-full px-4 py-3 border-2 border-[#fbbf24] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#dc2626] focus:border-transparent transition-all" 
+          placeholder="Masukkan nama Anda"
+        >
+      </div>
+
+      <div class="pattern-box">
+        <p class="code-label">Select Dropdown</p>
+        <select class="w-full px-4 py-3 border-2 border-[#fbbf24] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#dc2626] focus:border-transparent transition-all">
+          <option value="">Pilih opsi</option>
+          <option value="1">Option 1</option>
+          <option value="2">Option 2</option>
+        </select>
+      </div>
+
+      <div class="pattern-box">
+        <p class="code-label">Textarea</p>
+        <textarea 
+          rows="4" 
+          class="w-full px-4 py-3 border-2 border-[#fbbf24] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#dc2626] focus:border-transparent transition-all resize-none" 
+          placeholder="Tuliskan pesan Anda..."
+        ></textarea>
+      </div>
+    </section>
+
+    <!-- Section Title -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6" style="font-family: 'Playfair Display', serif;">
+        📋 Section Title Pattern
+      </h2>
+      
+      <div class="pattern-box">
+        <p class="code-label">Standard Section Title - Digunakan di semua section</p>
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4" style="font-family: 'Playfair Display', serif;">
+            Section Title
+          </h2>
+          <div class="w-24 h-1 bg-gradient-to-r from-transparent via-[#fbbf24] to-transparent mx-auto"></div>
+          <p class="text-gray-700 mt-6">
+            Section description text goes here
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Icons -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6" style="font-family: 'Playfair Display', serif;">
+        🎭 Icon Patterns
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="pattern-box text-center">
+          <p class="code-label">Large Icon (6xl)</p>
+          <i class="fas fa-mosque text-6xl text-[#dc2626]"></i>
+        </div>
+
+        <div class="pattern-box text-center">
+          <p class="code-label">Medium Icon in Circle</p>
+          <div class="w-20 h-20 bg-gradient-to-br from-[#dc2626] to-[#b91c1c] rounded-full flex items-center justify-center shadow-lg mx-auto">
+            <i class="fas fa-university text-4xl text-[#fbbf24]"></i>
+          </div>
+        </div>
+
+        <div class="pattern-box text-center">
+          <p class="code-label">Avatar Icon</p>
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#dc2626] to-[#b91c1c] flex items-center justify-center text-white font-bold text-xl mx-auto">
+            A
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Payment Card -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6" style="font-family: 'Playfair Display', serif;">
+        💳 Payment Card Pattern
+      </h2>
+      
+      <div class="pattern-box">
+        <p class="code-label">Gift Section - Payment Method Card</p>
+        <div class="bg-white rounded-2xl shadow-xl p-8 border-2 border-[#fbbf24]">
+          <div class="flex flex-col md:flex-row items-center gap-6">
+            <div class="flex-shrink-0">
+              <div class="w-20 h-20 bg-gradient-to-br from-[#dc2626] to-[#b91c1c] rounded-full flex items-center justify-center shadow-lg">
+                <i class="fas fa-university text-4xl text-[#fbbf24]"></i>
+              </div>
+            </div>
+            
+            <div class="flex-1 text-center md:text-left">
+              <h3 class="text-2xl font-bold text-[#dc2626] mb-2">Bank BCA</h3>
+              <p class="text-gray-800 text-lg mb-1">
+                <span class="font-mono font-bold">1234567890</span>
+              </p>
+              <p class="text-gray-600 text-sm">
+                a.n. John Doe
+              </p>
+            </div>
+            
+            <div class="flex-shrink-0">
+              <button class="inline-flex items-center gap-2 px-6 py-3 bg-[#dc2626] text-white rounded-full hover:bg-[#b91c1c] transition-all shadow-lg">
+                <i class="fas fa-copy"></i>
+                Salin
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Guestbook Message -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6" style="font-family: 'Playfair Display', serif;">
+        💬 Guestbook Message Pattern
+      </h2>
+      
+      <div class="pattern-box">
+        <p class="code-label">RSVP Section - Guestbook Message</p>
+        <div class="bg-white rounded-2xl shadow-lg p-6 border-2 border-[#fbbf24]">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#dc2626] to-[#b91c1c] flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+              A
+            </div>
+            <div class="flex-1">
+              <h4 class="font-bold text-gray-800 mb-1">Ahmad & Keluarga</h4>
+              <p class="text-gray-500 text-sm mb-2">2 hari yang lalu</p>
+              <p class="text-gray-700 leading-relaxed">
+                Selamat menempuh hidup baru! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6" style="font-family: 'Playfair Display', serif;">
+        🔤 Typography
+      </h2>
+      
+      <div class="pattern-box">
+        <h1 class="text-5xl font-bold mb-4" style="font-family: 'Playfair Display', serif;">
+          Heading 1 - Playfair Display
+        </h1>
+        <h2 class="text-4xl font-bold mb-4" style="font-family: 'Playfair Display', serif;">
+          Heading 2 - Playfair Display
+        </h2>
+        <h3 class="text-3xl font-bold mb-4" style="font-family: 'Playfair Display', serif;">
+          Heading 3 - Playfair Display
+        </h3>
+        <p class="text-lg mb-2">Body text - Inter Regular</p>
+        <p class="text-lg font-semibold mb-2">Body text - Inter Semibold</p>
+        <p class="text-lg font-bold">Body text - Inter Bold</p>
+      </div>
+    </section>
+
+    <!-- Summary -->
+    <section class="mb-16">
+      <div class="bg-gradient-to-r from-[#dc2626] to-[#b91c1c] text-white rounded-2xl p-8 shadow-2xl">
+        <h2 class="text-3xl font-bold mb-4" style="font-family: 'Playfair Display', serif;">
+          ✅ Checklist Konsistensi
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex items-start gap-3">
+            <i class="fas fa-check-circle text-[#fbbf24] text-xl mt-1"></i>
+            <p>Section title dengan divider kuning</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <i class="fas fa-check-circle text-[#fbbf24] text-xl mt-1"></i>
+            <p>Card dengan border kuning 2px</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <i class="fas fa-check-circle text-[#fbbf24] text-xl mt-1"></i>
+            <p>Button merah rounded-full</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <i class="fas fa-check-circle text-[#fbbf24] text-xl mt-1"></i>
+            <p>Font Awesome icons (fas fa-*)</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <i class="fas fa-check-circle text-[#fbbf24] text-xl mt-1"></i>
+            <p>Playfair Display untuk heading</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <i class="fas fa-check-circle text-[#fbbf24] text-xl mt-1"></i>
+            <p>Tailwind utility classes</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <i class="fas fa-check-circle text-[#fbbf24] text-xl mt-1"></i>
+            <p>Responsive design (mobile-first)</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <i class="fas fa-check-circle text-[#fbbf24] text-xl mt-1"></i>
+            <p>Consistent spacing (py-20 md:py-32)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8 text-center">
+    <p class="mb-2">Betawi Heritage Template Preset</p>
+    <p class="text-sm text-gray-400">Version 1.0.0 - Production Ready</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class InvitationContent extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'invitation_id',
+        'bride_name',
+        'groom_name',
+        'bride_father',
+        'bride_mother',
+        'bride_photo_url',
+        'groom_father',
+        'groom_mother',
+        'groom_photo_url',
+        'akad_datetime',
+        'akad_venue',
+        'akad_maps_url',
+        'reception_datetime',
+        'reception_venue',
+        'reception_maps_url',
+        'cover_photo_url',
+        'music_url',
+        'gallery_photos',
+        'love_story',
+        'special_message',
+        'bank_name',
+        'account_number',
+        'account_name',
+        'qris_image_url',
+        'gopay_number',
+        'ovo_number',
+        'dana_number',
+    ];
+
+    protected $casts = [
+        'akad_datetime' => 'datetime',
+        'reception_datetime' => 'datetime',
+        'gallery_photos' => 'array',
+    ];
+
+    public function invitation(): BelongsTo
+    {
+        return $this->belongsTo(Invitation::class);
+    }
+}

@@ -1,0 +1,22 @@
+# MyAkad Robots.txt
+
+User-agent: *
+Allow: /
+Allow: /faq
+Allow: /templates
+Allow: /i/
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /settings/
+Disallow: /api/
+
+# Disallow authentication pages from indexing
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+
+# Sitemap
+Sitemap: https://myakad.com/sitemap.xml

@@ -82,6 +82,12 @@ RUN install-php-extensions \
     pdo_sqlite \
     zip
 
+RUN { \
+    echo "upload_max_filesize=50M"; \
+    echo "post_max_size=64M"; \
+    echo "memory_limit=256M"; \
+} > "$PHP_INI_DIR/conf.d/zz-myakad-upload.ini"
+
 COPY --from=vendor /app /app
 COPY --from=frontend /app/public/build /app/public/build
 COPY storage/app/public/templates /app/storage/app/public/templates

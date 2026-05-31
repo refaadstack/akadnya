@@ -12,7 +12,9 @@ use App\Models\Product;
 use App\Models\Template;
 use App\Models\User;
 use App\Models\UserFeature;
+use App\Notifications\PaymentSuccessfulNotification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class OrderService
@@ -110,11 +112,27 @@ class OrderService
      */
     public function updateOrderStatus(Order $order, string $status): void
     {
+        $wasPaid = $order->isPaid();
+
         $order->update(['status' => $status]);
 
         // If paid, activate features
         if ($status === 'paid') {
             $this->activateFeatures($order);
+
+            if (! $wasPaid) {
+                $order->loadMissing('user', 'items');
+
+                try {
+                    $order->user?->notify(new PaymentSuccessfulNotification($order));
+                } catch (\Throwable $e) {
+                    Log::warning('Payment success email could not be sent.', [
+                        'order_id' => $order->id,
+                        'order_number' => $order->order_number,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
         }
     }
 

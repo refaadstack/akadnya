@@ -54,7 +54,9 @@ const handleDragOver = (event: DragEvent) => {
 }
 
 const handleDrop = (index: number) => {
-  if (draggedSection.value === null) return
+  if (draggedSection.value === null) {
+    return
+  }
   
   const items = [...sections.value]
   const draggedItem = items[draggedSection.value]
@@ -73,6 +75,7 @@ const saveOrder = async () => {
   const xsrfToken = decodeURIComponent(
     document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))?.split('=')[1] ?? ''
   )
+
   try {
     await fetch('/dashboard/sections/reorder', {
       method: 'POST',
@@ -94,6 +97,7 @@ const toggleSection = async (sectionId: number) => {
   const xsrfToken = decodeURIComponent(
     document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))?.split('=')[1] ?? ''
   )
+
   try {
     const response = await fetch(`/dashboard/sections/${sectionId}/toggle`, {
       method: 'POST',
@@ -109,6 +113,7 @@ const toggleSection = async (sectionId: number) => {
     
     if (data.success) {
       const section = sections.value.find(s => s.id === sectionId)
+
       if (section) {
         section.is_visible = data.is_visible
       }
@@ -125,6 +130,7 @@ const toggleOrnament = async (ornamentId: number) => {
   const xsrfToken = decodeURIComponent(
     document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))?.split('=')[1] ?? ''
   )
+
   try {
     const response = await fetch(`/dashboard/ornaments/${ornamentId}/toggle`, {
       method: 'POST',
@@ -140,6 +146,7 @@ const toggleOrnament = async (ornamentId: number) => {
     
     if (data.success) {
       const ornament = ornaments.value.find(o => o.id === ornamentId)
+
       if (ornament) {
         ornament.is_active = data.is_active
       }
@@ -155,8 +162,9 @@ const getPositionLabel = (position: string) => {
     top: 'Atas',
     bottom: 'Bawah',
     between: 'Antar Section',
-    overlay: 'Overlay'
+    overlay: 'Overlay',
   }
+
   return labels[position] || position
 }
 </script>
@@ -360,7 +368,7 @@ const getPositionLabel = (position: string) => {
         <!-- Preview Button -->
         <div class="mt-8 text-center">
           <Link
-            :href="`/templates/${invitation.template.slug}/preview`"
+            :href="`/templates/${invitation.template.slug}/render`"
             target="_blank"
             class="inline-flex items-center bg-gradient-to-r from-pink-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition"
           >

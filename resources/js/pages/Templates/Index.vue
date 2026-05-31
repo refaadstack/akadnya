@@ -131,7 +131,7 @@ const addToCart = (template: Template) => {
             <div class="space-y-3">
               <!-- Preview Button -->
               <Link
-                :href="`/templates/${template.slug}/preview`"
+                :href="`/templates/${template.slug}/render`"
                 class="block w-full bg-white border-2 border-pink-600 text-pink-600 text-center py-3 rounded-lg font-semibold hover:bg-pink-50 transition-all duration-200 transform hover:scale-105"
               >
                 <span class="flex items-center justify-center gap-2">
@@ -167,7 +167,7 @@ const addToCart = (template: Template) => {
 
             <!-- Info Text -->
             <p class="text-xs text-center text-gray-500 mt-3">
-              💡 Klik "Lihat Preview" untuk coba dengan data Anda
+              💡 Klik "Lihat Preview" untuk melihat tampilan template
             </p>
           </div>
         </div>

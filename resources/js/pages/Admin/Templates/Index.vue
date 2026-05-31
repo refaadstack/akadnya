@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3'
-import { ref } from 'vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 
 defineOptions({
@@ -22,7 +21,7 @@ interface Template {
   created_at: string
 }
 
-const props = defineProps<{
+defineProps<{
   templates: {
     data: Template[]
     current_page: number
@@ -178,7 +177,7 @@ const syncTemplates = () => {
               <!-- Actions -->
               <div class="flex flex-col space-y-2">
                 <a
-                  :href="`/templates/${template.slug}/preview`"
+                  :href="`/templates/${template.slug}/render`"
                   target="_blank"
                   class="bg-green-600 text-white text-center px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition"
                 >

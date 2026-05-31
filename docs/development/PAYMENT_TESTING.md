@@ -3,8 +3,8 @@
 ## Midtrans Sandbox Configuration
 
 Aplikasi sudah dikonfigurasi dengan Midtrans Sandbox credentials di `.env`:
-- Server Key: `SB-Mid-server-avYbbijOCiUpuBiB32snZg9R`
-- Client Key: `SB-Mid-client-Kw3o7zBIgNS3Ftk1`
+- Server Key: simpan di `MIDTRANS_SERVER_KEY`
+- Client Key: simpan di `MIDTRANS_CLIENT_KEY`
 - Environment: Sandbox (Testing)
 
 ## Testing Payment Flow

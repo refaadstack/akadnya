@@ -275,7 +275,7 @@ class TemplateService
      */
     protected function validateAssetDirectory(string $assetsPath, array &$errors): void
     {
-        $allowedExtensions = ['css', 'js', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'woff', 'woff2', 'ttf', 'otf'];
+        $allowedExtensions = ['css', 'js', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'woff', 'woff2', 'ttf', 'otf', 'mp3', 'ogg', 'wav', 'webm'];
 
         foreach (File::allFiles($assetsPath) as $file) {
             $extension = strtolower($file->getExtension());
@@ -302,7 +302,7 @@ class TemplateService
             return;
         }
 
-        foreach (['css' => ['css'], 'js' => ['js']] as $type => $allowedExtensions) {
+        foreach (['css' => ['css'], 'js' => ['js'], 'audio' => ['mp3', 'ogg', 'wav', 'webm']] as $type => $allowedExtensions) {
             $assets = $templateData['assets'][$type] ?? [];
 
             if (is_string($assets)) {

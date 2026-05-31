@@ -208,14 +208,14 @@ class TemplateZipValidator
             return;
         }
 
-        $validAssetKeys = ['css', 'js'];
+        $validAssetKeys = ['css', 'js', 'audio'];
         foreach (array_keys($manifest['assets']) as $key) {
             if (! in_array($key, $validAssetKeys, true)) {
                 $errors[] = "⚠️ Unknown assets key '{$key}'. Valid keys: ".implode(', ', $validAssetKeys);
             }
         }
 
-        foreach (['css' => ['css'], 'js' => ['js']] as $type => $allowedExtensions) {
+        foreach (['css' => ['css'], 'js' => ['js'], 'audio' => ['mp3', 'ogg', 'wav', 'webm']] as $type => $allowedExtensions) {
             $assets = $manifest['assets'][$type] ?? [];
 
             if (is_string($assets)) {
@@ -245,7 +245,7 @@ class TemplateZipValidator
 
                 if ($zip->locateName($path) === false) {
                     $errors[] = "📦 Missing asset file: {$path}.";
-                } elseif (! $this->isValidTextFile($zip, $path)) {
+                } elseif ($this->isTextAsset($path) && ! $this->isValidTextFile($zip, $path)) {
                     $errors[] = "📄 Asset file '{$path}' is not a valid text file.";
                 }
             }
@@ -257,7 +257,7 @@ class TemplateZipValidator
      */
     protected function validateAssetFiles(ZipArchive $zip, array &$errors): void
     {
-        $allowedExtensions = ['css', 'js', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'woff', 'woff2', 'ttf', 'otf'];
+        $allowedExtensions = ['css', 'js', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'woff', 'woff2', 'ttf', 'otf', 'mp3', 'ogg', 'wav', 'webm'];
         $textExtensions = ['css', 'js', 'svg'];
 
         for ($i = 0; $i < $zip->numFiles; $i++) {
@@ -416,5 +416,10 @@ class TemplateZipValidator
         }
 
         return true;
+    }
+
+    protected function isTextAsset(string $path): bool
+    {
+        return in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), ['css', 'js', 'svg'], true);
     }
 }

@@ -109,3 +109,14 @@ test('template asset route serves safe assets and blocks traversal', function ()
     $this->get("/template-assets/{$slug}/../template.json")
         ->assertNotFound();
 });
+
+test('template asset route serves audio assets', function () {
+    $slug = 'test-'.uniqid();
+    $templatePath = storage_path("app/public/templates/{$slug}");
+    File::makeDirectory($templatePath.'/assets', 0755, true);
+    File::put($templatePath.'/assets/lagu-default.mp3', 'fake audio bytes');
+
+    $this->get("/template-assets/{$slug}/lagu-default.mp3")
+        ->assertOk()
+        ->assertHeader('Content-Type', 'audio/mpeg');
+});

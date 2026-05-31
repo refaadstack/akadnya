@@ -229,6 +229,30 @@ test('validates ZIP with configured template assets returns success', function (
     expect($result['errors'])->toBeEmpty();
 });
 
+test('validates ZIP with configured template audio asset returns success', function () {
+    $zipPath = $this->tempDir.'/test.zip';
+    $zip = new ZipArchive;
+    $zip->open($zipPath, ZipArchive::CREATE);
+    $zip->addFromString('template.json', json_encode([
+        'slug' => 'custom-audio',
+        'name' => 'Custom Audio',
+        'sections' => [
+            ['file' => 'cover.html', 'label' => 'Cover'],
+        ],
+        'assets' => [
+            'audio' => ['assets/lagu-default.mp3'],
+        ],
+    ]));
+    $zip->addFromString('sections/cover.html', '<h1>Cover</h1>');
+    $zip->addFromString('assets/lagu-default.mp3', "\xFF\xFB\0fake audio bytes");
+    $zip->close();
+
+    $result = $this->validator->validate($zipPath);
+
+    expect($result['valid'])->toBeTrue();
+    expect($result['errors'])->toBeEmpty();
+});
+
 test('validates ZIP with template defaults returns success', function () {
     $zipPath = $this->tempDir.'/test.zip';
     $zip = new ZipArchive;

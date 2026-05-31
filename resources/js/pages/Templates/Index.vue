@@ -130,7 +130,7 @@ const addToCart = (template: Template) => {
             <!-- Actions -->
             <div class="space-y-3">
               <!-- Preview Button -->
-              <Link
+              <a
                 :href="`/templates/${template.slug}/render`"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -143,7 +143,7 @@ const addToCart = (template: Template) => {
                   </svg>
                   Lihat Preview
                 </span>
-              </Link>
+              </a>
 
               <!-- Add to Cart Button -->
               <button

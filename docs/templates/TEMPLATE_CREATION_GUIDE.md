@@ -931,9 +931,9 @@ Template akan divalidasi saat upload. Berikut rules yang harus dipenuhi:
 
 ### ❌ NO LONGER REQUIRED
 
-1. **~~assets/style.css~~** - Not required anymore! Use `styling` in template.json
-2. **~~assets/script.js~~** - Not required anymore! Use `features` in template.json
-3. **~~Custom CSS/JS files~~** - System uses global CSS/JS now
+1. **Global CSS/JS** - Not loaded anymore. Put every template-specific CSS/JS file in `assets/`.
+2. **Global dummy data** - Not used for preview anymore. Put preview fallback values in `template.json.defaults`.
+3. **`assets/style.css` / `assets/script.js` as fixed names** - Optional convention only. Use `template.json.assets` for any CSS/JS filenames.
 
 ---
 
@@ -976,15 +976,16 @@ php artisan templates:sync
 3. Click "Preview"
 4. Check semua sections tampil dengan benar
 
-### 5. Test with Dummy Data
+### 5. Test with Template Defaults
 
-Preview akan menggunakan dummy data. Pastikan:
+Preview akan menggunakan `defaults` dari `template.json`. Pastikan:
 - ✅ Semua sections tampil
 - ✅ Tidak ada error di browser console
 - ✅ Responsive di mobile & desktop
 - ✅ Images load correctly
 - ✅ Countdown timer berfungsi (jika ada)
 - ✅ Forms berfungsi (jika ada)
+- ✅ Semua fallback value yang dibutuhkan section ada di `template.json.defaults`
 
 ---
 

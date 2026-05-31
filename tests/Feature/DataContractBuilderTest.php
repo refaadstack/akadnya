@@ -7,9 +7,22 @@ use App\Models\Template;
 use App\Models\User;
 use App\Services\DataContractBuilder;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
     $this->builder = new DataContractBuilder;
+});
+
+afterEach(function () {
+    $templatesPath = storage_path('app/public/templates');
+
+    if (is_dir($templatesPath)) {
+        foreach (glob($templatesPath.'/test-*') as $dir) {
+            if (is_dir($dir)) {
+                File::deleteDirectory($dir);
+            }
+        }
+    }
 });
 
 test('build returns all data contract keys even with null content', function () {
@@ -148,8 +161,24 @@ test('build includes gallery array with correct structure', function () {
     expect($contract['gallery'][0]['caption'])->toBe('Photo 1');
 });
 
-test('buildDummy returns complete dummy data', function () {
-    $contract = $this->builder->buildDummy();
+test('buildTemplateDefaults returns template-owned preview data', function () {
+    $slug = 'test-'.uniqid();
+    $template = Template::factory()->create(['slug' => $slug]);
+    $templatePath = storage_path("app/public/templates/{$slug}");
+
+    File::makeDirectory($templatePath, 0755, true);
+    File::put($templatePath.'/template.json', json_encode([
+        'defaults' => [
+            'bride_name' => 'Ayu Template',
+            'groom_name' => 'Raka Template',
+            'akad_datetime' => '2026-08-17 09:00:00',
+            'gallery' => [
+                ['url' => 'assets/gallery/one.jpg', 'caption' => 'One'],
+            ],
+        ],
+    ]));
+
+    $contract = $this->builder->buildTemplateDefaults($template);
 
     expect($contract)->toHaveKeys([
         'bride_name',
@@ -159,7 +188,9 @@ test('buildDummy returns complete dummy data', function () {
         'gallery',
     ]);
 
-    expect($contract['bride_name'])->toBeString();
+    expect($contract['bride_name'])->toBe('Ayu Template');
+    expect($contract['groom_name'])->toBe('Raka Template');
     expect($contract['gallery'])->toBeArray()->not->toBeEmpty();
     expect($contract['akad_datetime_formatted'])->toBeString();
+    expect($contract['reception_datetime_formatted'])->toBeNull();
 });

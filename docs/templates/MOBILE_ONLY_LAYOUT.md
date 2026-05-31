@@ -2,13 +2,13 @@
 
 ## Overview
 
-All MyAkad templates now use a **mobile-only layout** (fixed 480px width on all devices). This ensures consistent display across desktop, tablet, and mobile devices.
+Mobile-only layout is now a **template-owned choice**. If a template needs fixed 480px display, put that CSS inside the template's own `assets/` files.
 
 ---
 
 ## ✅ Current Implementation
 
-The mobile-only layout is **ACTIVE** and configured in `/public/css/template-base.css`.
+There is no global mobile-only CSS injected by the renderer. Each template controls its own layout from `assets/`.
 
 ### Key Features
 
@@ -83,7 +83,7 @@ html, body {
 
 ### Change Mobile Width
 
-Edit `/public/css/template-base.css`:
+Edit CSS file inside the template package, for example `assets/style.css`:
 
 ```css
 /* Options: 375px (iPhone SE), 390px (iPhone), 412px (Android), 480px (Comfortable) */
@@ -94,7 +94,7 @@ body {
 
 ### Disable Mobile-Only Layout
 
-To revert to responsive design, comment out the mobile-only section in `template-base.css`:
+To revert to responsive design, remove or comment out the mobile-only section in the template's own CSS file:
 
 ```css
 /* ============================================
@@ -197,18 +197,16 @@ body {
 
 ## 📝 Notes
 
-- Mobile-only layout is applied globally via `template-base.css`
-- No changes needed in individual template files
-- Layout is enforced with `!important` to override Tailwind
-- Cache buster (`?v=timestamp`) ensures CSS updates are loaded
+- Mobile-only layout is applied per template through its own `assets/` CSS
+- Each template can choose fixed-width or responsive behavior independently
+- Use `!important` only when the template intentionally needs to override imported styles
+- Update `template.json.assets.css` when adding or renaming CSS files
 
 ---
 
 ## 🔗 Related Documentation
 
 - [Template Creation Guide](./TEMPLATE_CREATION_GUIDE.md)
-- [Template Base CSS](../../public/css/template-base.css)
-- [Template Base JS](../../public/js/template-base.js)
 
 ---
 

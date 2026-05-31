@@ -71,7 +71,7 @@ test('preview API returns 404 for inactive template', function () {
     $response->assertStatus(404);
 });
 
-test('preview API merges user data with dummy data', function () {
+test('preview API merges user data with template defaults', function () {
     $slug = 'test-'.uniqid();
     $template = Template::factory()->create([
         'slug' => $slug,
@@ -90,10 +90,15 @@ test('preview API merges user data with dummy data', function () {
     $templatePath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($templatePath.'/sections', 0755, true);
     File::makeDirectory($templatePath.'/assets', 0755, true);
+    File::put($templatePath.'/template.json', json_encode([
+        'defaults' => [
+            'akad_venue' => 'Rumah Adat Template',
+        ],
+    ]));
     File::put($templatePath.'/sections/cover.html', '<h1>{{ $bride_name }}</h1><p>{{ $akad_venue }}</p>');
     File::put($templatePath.'/assets/style.css', 'body {}');
 
-    // Send only bride_name, akad_venue should come from dummy data
+    // Send only bride_name, akad_venue should come from template defaults
     $response = $this->postJson("/api/templates/{$slug}/preview", [
         'bride_name' => 'Custom Name',
     ]);
@@ -102,7 +107,8 @@ test('preview API merges user data with dummy data', function () {
 
     $html = $response->json('html');
     expect($html)->toContain('Custom Name'); // User data
-    expect($html)->toContain('Masjid'); // From dummy data
+    expect($html)->toContain('Rumah Adat Template'); // From template defaults
+    expect($html)->not->toContain('Masjid'); // No global dummy data
 });
 
 test('preview API works without authentication', function () {

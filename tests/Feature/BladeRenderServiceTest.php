@@ -123,9 +123,7 @@ test('buildAssetTags returns empty string when no assets exist', function () {
 
     $result = $this->service->buildAssetTags($template);
 
-    expect($result)->toContain('template-base.css');
-    expect($result)->toContain('template-components.css');
-    expect($result)->toContain('template-base.js');
+    expect($result)->toBe('');
 });
 
 test('buildAssetTags generates both CSS and JS tags when both exist', function () {
@@ -141,6 +139,9 @@ test('buildAssetTags generates both CSS and JS tags when both exist', function (
 
     expect($result)->toContain('<link rel="stylesheet"');
     expect($result)->toContain('<script src=');
+    expect($result)->not->toContain('template-base.css');
+    expect($result)->not->toContain('template-components.css');
+    expect($result)->not->toContain('template-base.js');
 });
 
 test('renderOrnament returns empty string when file not found', function () {

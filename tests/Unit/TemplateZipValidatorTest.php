@@ -229,6 +229,77 @@ test('validates ZIP with configured template assets returns success', function (
     expect($result['errors'])->toBeEmpty();
 });
 
+test('validates ZIP with template defaults returns success', function () {
+    $zipPath = $this->tempDir.'/test.zip';
+    $zip = new ZipArchive;
+    $zip->open($zipPath, ZipArchive::CREATE);
+    $zip->addFromString('template.json', json_encode([
+        'slug' => 'defaults-template',
+        'name' => 'Defaults Template',
+        'sections' => [
+            ['file' => 'cover.html', 'label' => 'Cover'],
+        ],
+        'defaults' => [
+            'bride_name' => 'Ayu',
+            'groom_name' => 'Raka',
+            'gallery' => [
+                ['url' => 'assets/gallery/one.jpg', 'caption' => 'One'],
+            ],
+        ],
+    ]));
+    $zip->addFromString('sections/cover.html', '<h1>Cover</h1>');
+    $zip->close();
+
+    $result = $this->validator->validate($zipPath);
+
+    expect($result['valid'])->toBeTrue();
+    expect($result['errors'])->toBeEmpty();
+});
+
+test('validates ZIP with invalid defaults structure returns error', function () {
+    $zipPath = $this->tempDir.'/test.zip';
+    $zip = new ZipArchive;
+    $zip->open($zipPath, ZipArchive::CREATE);
+    $zip->addFromString('template.json', json_encode([
+        'slug' => 'invalid-defaults',
+        'name' => 'Invalid Defaults',
+        'sections' => [
+            ['file' => 'cover.html', 'label' => 'Cover'],
+        ],
+        'defaults' => 'invalid',
+    ]));
+    $zip->addFromString('sections/cover.html', '<h1>Cover</h1>');
+    $zip->close();
+
+    $result = $this->validator->validate($zipPath);
+
+    expect($result['valid'])->toBeFalse();
+    expect(implode(' ', $result['errors']))->toContain('"defaults" must be an object/array');
+});
+
+test('validates ZIP with invalid defaults key returns error', function () {
+    $zipPath = $this->tempDir.'/test.zip';
+    $zip = new ZipArchive;
+    $zip->open($zipPath, ZipArchive::CREATE);
+    $zip->addFromString('template.json', json_encode([
+        'slug' => 'invalid-default-key',
+        'name' => 'Invalid Default Key',
+        'sections' => [
+            ['file' => 'cover.html', 'label' => 'Cover'],
+        ],
+        'defaults' => [
+            'bad-key' => 'value',
+        ],
+    ]));
+    $zip->addFromString('sections/cover.html', '<h1>Cover</h1>');
+    $zip->close();
+
+    $result = $this->validator->validate($zipPath);
+
+    expect($result['valid'])->toBeFalse();
+    expect(implode(' ', $result['errors']))->toContain('Invalid defaults key');
+});
+
 test('validates ZIP with missing configured template asset returns error', function () {
     $zipPath = $this->tempDir.'/test.zip';
     $zip = new ZipArchive;

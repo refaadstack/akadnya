@@ -64,6 +64,8 @@ class TemplateController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
+        $data = $this->dataBuilder->buildTemplateDefaults($template);
+
         // Check if custom data is provided via query parameters
         $customData = request()->query('data');
 
@@ -71,13 +73,12 @@ class TemplateController extends Controller
             // Decode base64-encoded JSON data from query string
             try {
                 $decodedData = json_decode(base64_decode($customData), true);
-                $data = array_merge($this->dataBuilder->buildDummy(), $decodedData);
+                if (is_array($decodedData)) {
+                    $data = array_replace($data, array_filter($decodedData, fn ($value) => $value !== null && $value !== ''));
+                }
             } catch (\Exception $e) {
-                // Fall back to dummy data if decoding fails
-                $data = $this->dataBuilder->buildDummy();
+                // Fall back to template defaults if decoding fails
             }
-        } else {
-            $data = $this->dataBuilder->buildDummy();
         }
 
         $html = $this->bladeRenderer->renderPreview($template, $data);

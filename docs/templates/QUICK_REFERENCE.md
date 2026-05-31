@@ -5,8 +5,9 @@
 ```
 my-template/
 ├── template.json          ✅ REQUIRED
-├── assets/
-│   └── style.css         ✅ REQUIRED
+├── assets/                Optional, template-owned CSS/JS/images/fonts
+│   ├── style.css
+│   └── script.js
 └── sections/
     └── hero.html         ✅ REQUIRED (min 1)
 ```
@@ -17,7 +18,15 @@ my-template/
 {
   "name": "My Template",
   "slug": "my-template",
-  "sections": [{"file": "hero.html", "label": "Hero"}]
+  "sections": [{"file": "hero.html", "label": "Hero"}],
+  "assets": {
+    "css": ["style.css"],
+    "js": ["script.js"]
+  },
+  "defaults": {
+    "bride_name": "Ayu",
+    "groom_name": "Raka"
+  }
 }
 ```
 
@@ -73,7 +82,8 @@ Compress-Archive -Path "my-template\*" -DestinationPath "my-template.zip"
 ## ✅ Validation Checklist
 
 - [ ] `template.json` exists with `name` and `slug`
-- [ ] `assets/style.css` exists
+- [ ] All CSS/JS needed by this template is inside `assets/`
+- [ ] Preview fallback values are inside `template.json.defaults`
 - [ ] All section files exist
 - [ ] No path traversal (`../`, `/etc/`)
 - [ ] ZIP structure correct (no parent folder)
@@ -86,14 +96,14 @@ Compress-Archive -Path "my-template\*" -DestinationPath "my-template.zip"
 2. Click "Upload Template"
 3. Select ZIP file
 4. Upload
-5. Preview at `/templates/{slug}/preview`
+5. Preview at `/templates/{slug}/render`
 
 ## 🐛 Common Errors
 
 | Error | Solution |
 |-------|----------|
 | template.json not found | ZIP isi folder, bukan folder itu sendiri |
-| style.css not found | Create `assets/style.css` |
+| CSS/JS not applied | Add files to `assets/` and list them in `template.json.assets` |
 | Missing section files | Create files or update template.json |
 | Unsafe paths | Remove `../` and absolute paths |
 

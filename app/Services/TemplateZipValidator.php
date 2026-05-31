@@ -169,6 +169,7 @@ class TemplateZipValidator
             // Validate optional template-specific CSS/JS assets
             $this->validateAssetsConfiguration($zip, $manifest, $errors);
             $this->validateAssetFiles($zip, $errors);
+            $this->validateDefaultsConfiguration($manifest, $errors);
 
             // Check for common mistakes
             $this->checkCommonMistakes($zip, $errors);
@@ -282,6 +283,29 @@ class TemplateZipValidator
 
             if (in_array($extension, $textExtensions, true) && ! $this->isValidTextFile($zip, $name)) {
                 $errors[] = "📄 Asset file '{$name}' is not a valid text file.";
+            }
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $manifest
+     * @param  array<int, string>  $errors
+     */
+    protected function validateDefaultsConfiguration(?array $manifest, array &$errors): void
+    {
+        if (! isset($manifest['defaults'])) {
+            return;
+        }
+
+        if (! is_array($manifest['defaults'])) {
+            $errors[] = '📋 "defaults" must be an object/array in template.json.';
+
+            return;
+        }
+
+        foreach (array_keys($manifest['defaults']) as $key) {
+            if (! is_string($key) || preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $key) !== 1) {
+                $errors[] = "📋 Invalid defaults key '{$key}'. Keys must be valid Blade variable names.";
             }
         }
     }

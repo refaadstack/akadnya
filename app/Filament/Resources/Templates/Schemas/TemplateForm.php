@@ -18,7 +18,7 @@ class TemplateForm
         return $schema
             ->components([
                 Section::make('Upload Template ZIP')
-                    ->description('Upload a template ZIP file containing template.json, sections/, and assets/')
+                    ->description('Upload a template ZIP file containing template.json, sections/, and optional template-owned assets/')
                     ->schema([
                         FileUpload::make('template_zip')
                             ->label('Template ZIP File')
@@ -28,7 +28,7 @@ class TemplateForm
                             ->directory('temp-templates')
                             ->visibility('private')
                             ->required()
-                            ->helperText('Upload a ZIP file with the following structure: template.json, sections/, assets/')
+                            ->helperText('Upload a ZIP file with template.json, sections/, and optional assets/')
                             ->columnSpanFull()
                             ->hiddenOn('edit'),
 
@@ -38,9 +38,9 @@ class TemplateForm
                                 <ul class="list-disc list-inside space-y-1 text-gray-600">
                                     <li><code>template.json</code> - Template metadata (name, slug, sections)</li>
                                     <li><code>sections/</code> - Folder with HTML section files</li>
-                                    <li><code>assets/style.css</code> - Required stylesheet</li>
-                                    <li><code>assets/script.js</code> - Optional JavaScript (optional)</li>
-                                    <li><code>assets/images/</code> - Template images (optional)</li>
+                                    <li><code>template.json.defaults</code> - Preview fallback values owned by this template</li>
+                                    <li><code>assets/</code> - Optional CSS, JavaScript, images, and fonts owned by this template</li>
+                                    <li><code>template.json.assets</code> - Optional CSS/JS load order</li>
                                 </ul>
                                 <p class="mt-2 text-gray-500">See documentation for detailed structure.</p>
                             </div>

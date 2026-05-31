@@ -2,7 +2,7 @@
 
 ## 🎨 Overview
 
-**Betawi Heritage** adalah template preset yang sudah jadi dan siap pakai untuk undangan pernikahan digital dengan tema adat Betawi. Template ini menggunakan sistem styling global yang konsisten dan modern.
+**Betawi Heritage** adalah template preset yang sudah jadi dan siap pakai untuk undangan pernikahan digital dengan tema adat Betawi. Template ini harus membawa styling, script, font, dan nilai preview default-nya sendiri di dalam paket template.
 
 ## ✅ Status: READY TO USE
 
@@ -36,12 +36,11 @@ Template ini sudah **100% siap digunakan** dengan semua fitur berikut:
 - Script: `Dancing Script` (cursive, untuk aksen)
 
 **Icons:**
-- Font Awesome 6.5.1 (semua icon menggunakan `fas fa-*`)
+- Sertakan library icon sendiri di `assets/` jika template membutuhkannya
 
 **CSS Framework:**
-- Tailwind CSS 4.x (utility-first)
-- Global CSS: `/css/template-base.css`
-- Global JS: `/js/template-base.js`
+- CSS/JS milik template dimuat dari `assets/` lewat `template.json.assets`
+- Tidak ada CSS/JS global yang disuntik otomatis ke render template
 
 ## 📁 Struktur File
 
@@ -220,7 +219,7 @@ Edit data di database atau controller untuk mengisi variabel Blade.
 
 ## 🚀 JavaScript Functions
 
-Template menggunakan global JavaScript dari `/js/template-base.js`:
+Template harus membawa JavaScript sendiri di `assets/` dan mendaftarkannya di `template.json.assets.js`:
 
 ### MyAkad Namespace
 ```javascript

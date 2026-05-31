@@ -74,6 +74,11 @@ test('render returns standalone template preview html with template assets', fun
     $templatePath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($templatePath.'/sections', 0755, true);
     File::makeDirectory($templatePath.'/assets', 0755, true);
+    File::put($templatePath.'/template.json', json_encode([
+        'defaults' => [
+            'bride_name' => 'Template Bride',
+        ],
+    ]));
     File::put($templatePath.'/sections/hero.html', '<h1>{{ $bride_name ?? "" }}</h1>');
     File::put($templatePath.'/assets/style.css', 'h1 { color: red; }');
     File::put($templatePath.'/assets/script.js', 'window.loaded = true;');
@@ -84,8 +89,11 @@ test('render returns standalone template preview html with template assets', fun
     $response->assertHeader('Content-Type', 'text/html; charset=utf-8');
     $response->assertSee('<!DOCTYPE html>', false);
     $response->assertSee('Preview Mode - Template: Standalone Template', false);
+    $response->assertSee('Template Bride', false);
     $response->assertSee("template-assets/{$slug}/style.css", false);
     $response->assertSee("template-assets/{$slug}/script.js", false);
+    $response->assertDontSee('template-base.css', false);
+    $response->assertDontSee('template-base.js', false);
 });
 
 test('template asset route serves safe assets and blocks traversal', function () {

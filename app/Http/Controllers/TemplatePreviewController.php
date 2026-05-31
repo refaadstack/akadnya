@@ -33,12 +33,12 @@ class TemplatePreviewController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
-        // Get data from request, merge with dummy data as fallback
-        $dummyData = $this->dataBuilder->buildDummy();
+        // Get data from request, merge with template-owned defaults as fallback
+        $defaultData = $this->dataBuilder->buildTemplateDefaults($template);
         $userData = $request->all();
 
-        // Merge user data with dummy data (user data takes precedence)
-        $data = array_merge($dummyData, array_filter($userData, fn ($value) => $value !== null && $value !== ''));
+        // Merge user data with template defaults (user data takes precedence)
+        $data = array_replace($defaultData, array_filter($userData, fn ($value) => $value !== null && $value !== ''));
 
         // Render preview HTML
         $html = $this->bladeRenderer->renderPreview($template, $data);

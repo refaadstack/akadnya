@@ -132,6 +132,8 @@ const addToCart = (template: Template) => {
               <!-- Preview Button -->
               <Link
                 :href="`/templates/${template.slug}/render`"
+                target="_blank"
+                rel="noopener noreferrer"
                 class="block w-full bg-white border-2 border-pink-600 text-pink-600 text-center py-3 rounded-lg font-semibold hover:bg-pink-50 transition-all duration-200 transform hover:scale-105"
               >
                 <span class="flex items-center justify-center gap-2">

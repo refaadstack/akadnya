@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Template;
 use App\Services\BladeRenderService;
 use App\Services\DataContractBuilder;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
@@ -40,22 +41,17 @@ class TemplateController extends Controller
     }
 
     /**
-     * Preview template with dummy data in Inertia page
+     * Redirect legacy preview URLs to the standalone template renderer.
      */
-    public function preview(string $slug): Response
+    public function preview(string $slug): RedirectResponse
     {
-        $template = Template::where('slug', $slug)
+        Template::where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();
 
-        return Inertia::render('Templates/Preview', [
-            'template' => [
-                'id' => $template->id,
-                'slug' => $template->slug,
-                'name' => $template->name,
-                'price' => $template->price,
-                'is_free' => $template->is_free,
-            ],
+        return redirect()->route('templates.render', [
+            'slug' => $slug,
+            ...request()->query(),
         ]);
     }
 

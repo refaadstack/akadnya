@@ -2,7 +2,6 @@
 
 use App\Models\Template;
 use Illuminate\Support\Facades\File;
-use Inertia\Testing\AssertableInertia as Assert;
 
 afterEach(function () {
     $templatesPath = storage_path('app/public/templates');
@@ -16,7 +15,7 @@ afterEach(function () {
     }
 });
 
-test('preview returns correct template metadata', function () {
+test('preview redirects to standalone render route', function () {
     $template = Template::factory()->create([
         'slug' => 'elegant-wedding',
         'name' => 'Elegant Wedding',
@@ -26,20 +25,18 @@ test('preview returns correct template metadata', function () {
 
     $response = $this->get("/templates/{$template->slug}/preview");
 
-    $response->assertOk();
-    $response->assertInertia(fn (Assert $page) => $page
-        ->component('Templates/Preview')
-        ->has('template', fn (Assert $prop) => $prop
-            ->where('id', $template->id)
-            ->where('slug', 'elegant-wedding')
-            ->where('name', 'Elegant Wedding')
-            ->where('price', '150000.00')
-            ->where('is_free', $template->is_free)
-            ->missing('sections')
-            ->missing('ornaments')
-            ->missing('dummyData')
-        )
-    );
+    $response->assertRedirect("/templates/{$template->slug}/render");
+});
+
+test('preview redirect preserves custom render data query', function () {
+    $template = Template::factory()->create([
+        'slug' => 'query-template',
+        'is_active' => true,
+    ]);
+
+    $response = $this->get("/templates/{$template->slug}/preview?data=abc123");
+
+    $response->assertRedirect("/templates/{$template->slug}/render?data=abc123");
 });
 
 test('preview returns 404 for inactive template', function () {

@@ -2,9 +2,6 @@
 
 namespace App\Services;
 
-use App\Exceptions\Template\TemplateManifestException;
-use App\Exceptions\Template\TemplateSecurityException;
-use App\Exceptions\Template\TemplateValidationException;
 use ZipArchive;
 
 /**
@@ -169,9 +166,9 @@ class TemplateZipValidator
                 }
             }
 
-            // NOTE: Custom CSS/JS files are NO LONGER REQUIRED
-            // Templates now use global CSS/JS controlled by template.json configuration
-            // If custom assets exist, they will be ignored in favor of global system
+            // Validate optional template-specific CSS/JS assets
+            $this->validateAssetsConfiguration($zip, $manifest, $errors);
+            $this->validateAssetFiles($zip, $errors);
 
             // Check for common mistakes
             $this->checkCommonMistakes($zip, $errors);
@@ -192,6 +189,130 @@ class TemplateZipValidator
                 'manifest' => null,
             ];
         }
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $manifest
+     * @param  array<int, string>  $errors
+     */
+    protected function validateAssetsConfiguration(ZipArchive $zip, ?array $manifest, array &$errors): void
+    {
+        if (! isset($manifest['assets'])) {
+            return;
+        }
+
+        if (! is_array($manifest['assets'])) {
+            $errors[] = '📦 "assets" must be an object/array in template.json.';
+
+            return;
+        }
+
+        $validAssetKeys = ['css', 'js'];
+        foreach (array_keys($manifest['assets']) as $key) {
+            if (! in_array($key, $validAssetKeys, true)) {
+                $errors[] = "⚠️ Unknown assets key '{$key}'. Valid keys: ".implode(', ', $validAssetKeys);
+            }
+        }
+
+        foreach (['css' => ['css'], 'js' => ['js']] as $type => $allowedExtensions) {
+            $assets = $manifest['assets'][$type] ?? [];
+
+            if (is_string($assets)) {
+                $assets = [$assets];
+            }
+
+            if (! is_array($assets)) {
+                $errors[] = "📦 assets.{$type} must be a string or array of strings.";
+
+                continue;
+            }
+
+            foreach ($assets as $asset) {
+                if (! is_string($asset)) {
+                    $errors[] = "📦 assets.{$type} may only contain file paths.";
+
+                    continue;
+                }
+
+                $path = $this->sanitizeAssetPath($asset, $allowedExtensions);
+
+                if (! $path) {
+                    $errors[] = "📦 Invalid assets.{$type} path '{$asset}'.";
+
+                    continue;
+                }
+
+                if ($zip->locateName($path) === false) {
+                    $errors[] = "📦 Missing asset file: {$path}.";
+                } elseif (! $this->isValidTextFile($zip, $path)) {
+                    $errors[] = "📄 Asset file '{$path}' is not a valid text file.";
+                }
+            }
+        }
+    }
+
+    /**
+     * @param  array<int, string>  $errors
+     */
+    protected function validateAssetFiles(ZipArchive $zip, array &$errors): void
+    {
+        $allowedExtensions = ['css', 'js', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'woff', 'woff2', 'ttf', 'otf'];
+        $textExtensions = ['css', 'js', 'svg'];
+
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $stat = $zip->statIndex($i);
+
+            if ($stat === false) {
+                continue;
+            }
+
+            $name = $stat['name'];
+
+            if (! str_starts_with($name, 'assets/') || str_ends_with($name, '/')) {
+                continue;
+            }
+
+            $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+
+            if (! in_array($extension, $allowedExtensions, true)) {
+                $errors[] = "📦 Asset file '{$name}' has an unsupported file type.";
+
+                continue;
+            }
+
+            if (in_array($extension, $textExtensions, true) && ! $this->isValidTextFile($zip, $name)) {
+                $errors[] = "📄 Asset file '{$name}' is not a valid text file.";
+            }
+        }
+    }
+
+    /**
+     * @param  array<int, string>  $allowedExtensions
+     */
+    protected function sanitizeAssetPath(string $path, array $allowedExtensions): ?string
+    {
+        $normalizedPath = str_replace('\\', '/', trim($path));
+        $normalizedPath = ltrim($normalizedPath, '/');
+
+        if (! str_starts_with($normalizedPath, 'assets/')) {
+            $normalizedPath = 'assets/'.$normalizedPath;
+        }
+
+        if (
+            $normalizedPath === 'assets/'
+            || str_contains($normalizedPath, '..')
+            || preg_match('/^[a-zA-Z]:/', $normalizedPath) === 1
+        ) {
+            return null;
+        }
+
+        $extension = strtolower(pathinfo($normalizedPath, PATHINFO_EXTENSION));
+
+        if (! in_array($extension, $allowedExtensions, true)) {
+            return null;
+        }
+
+        return $normalizedPath;
     }
 
     /**

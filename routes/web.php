@@ -4,6 +4,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Dev\PaymentSimulatorController;
 use App\Http\Controllers\EditorController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\InvitationController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\InvitationSettingsController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\PublicInvitationController;
+use App\Http\Controllers\TemplateAssetController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\TemplatePreviewController;
 use App\Http\Controllers\WelcomeController;
@@ -18,7 +20,7 @@ use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
-Route::get('/faq', [App\Http\Controllers\FaqController::class, 'index'])->name('faq');
+Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 
 // Public invitation routes (must be before other routes to catch subdomains)
 Route::get('/i/{subdomain}', [PublicInvitationController::class, 'show'])->name('invitation.show');
@@ -34,37 +36,9 @@ Route::get('/templates/{slug}/preview', [TemplateController::class, 'preview'])-
 Route::get('/templates/{slug}/render', [TemplateController::class, 'render'])->name('templates.render');
 
 // Serve template assets (CSS, JS, images) from storage via Laravel
-Route::get('/template-assets/{slug}/{file}', function (string $slug, string $file) {
-    $path = storage_path("app/public/templates/{$slug}/assets/{$file}");
-    
-    if (!file_exists($path)) {
-        abort(404, 'Asset not found');
-    }
-    
-    // Determine MIME type
-    $mimeTypes = [
-        'css' => 'text/css',
-        'js' => 'application/javascript',
-        'jpg' => 'image/jpeg',
-        'jpeg' => 'image/jpeg',
-        'png' => 'image/png',
-        'gif' => 'image/gif',
-        'svg' => 'image/svg+xml',
-        'webp' => 'image/webp',
-        'woff' => 'font/woff',
-        'woff2' => 'font/woff2',
-        'ttf' => 'font/ttf',
-        'otf' => 'font/otf',
-    ];
-    
-    $extension = pathinfo($file, PATHINFO_EXTENSION);
-    $mimeType = $mimeTypes[$extension] ?? 'application/octet-stream';
-    
-    return response()->file($path, [
-        'Content-Type' => $mimeType,
-        'Cache-Control' => 'public, max-age=31536000',
-    ]);
-})->where('file', '.*')->name('templates.asset');
+Route::get('/template-assets/{slug}/{file}', TemplateAssetController::class)
+    ->where('file', '.*')
+    ->name('templates.asset');
 
 // Template preview API (public, no auth required)
 Route::post('/api/templates/{slug}/preview', [TemplatePreviewController::class, 'render'])

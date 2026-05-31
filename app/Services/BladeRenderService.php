@@ -182,7 +182,7 @@ HTML;
 
     /**
      * Build HTML asset tags (link and script).
-     * Uses global CSS/JS with template configuration injected via CSS variables.
+     * Loads core template assets first, then optional template-specific assets.
      */
     public function buildAssetTags(Template $template): string
     {
@@ -204,6 +204,8 @@ HTML;
             $tags[] = $this->buildCssVariables($config['styling']);
         }
 
+        $tags = array_merge($tags, $this->buildTemplateCssTags($template, $config));
+
         // Inject template configuration via meta tag (base64 encoded to avoid escaping issues)
         if (! empty($config)) {
             $configJson = json_encode($config);
@@ -213,8 +215,105 @@ HTML;
 
         // Global JS (loaded after config) with cache buster
         $tags[] = '<script src="'.asset('js/template-base.js').'"></script>';
+        $tags = array_merge($tags, $this->buildTemplateScriptTags($template, $config));
 
         return implode("\n    ", $tags);
+    }
+
+    /**
+     * @param  array<string, mixed>  $config
+     * @return array<int, string>
+     */
+    protected function buildTemplateCssTags(Template $template, array $config): array
+    {
+        return array_map(
+            fn (string $path): string => '<link rel="stylesheet" href="'.e(route('templates.asset', ['slug' => $template->slug, 'file' => $path])).'">',
+            $this->discoverTemplateAssets($template, $config, 'css', ['style.css'], ['css'])
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $config
+     * @return array<int, string>
+     */
+    protected function buildTemplateScriptTags(Template $template, array $config): array
+    {
+        return array_map(
+            fn (string $path): string => '<script src="'.e(route('templates.asset', ['slug' => $template->slug, 'file' => $path])).'"></script>',
+            $this->discoverTemplateAssets($template, $config, 'js', ['script.js'], ['js'])
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $defaults
+     * @param  array<int, string>  $allowedExtensions
+     * @return array<int, string>
+     */
+    protected function discoverTemplateAssets(Template $template, array $config, string $type, array $defaults, array $allowedExtensions): array
+    {
+        $configuredAssets = $config['assets'][$type] ?? [];
+
+        if (is_string($configuredAssets)) {
+            $configuredAssets = [$configuredAssets];
+        }
+
+        if (! is_array($configuredAssets)) {
+            $configuredAssets = [];
+        }
+
+        $assets = array_merge($defaults, $configuredAssets);
+        $paths = [];
+
+        foreach ($assets as $asset) {
+            if (! is_string($asset)) {
+                continue;
+            }
+
+            $path = $this->sanitizeTemplateAssetPath($asset, $allowedExtensions);
+
+            if (! $path) {
+                continue;
+            }
+
+            if (! File::exists($template->getFolderPath().'/assets/'.$path)) {
+                continue;
+            }
+
+            $paths[] = $path;
+        }
+
+        return array_values(array_unique($paths));
+    }
+
+    /**
+     * @param  array<int, string>  $allowedExtensions
+     */
+    protected function sanitizeTemplateAssetPath(string $path, array $allowedExtensions): ?string
+    {
+        $normalizedPath = str_replace('\\', '/', trim($path));
+        $normalizedPath = ltrim($normalizedPath, '/');
+
+        if (str_starts_with($normalizedPath, 'assets/')) {
+            $normalizedPath = substr($normalizedPath, strlen('assets/'));
+        }
+
+        if (
+            $normalizedPath === ''
+            || str_contains($normalizedPath, '..')
+            || str_starts_with($normalizedPath, '/')
+            || preg_match('/^[a-zA-Z]:/', $normalizedPath) === 1
+        ) {
+            return null;
+        }
+
+        $extension = strtolower(pathinfo($normalizedPath, PATHINFO_EXTENSION));
+
+        if (! in_array($extension, $allowedExtensions, true)) {
+            return null;
+        }
+
+        return $normalizedPath;
     }
 
     /**
@@ -289,16 +388,16 @@ HTML;
     {
         $colors = $styling['colors'] ?? [];
         $fonts = $styling['fonts'] ?? [];
-        
+
         $primary = $colors['primary'] ?? '#dc2626';
         $secondary = $colors['secondary'] ?? '#fbbf24';
         $accent = $colors['accent'] ?? '#991b1b';
         $background = $colors['background'] ?? '#FFFAF0';
         $text = $colors['text'] ?? '#1f2937';
-        
+
         $headingFont = $fonts['heading'] ?? "'Playfair Display', serif";
         $bodyFont = $fonts['body'] ?? "'Inter', sans-serif";
-        
+
         $css = <<<CSS
 <style>
 /* Template-specific styles for {$slug} */

@@ -7,6 +7,7 @@ use App\Services\BladeRenderService;
 use App\Services\DataContractBuilder;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class TemplateController extends Controller
 {
@@ -61,7 +62,7 @@ class TemplateController extends Controller
     /**
      * Render template HTML for iframe
      */
-    public function render(string $slug)
+    public function render(string $slug): SymfonyResponse
     {
         $template = Template::where('slug', $slug)
             ->where('is_active', true)
@@ -69,7 +70,7 @@ class TemplateController extends Controller
 
         // Check if custom data is provided via query parameters
         $customData = request()->query('data');
-        
+
         if ($customData) {
             // Decode base64-encoded JSON data from query string
             try {

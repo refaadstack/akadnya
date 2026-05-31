@@ -203,6 +203,76 @@ test('validates complete valid ZIP returns success', function () {
     expect($result['manifest']['slug'])->toBe('elegant-rose');
 });
 
+test('validates ZIP with configured template assets returns success', function () {
+    $zipPath = $this->tempDir.'/test.zip';
+    $zip = new ZipArchive;
+    $zip->open($zipPath, ZipArchive::CREATE);
+    $zip->addFromString('template.json', json_encode([
+        'slug' => 'custom-assets',
+        'name' => 'Custom Assets',
+        'sections' => [
+            ['file' => 'cover.html', 'label' => 'Cover'],
+        ],
+        'assets' => [
+            'css' => ['assets/style.css'],
+            'js' => ['script.js'],
+        ],
+    ]));
+    $zip->addFromString('sections/cover.html', '<h1>Cover</h1>');
+    $zip->addFromString('assets/style.css', 'body {}');
+    $zip->addFromString('assets/script.js', 'console.log("template");');
+    $zip->close();
+
+    $result = $this->validator->validate($zipPath);
+
+    expect($result['valid'])->toBeTrue();
+    expect($result['errors'])->toBeEmpty();
+});
+
+test('validates ZIP with missing configured template asset returns error', function () {
+    $zipPath = $this->tempDir.'/test.zip';
+    $zip = new ZipArchive;
+    $zip->open($zipPath, ZipArchive::CREATE);
+    $zip->addFromString('template.json', json_encode([
+        'slug' => 'missing-assets',
+        'name' => 'Missing Assets',
+        'sections' => [
+            ['file' => 'cover.html', 'label' => 'Cover'],
+        ],
+        'assets' => [
+            'css' => ['assets/missing.css'],
+        ],
+    ]));
+    $zip->addFromString('sections/cover.html', '<h1>Cover</h1>');
+    $zip->close();
+
+    $result = $this->validator->validate($zipPath);
+
+    expect($result['valid'])->toBeFalse();
+    expect(implode(' ', $result['errors']))->toContain('Missing asset file');
+});
+
+test('validates ZIP with unsupported asset file type returns error', function () {
+    $zipPath = $this->tempDir.'/test.zip';
+    $zip = new ZipArchive;
+    $zip->open($zipPath, ZipArchive::CREATE);
+    $zip->addFromString('template.json', json_encode([
+        'slug' => 'bad-asset',
+        'name' => 'Bad Asset',
+        'sections' => [
+            ['file' => 'cover.html', 'label' => 'Cover'],
+        ],
+    ]));
+    $zip->addFromString('sections/cover.html', '<h1>Cover</h1>');
+    $zip->addFromString('assets/hack.php', '<?php echo "bad";');
+    $zip->close();
+
+    $result = $this->validator->validate($zipPath);
+
+    expect($result['valid'])->toBeFalse();
+    expect(implode(' ', $result['errors']))->toContain('unsupported file type');
+});
+
 test('validates ZIP with invalid styling structure returns error', function () {
     $zipPath = $this->tempDir.'/test.zip';
     $zip = new ZipArchive;

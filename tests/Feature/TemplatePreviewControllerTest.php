@@ -4,8 +4,8 @@ use App\Models\Template;
 use Illuminate\Support\Facades\File;
 
 afterEach(function () {
-    // Cleanup public/templates/test-* directories
-    $publicTemplates = public_path('templates');
+    // Cleanup storage template test directories
+    $publicTemplates = storage_path('app/public/templates');
     if (is_dir($publicTemplates)) {
         $dirs = glob($publicTemplates.'/test-*');
         foreach ($dirs as $dir) {
@@ -32,7 +32,7 @@ test('preview API returns HTML with valid data', function () {
     ]);
 
     // Create template structure
-    $templatePath = public_path("templates/{$slug}");
+    $templatePath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($templatePath.'/sections', 0755, true);
     File::makeDirectory($templatePath.'/assets', 0755, true);
     File::put($templatePath.'/sections/cover.html', '<h1>{{ $bride_name }} & {{ $groom_name }}</h1>');
@@ -87,7 +87,7 @@ test('preview API merges user data with dummy data', function () {
     ]);
 
     // Create template structure
-    $templatePath = public_path("templates/{$slug}");
+    $templatePath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($templatePath.'/sections', 0755, true);
     File::makeDirectory($templatePath.'/assets', 0755, true);
     File::put($templatePath.'/sections/cover.html', '<h1>{{ $bride_name }}</h1><p>{{ $akad_venue }}</p>');
@@ -113,7 +113,7 @@ test('preview API works without authentication', function () {
     ]);
 
     // Create template structure
-    $templatePath = public_path("templates/{$slug}");
+    $templatePath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($templatePath.'/sections', 0755, true);
     File::makeDirectory($templatePath.'/assets', 0755, true);
     File::put($templatePath.'/sections/cover.html', '<h1>Test</h1>');
@@ -136,7 +136,7 @@ test('preview API includes preview banner in HTML', function () {
     ]);
 
     // Create template structure
-    $templatePath = public_path("templates/{$slug}");
+    $templatePath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($templatePath.'/sections', 0755, true);
     File::makeDirectory($templatePath.'/assets', 0755, true);
     File::put($templatePath.'/sections/cover.html', '<h1>Test</h1>');

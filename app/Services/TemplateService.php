@@ -259,15 +259,111 @@ class TemplateService
         // Check assets directory
         $assetsPath = $folderPath.'/assets';
         if (File::exists($assetsPath)) {
-            if (! File::exists($assetsPath.'/style.css')) {
-                $errors[] = 'assets/style.css not found';
-            }
+            $this->validateAssetDirectory($assetsPath, $errors);
         }
+
+        $this->validateManifestAssets($folderPath, $templateData, $errors);
 
         return [
             'valid' => empty($errors),
             'errors' => $errors,
         ];
+    }
+
+    /**
+     * @param  array<int, string>  $errors
+     */
+    protected function validateAssetDirectory(string $assetsPath, array &$errors): void
+    {
+        $allowedExtensions = ['css', 'js', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'woff', 'woff2', 'ttf', 'otf'];
+
+        foreach (File::allFiles($assetsPath) as $file) {
+            $extension = strtolower($file->getExtension());
+
+            if (! in_array($extension, $allowedExtensions, true)) {
+                $errors[] = "Unsupported asset file type: {$file->getRelativePathname()}";
+            }
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $templateData
+     * @param  array<int, string>  $errors
+     */
+    protected function validateManifestAssets(string $folderPath, array $templateData, array &$errors): void
+    {
+        if (! isset($templateData['assets'])) {
+            return;
+        }
+
+        if (! is_array($templateData['assets'])) {
+            $errors[] = 'assets must be an array';
+
+            return;
+        }
+
+        foreach (['css' => ['css'], 'js' => ['js']] as $type => $allowedExtensions) {
+            $assets = $templateData['assets'][$type] ?? [];
+
+            if (is_string($assets)) {
+                $assets = [$assets];
+            }
+
+            if (! is_array($assets)) {
+                $errors[] = "assets.{$type} must be a string or array";
+
+                continue;
+            }
+
+            foreach ($assets as $asset) {
+                if (! is_string($asset)) {
+                    $errors[] = "assets.{$type} may only contain file paths";
+
+                    continue;
+                }
+
+                $path = $this->sanitizeAssetPath($asset, $allowedExtensions);
+
+                if (! $path) {
+                    $errors[] = "Invalid asset path: {$asset}";
+
+                    continue;
+                }
+
+                if (! File::exists($folderPath.'/'.$path)) {
+                    $errors[] = "Asset file not found: {$path}";
+                }
+            }
+        }
+    }
+
+    /**
+     * @param  array<int, string>  $allowedExtensions
+     */
+    protected function sanitizeAssetPath(string $path, array $allowedExtensions): ?string
+    {
+        $normalizedPath = str_replace('\\', '/', trim($path));
+        $normalizedPath = ltrim($normalizedPath, '/');
+
+        if (! str_starts_with($normalizedPath, 'assets/')) {
+            $normalizedPath = 'assets/'.$normalizedPath;
+        }
+
+        if (
+            $normalizedPath === 'assets/'
+            || str_contains($normalizedPath, '..')
+            || preg_match('/^[a-zA-Z]:/', $normalizedPath) === 1
+        ) {
+            return null;
+        }
+
+        $extension = strtolower(pathinfo($normalizedPath, PATHINFO_EXTENSION));
+
+        if (! in_array($extension, $allowedExtensions, true)) {
+            return null;
+        }
+
+        return $normalizedPath;
     }
 
     /**

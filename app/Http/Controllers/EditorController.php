@@ -3,12 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\InvitationContentRequest;
+use App\Services\BladeRenderService;
+use App\Services\DataContractBuilder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class EditorController extends Controller
 {
+    public function __construct(
+        protected BladeRenderService $bladeRenderer,
+        protected DataContractBuilder $dataBuilder
+    ) {}
+
     /**
      * Show the content editor.
      */
@@ -57,7 +66,7 @@ class EditorController extends Controller
     /**
      * Save invitation content.
      */
-    public function save(InvitationContentRequest $request)
+    public function save(InvitationContentRequest $request): RedirectResponse
     {
         $user = $request->user();
         $invitation = $user->invitations()->firstOrFail();
@@ -73,83 +82,29 @@ class EditorController extends Controller
     /**
      * Preview invitation (authenticated user only)
      */
-    public function preview(Request $request)
+    public function preview(Request $request): SymfonyResponse
     {
         $user = $request->user();
         $invitation = $user->invitations()
             ->with(['template', 'content', 'sections.templateSection', 'ornaments.templateOrnament', 'gallery'])
             ->firstOrFail();
 
-        // Use same structure as public invitation but for authenticated preview
-        $content = $invitation->content;
-
-        if (! $content) {
-            return Inertia::render('Dashboard/EditorPreview', [
-                'error' => 'Konten undangan belum diisi. Silakan isi konten terlebih dahulu.',
-            ]);
+        if (! $invitation->content) {
+            return response(
+                '<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Preview belum tersedia</title></head><body style="font-family: sans-serif; padding: 2rem; text-align: center;"><p>Konten undangan belum diisi. Silakan isi konten terlebih dahulu.</p></body></html>',
+                422
+            )->header('Content-Type', 'text/html; charset=utf-8');
         }
 
-        return Inertia::render('Dashboard/EditorPreview', [
-            'invitation' => [
-                'id' => $invitation->id,
-                'subdomain' => $invitation->subdomain,
-                'status' => $invitation->status,
-                'template' => [
-                    'name' => $invitation->template->name,
-                    'slug' => $invitation->template->slug,
-                ],
-                'content' => [
-                    'bride_name' => $content->bride_name,
-                    'bride_father' => $content->bride_father,
-                    'bride_mother' => $content->bride_mother,
-                    'groom_name' => $content->groom_name,
-                    'groom_father' => $content->groom_father,
-                    'groom_mother' => $content->groom_mother,
-                    'akad_datetime' => $content->akad_datetime,
-                    'akad_venue' => $content->akad_venue,
-                    'akad_maps_url' => $content->akad_maps_url,
-                    'reception_datetime' => $content->reception_datetime,
-                    'reception_venue' => $content->reception_venue,
-                    'reception_maps_url' => $content->reception_maps_url,
-                    'cover_photo_url' => $content->cover_photo_url,
-                    'music_url' => $content->music_url,
-                    'love_story' => $content->love_story,
-                    'special_message' => $content->special_message,
-                    'bank_name' => $content->bank_name,
-                    'account_number' => $content->account_number,
-                    'account_name' => $content->account_name,
-                    'qris_image_url' => $content->qris_image_url,
-                    'gopay_number' => $content->gopay_number,
-                    'ovo_number' => $content->ovo_number,
-                    'dana_number' => $content->dana_number,
-                ],
-                'sections' => $invitation->sections()
-                    ->where('is_visible', true)
-                    ->with('templateSection')
-                    ->orderBy('sort_order')
-                    ->get()
-                    ->map(fn ($section) => [
-                        'id' => $section->id,
-                        'file' => $section->templateSection->file,
-                        'label' => $section->templateSection->label,
-                        'sort_order' => $section->sort_order,
-                    ]),
-                'ornaments' => $invitation->ornaments()
-                    ->where('is_active', true)
-                    ->with('templateOrnament')
-                    ->get()
-                    ->map(fn ($ornament) => [
-                        'id' => $ornament->id,
-                        'file' => $ornament->templateOrnament->file,
-                        'label' => $ornament->templateOrnament->label,
-                        'position' => $ornament->templateOrnament->position,
-                    ]),
-                'gallery' => $invitation->gallery->map(fn ($photo) => [
-                    'id' => $photo->id,
-                    'image_url' => $photo->image_url,
-                    'caption' => $photo->caption,
-                ]),
-            ],
-        ]);
+        if (! file_exists($invitation->template->getFolderPath())) {
+            abort(500, 'Template files not found');
+        }
+
+        $data = $this->dataBuilder->build($invitation);
+        $html = $this->bladeRenderer->renderInvitation($invitation, $data);
+
+        return response($html)
+            ->header('Content-Type', 'text/html; charset=utf-8')
+            ->header('X-Frame-Options', 'SAMEORIGIN');
     }
 }

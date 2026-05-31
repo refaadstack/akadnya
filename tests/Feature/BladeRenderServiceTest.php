@@ -26,8 +26,8 @@ afterEach(function () {
         rmdir($this->tempDir);
     }
 
-    // Cleanup public/templates/test-* directories
-    $publicTemplates = public_path('templates');
+    // Cleanup storage template test directories
+    $publicTemplates = storage_path('app/public/templates');
     if (is_dir($publicTemplates)) {
         $dirs = glob($publicTemplates.'/test-*');
         foreach ($dirs as $dir) {
@@ -51,7 +51,7 @@ test('renderSection renders Blade template with data', function () {
     $template = Template::factory()->create(['slug' => $slug]);
 
     // Create template structure
-    $templatePath = public_path("templates/{$slug}");
+    $templatePath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($templatePath.'/sections', 0755, true);
     File::put($templatePath.'/sections/cover.html', '<h1>{{ $bride_name }} & {{ $groom_name }}</h1>');
 
@@ -68,7 +68,7 @@ test('renderSection handles Blade directives', function () {
     $slug = 'test-'.uniqid();
     $template = Template::factory()->create(['slug' => $slug]);
 
-    $templatePath = public_path("templates/{$slug}");
+    $templatePath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($templatePath.'/sections', 0755, true);
     File::put($templatePath.'/sections/test.html', '@if($show)<p>Visible</p>@endif');
 
@@ -93,28 +93,28 @@ test('buildAssetTags generates link tag for existing CSS', function () {
     $slug = 'test-'.uniqid();
     $template = Template::factory()->create(['slug' => $slug]);
 
-    $templatePath = public_path("templates/{$slug}");
+    $templatePath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($templatePath.'/assets', 0755, true);
     File::put($templatePath.'/assets/style.css', 'body { margin: 0; }');
 
     $result = $this->service->buildAssetTags($template);
 
     expect($result)->toContain('<link rel="stylesheet"');
-    expect($result)->toContain("templates/{$slug}/assets/style.css");
+    expect($result)->toContain("template-assets/{$slug}/style.css");
 });
 
 test('buildAssetTags generates script tag for existing JS', function () {
     $slug = 'test-'.uniqid();
     $template = Template::factory()->create(['slug' => $slug]);
 
-    $templatePath = public_path("templates/{$slug}");
+    $templatePath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($templatePath.'/assets', 0755, true);
     File::put($templatePath.'/assets/script.js', 'console.log("test");');
 
     $result = $this->service->buildAssetTags($template);
 
     expect($result)->toContain('<script src=');
-    expect($result)->toContain("templates/{$slug}/assets/script.js");
+    expect($result)->toContain("template-assets/{$slug}/script.js");
 });
 
 test('buildAssetTags returns empty string when no assets exist', function () {
@@ -123,14 +123,16 @@ test('buildAssetTags returns empty string when no assets exist', function () {
 
     $result = $this->service->buildAssetTags($template);
 
-    expect($result)->toBe('');
+    expect($result)->toContain('template-base.css');
+    expect($result)->toContain('template-components.css');
+    expect($result)->toContain('template-base.js');
 });
 
 test('buildAssetTags generates both CSS and JS tags when both exist', function () {
     $slug = 'test-'.uniqid();
     $template = Template::factory()->create(['slug' => $slug]);
 
-    $templatePath = public_path("templates/{$slug}");
+    $templatePath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($templatePath.'/assets', 0755, true);
     File::put($templatePath.'/assets/style.css', 'body {}');
     File::put($templatePath.'/assets/script.js', 'console.log("test");');
@@ -153,7 +155,7 @@ test('renderOrnament renders Blade template with data', function () {
     $slug = 'test-'.uniqid();
     $template = Template::factory()->create(['slug' => $slug]);
 
-    $templatePath = public_path("templates/{$slug}");
+    $templatePath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($templatePath.'/ornaments', 0755, true);
     File::put($templatePath.'/ornaments/flower.html', '<div class="flower">{{ $color }}</div>');
 

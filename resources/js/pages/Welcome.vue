@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import PublicFooter from '@/components/PublicFooter.vue'
-import PublicNavbar from '@/components/PublicNavbar.vue'
 import { Head, Link } from '@inertiajs/vue3'
 import { CalendarCheck, Eye, Gift, MessageCircle, Music, Send } from 'lucide-vue-next'
 import { computed } from 'vue'
+import PublicFooter from '@/components/PublicFooter.vue'
+import PublicNavbar from '@/components/PublicNavbar.vue'
 
 interface BasePackage {
   name: string
@@ -19,7 +19,10 @@ const props = defineProps<{
 const isLocal = import.meta.env.DEV
 
 const formattedPrice = computed(() => {
-  if (!props.basePackage) return 'Rp 0'
+  if (!props.basePackage) {
+    return 'Rp 0'
+  }
+
   return `Rp ${props.basePackage.price.toLocaleString('id-ID')}`
 })
 
@@ -28,34 +31,37 @@ const templates = [
     name: 'Minang Songket Gadang',
     slug: 'minang-songket-gadang',
     tone: 'Tradisional, hangat, dan megah',
+    story: 'Untuk pasangan yang ingin membawa kehangatan adat Minangkabau ke setiap tamu undangan.',
     image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=900&q=80',
   },
   {
     name: 'Bugis Royal Mappacci',
     slug: 'bugis-royal-mappacci',
     tone: 'Editorial, royal, dan romantis',
+    story: 'Nuansa keagungan Bugis yang elegan untuk acara pernikahan yang terasa penuh martabat.',
     image: 'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=900&q=80',
   },
   {
     name: 'Chinese Imperial Luxe',
     slug: 'chinese-imperial-luxe',
     tone: 'Merah emas, formal, dan mewah',
+    story: 'Merah emas yang kaya makna untuk momen bahagia yang dirayakan dengan penuh kebanggaan.',
     image: 'https://images.unsplash.com/photo-1529634899331-b52ed4ee8d7b?auto=format&fit=crop&w=900&q=80',
   },
 ]
 
 const features = [
-  { icon: Eye, title: 'Preview sebelum beli', text: 'Calon client bisa cek bentuk template langsung dari route render yang terpisah.' },
-  { icon: CalendarCheck, title: 'Isi data setelah checkout', text: 'Setelah beli, pasangan bisa atur nama, acara, tamu, galeri, RSVP, dan kado.' },
-  { icon: Music, title: 'Musik dan komponen lengkap', text: 'Template mendukung opening, navigasi, musik, galeri, countdown, dan amplop digital.' },
-  { icon: Send, title: 'Siap dibagikan', text: 'Undangan publish ke link personal dan siap dikirim ke tamu lewat WhatsApp atau media sosial.' },
+  { icon: Eye, title: 'Lihat dulu, baru putuskan', text: 'Kamu bisa cek tampilan asli setiap template sebelum checkout. Yang kamu lihat adalah yang tamu akan buka.' },
+  { icon: CalendarCheck, title: 'Kustomisasi sebebasmu', text: 'Isi nama, foto, detail acara, daftar tamu, RSVP, hingga amplop digital dengan santai setelah checkout.' },
+  { icon: Music, title: 'Detail yang terasa hidup', text: 'Musik pembuka, galeri foto, hitung mundur hari-H, dan amplop digital sudah ada, tinggal kamu isi.' },
+  { icon: Send, title: 'Satu link untuk semua tamu', text: 'Setelah publish, link personal undanganmu siap dibagikan lewat WhatsApp, Instagram, atau media sosial.' },
 ]
 
 const steps = [
-  'Pilih template yang paling cocok dengan konsep acara.',
-  'Preview tampilan asli template di tab baru.',
-  'Checkout, lalu isi semua detail undangan.',
-  'Publish dan bagikan link ke tamu undangan.',
+  'Temukan template yang punya jiwa yang sama dengan acaramu.',
+  'Preview tampilan aslinya dulu sebelum memutuskan.',
+  'Checkout, lalu isi nama, foto, detail acara, dan tamu dengan santai.',
+  'Publish, salin link, dan bagikan ke seluruh tamu lewat WhatsApp.',
 ]
 </script>
 
@@ -69,23 +75,24 @@ const steps = [
       <section class="min-h-[860px] px-0 pt-24 md:pt-20">
         <div class="my-container grid min-h-[760px] items-center gap-12 py-16 lg:grid-cols-2">
           <div>
-            <p class="my-label mb-5">Premium Digital Invitation</p>
+            <p class="my-label mb-5">Undangan Digital Premium</p>
             <h1 class="my-heading max-w-2xl text-5xl leading-[0.98] md:text-6xl">
               Abadikan Momen
               <br />
-              <span class="my-heading-accent">Terindah Anda</span>
+              <span class="my-heading-accent">Terindah Kamu</span>
             </h1>
             <p class="my-copy mt-6 max-w-xl">
-              Buat undangan digital yang terasa personal, rapi, dan siap dipreview. Pilih template, isi data, lalu publish tanpa tampilan yang saling tabrakan.
+              Pilih template dengan karakter budaya yang paling kamu suka, isi detail acara, lalu bagikan linknya ke semua tamu. Siap dalam hitungan menit, tanpa perlu skill desain.
             </p>
             <div class="mt-9 flex flex-wrap gap-4">
               <Link href="/templates" class="my-btn-primary px-9">
-                Lihat Katalog
+                Pilih Template Undanganku
               </Link>
               <a href="#how-it-works" class="my-btn-secondary px-9">
                 Cara Pesan
               </a>
             </div>
+            <p class="mt-5 text-sm font-semibold text-[var(--my-muted)]">Dipercaya pasangan yang ingin undangan digital terasa personal, rapi, dan mudah dibagikan.</p>
           </div>
 
           <div class="flex justify-center lg:justify-end">
@@ -96,8 +103,8 @@ const steps = [
                 alt="Detail undangan pernikahan dengan bunga putih dan dedaunan sage"
               />
               <div class="absolute -bottom-5 left-8 rounded-xl border border-[var(--my-border)] bg-white/84 px-5 py-4 shadow-lg backdrop-blur-md">
-                <p class="my-label text-[0.66rem]">Live Preview</p>
-                <p class="font-display mt-1 text-xl font-semibold text-[var(--my-neutral)]">Template isolated render</p>
+                <p class="my-label text-[0.66rem]">Preview Asli</p>
+                <p class="font-display mt-1 text-xl font-semibold text-[var(--my-neutral)]">Lihat dulu sebelum checkout</p>
               </div>
             </div>
           </div>
@@ -108,7 +115,7 @@ const steps = [
         <div class="my-container">
           <div class="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div>
-              <p class="my-label mb-3">Koleksi Terkurasi</p>
+              <p class="my-label mb-3">Koleksi Nusantara & Global</p>
               <h2 class="my-heading text-4xl">Template yang punya karakter sendiri</h2>
             </div>
             <Link href="/templates" class="my-btn-secondary w-fit px-7">Lihat semua</Link>
@@ -126,6 +133,7 @@ const steps = [
               <div class="p-4">
                 <h3 class="my-heading text-2xl">{{ template.name }}</h3>
                 <p class="mt-2 text-sm text-[var(--my-muted)]">{{ template.tone }}</p>
+                <p class="mt-3 text-sm leading-6 text-[var(--my-neutral)]">{{ template.story }}</p>
                 <a
                   :href="`/templates/${template.slug}/render`"
                   target="_blank"
@@ -146,7 +154,7 @@ const steps = [
             <p class="my-label mb-3">Cara Pesan</p>
             <h2 class="my-heading text-4xl">Alurnya sederhana, hasilnya tetap premium.</h2>
             <p class="my-copy mt-5">
-              MyAkad dipisahkan antara halaman pilih template, render preview, checkout, dan editor undangan. Jadi style template tetap bebas tanpa nabrak halaman Vue.
+              Di MyAkad, kamu bisa preview tampilan asli setiap template sebelum memutuskan beli. Setelah itu tinggal isi data, publish, dan bagikan link undanganmu.
             </p>
           </div>
 
@@ -181,24 +189,24 @@ const steps = [
         <div class="my-container">
           <div class="mx-auto max-w-2xl text-center">
             <p class="my-label mb-3">Harga</p>
-            <h2 class="my-heading text-4xl">Mulai dari {{ basePackage ? formattedPrice : 'paket aktif' }}</h2>
+            <h2 class="my-heading text-4xl">Mulai dari {{ basePackage ? `${formattedPrice} / bulan` : 'paket aktif' }}</h2>
             <p class="my-copy mt-4">
-              Sekali checkout untuk mulai membangun undangan digital. Pilihan add-on bisa disesuaikan setelah template dipilih.
+              Setara harga beberapa lembar undangan cetak, tapi bisa dibagikan ke banyak tamu sekaligus dan diperbarui kapanpun ada perubahan info.
             </p>
           </div>
 
           <div class="my-card mx-auto mt-10 max-w-md p-7">
             <div class="text-center">
               <h3 class="my-heading text-3xl">{{ basePackage?.name ?? 'Paket MyAkad' }}</h3>
-              <p class="mt-3 text-4xl font-bold text-[var(--my-primary)]">{{ basePackage ? formattedPrice : 'Tersedia di checkout' }}</p>
+              <p class="mt-3 text-4xl font-bold text-[var(--my-primary)]">{{ basePackage ? `${formattedPrice} / bulan` : 'Tersedia di checkout' }}</p>
               <p class="mt-3 text-[var(--my-muted)]">{{ basePackage?.description ?? 'Pilih template dulu untuk melihat paket yang tersedia.' }}</p>
             </div>
             <ul class="mt-7 grid gap-3 text-[var(--my-muted)]">
-              <li class="flex gap-3"><Gift class="mt-0.5 size-5 text-[var(--my-primary)]" /> Template premium siap render</li>
+              <li class="flex gap-3"><Gift class="mt-0.5 size-5 text-[var(--my-primary)]" /> Template premium siap pakai</li>
               <li class="flex gap-3"><CalendarCheck class="mt-0.5 size-5 text-[var(--my-primary)]" /> RSVP, galeri, dan data acara</li>
               <li class="flex gap-3"><MessageCircle class="mt-0.5 size-5 text-[var(--my-primary)]" /> Link undangan siap dibagikan</li>
             </ul>
-            <Link href="/templates" class="my-btn-primary mt-8 w-full">Pilih Template</Link>
+            <Link href="/templates" class="my-btn-primary mt-8 w-full">Pilih Template Undanganku</Link>
           </div>
         </div>
       </section>

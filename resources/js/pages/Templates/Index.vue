@@ -55,7 +55,7 @@ const addToCart = (template: Template) => {
             Pilih gaya undangan yang paling dekat dengan cerita kalian.
           </h1>
           <p class="my-copy mt-5">
-            Setiap template punya CSS, JS, opening, navigasi, musik, dan komponen sendiri. Preview dibuka di tab baru lewat route render supaya tampilannya tidak nabrak halaman Vue.
+            Setiap template bisa kamu lihat dulu dalam tampilan aslinya sebelum checkout. Setelah menemukan yang cocok, kamu tinggal isi detail acara dan publish undanganmu.
           </p>
         </div>
       </section>
@@ -96,9 +96,9 @@ const addToCart = (template: Template) => {
               </div>
 
               <div class="mt-5 grid gap-2 text-sm text-[var(--my-muted)]">
-                <p class="flex items-center gap-2"><Check class="size-4 text-[var(--my-primary)]" /> Render preview isolated</p>
+                <p class="flex items-center gap-2"><Check class="size-4 text-[var(--my-primary)]" /> Preview asli sebelum checkout</p>
                 <p class="flex items-center gap-2"><Check class="size-4 text-[var(--my-primary)]" /> Opening, musik, dan navigasi</p>
-                <p class="flex items-center gap-2"><Check class="size-4 text-[var(--my-primary)]" /> RSVP, galeri, dan kado digital</p>
+                <p class="flex items-center gap-2"><Check class="size-4 text-[var(--my-primary)]" /> RSVP, galeri, dan amplop digital</p>
               </div>
 
               <div class="mt-6 grid gap-3">

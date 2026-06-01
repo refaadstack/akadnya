@@ -10,19 +10,19 @@ const logout = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="my-page min-h-screen">
     <!-- Navigation -->
-    <nav class="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <nav class="sticky top-0 z-40 border-b border-[var(--my-border)] bg-[var(--my-background)]/86 backdrop-blur-md">
       <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-16">
           <!-- Logo -->
           <Link href="/admin/dashboard" class="flex items-center space-x-2">
-            <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-600 rounded-lg flex items-center justify-center">
+            <div class="w-10 h-10 bg-[var(--my-primary)] rounded-lg flex items-center justify-center">
               <span class="text-white font-bold text-xl">A</span>
             </div>
             <div>
-              <span class="text-xl font-bold text-gray-900">Admin Panel</span>
-              <span class="block text-xs text-gray-500">MyAkad</span>
+              <span class="font-display text-xl font-bold text-[var(--my-primary)]">Admin Panel</span>
+              <span class="block text-xs text-[var(--my-muted)]">MyAkad</span>
             </div>
           </Link>
 
@@ -154,7 +154,7 @@ const logout = () => {
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-12">
+    <footer class="mt-12 border-t border-[var(--my-border)] bg-white/60">
       <div class="container mx-auto px-4 py-6">
         <div class="flex items-center justify-between">
           <p class="text-sm text-gray-600">

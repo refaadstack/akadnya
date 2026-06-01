@@ -10,17 +10,17 @@ const logout = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="my-page min-h-screen">
     <!-- Navigation -->
-    <nav class="bg-white border-b border-gray-200">
+    <nav class="border-b border-[var(--my-border)] bg-[var(--my-background)]/86 backdrop-blur-md">
       <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-16">
           <!-- Logo -->
           <Link href="/dashboard" class="flex items-center space-x-2">
-            <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <div class="w-10 h-10 bg-[var(--my-primary)] rounded-lg flex items-center justify-center">
               <span class="text-white font-bold text-xl">M</span>
             </div>
-            <span class="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+            <span class="font-display text-2xl font-bold text-[var(--my-primary)]">
               MyAkad
             </span>
           </Link>

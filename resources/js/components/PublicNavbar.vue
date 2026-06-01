@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
+import { Menu, X } from 'lucide-vue-next'
 import { ref } from 'vue'
 
-const props = defineProps<{
+defineProps<{
   canRegister?: boolean
   currentPage?: string
 }>()
@@ -11,114 +12,75 @@ const mobileMenuOpen = ref(false)
 </script>
 
 <template>
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
-    <div class="container mx-auto px-4 py-4">
-      <div class="flex items-center justify-between">
-        <!-- Logo -->
-        <Link href="/" class="flex items-center space-x-2">
-          <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <span class="text-white font-bold text-xl">M</span>
-          </div>
-          <span class="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-            MyAkad
-          </span>
+  <nav class="fixed top-0 left-0 right-0 z-50 border-b border-[var(--my-border)]/60 bg-[var(--my-background)]/86 backdrop-blur-md">
+    <div class="my-container">
+      <div class="flex min-h-16 items-center justify-between">
+        <Link href="/" class="font-display text-3xl font-bold leading-none text-[var(--my-primary)]">
+          MyAkad
         </Link>
 
-        <!-- Desktop Menu -->
-        <div class="hidden md:flex items-center space-x-6">
-          <Link
-            href="/"
-            class="font-medium transition"
-            :class="currentPage === 'home' ? 'text-pink-600' : 'text-gray-700 hover:text-pink-600'"
-          >
-            Beranda
-          </Link>
+        <div class="hidden items-center gap-8 md:flex">
           <Link
             href="/templates"
-            class="font-medium transition"
-            :class="currentPage === 'templates' ? 'text-pink-600' : 'text-gray-700 hover:text-pink-600'"
+            class="text-sm font-semibold transition"
+            :class="currentPage === 'templates' ? 'border-b-2 border-[var(--my-primary)] text-[var(--my-primary)]' : 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'"
           >
-            Template
+            Koleksi
+          </Link>
+          <Link
+            href="/#how-it-works"
+            class="text-sm font-semibold text-[var(--my-neutral)] transition hover:text-[var(--my-primary)]"
+          >
+            Cara Pesan
           </Link>
           <Link
             href="/faq"
-            class="font-medium transition"
-            :class="currentPage === 'faq' ? 'text-pink-600' : 'text-gray-700 hover:text-pink-600'"
+            class="text-sm font-semibold transition"
+            :class="currentPage === 'faq' ? 'border-b-2 border-[var(--my-primary)] text-[var(--my-primary)]' : 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'"
           >
             FAQ
           </Link>
-          <Link
-            href="/login"
-            class="text-gray-700 hover:text-pink-600 font-medium transition"
-          >
+        </div>
+
+        <div class="hidden items-center gap-3 md:flex">
+          <Link href="/login" class="px-3 py-2 text-sm font-semibold text-[var(--my-neutral)] transition hover:text-[var(--my-primary)]">
             Masuk
           </Link>
-          <Link
-            v-if="canRegister"
-            href="/register"
-            class="bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition"
-          >
-            Daftar Gratis
+          <Link v-if="canRegister" href="/register" class="my-btn-primary min-h-10 px-5">
+            Mulai Desain
+          </Link>
+          <Link v-else href="/templates" class="my-btn-primary min-h-10 px-5">
+            Mulai Desain
           </Link>
         </div>
 
-        <!-- Mobile Menu Button -->
         <button
+          class="inline-flex size-10 items-center justify-center rounded-lg border border-[var(--my-border)] text-[var(--my-neutral)] md:hidden"
+          type="button"
+          aria-label="Buka menu"
           @click="mobileMenuOpen = !mobileMenuOpen"
-          class="md:hidden text-gray-700 hover:text-pink-600 transition"
         >
-          <svg v-if="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-          <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <Menu v-if="!mobileMenuOpen" class="size-5" />
+          <X v-else class="size-5" />
         </button>
       </div>
 
-      <!-- Mobile Menu -->
-      <div v-if="mobileMenuOpen" class="md:hidden mt-4 pb-4 border-t border-gray-200 pt-4">
-        <div class="flex flex-col space-y-3">
-          <Link
-            href="/"
-            class="font-medium transition py-2"
-            :class="currentPage === 'home' ? 'text-pink-600' : 'text-gray-700 hover:text-pink-600'"
-            @click="mobileMenuOpen = false"
-          >
-            Beranda
-          </Link>
-          <Link
-            href="/templates"
-            class="font-medium transition py-2"
-            :class="currentPage === 'templates' ? 'text-pink-600' : 'text-gray-700 hover:text-pink-600'"
-            @click="mobileMenuOpen = false"
-          >
-            Template
-          </Link>
-          <Link
-            href="/faq"
-            class="font-medium transition py-2"
-            :class="currentPage === 'faq' ? 'text-pink-600' : 'text-gray-700 hover:text-pink-600'"
-            @click="mobileMenuOpen = false"
-          >
-            FAQ
-          </Link>
-          <Link
-            href="/login"
-            class="text-gray-700 hover:text-pink-600 font-medium transition py-2"
-            @click="mobileMenuOpen = false"
-          >
-            Masuk
-          </Link>
-          <Link
-            v-if="canRegister"
-            href="/register"
-            class="bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition text-center"
-            @click="mobileMenuOpen = false"
-          >
-            Daftar Gratis
-          </Link>
-        </div>
+      <div v-if="mobileMenuOpen" class="grid gap-3 border-t border-[var(--my-border)]/70 py-4 md:hidden">
+        <Link href="/templates" class="py-2 font-semibold text-[var(--my-neutral)]" @click="mobileMenuOpen = false">
+          Koleksi
+        </Link>
+        <Link href="/#how-it-works" class="py-2 font-semibold text-[var(--my-neutral)]" @click="mobileMenuOpen = false">
+          Cara Pesan
+        </Link>
+        <Link href="/faq" class="py-2 font-semibold text-[var(--my-neutral)]" @click="mobileMenuOpen = false">
+          FAQ
+        </Link>
+        <Link href="/login" class="py-2 font-semibold text-[var(--my-neutral)]" @click="mobileMenuOpen = false">
+          Masuk
+        </Link>
+        <Link v-if="canRegister" href="/register" class="my-btn-primary mt-2" @click="mobileMenuOpen = false">
+          Mulai Desain
+        </Link>
       </div>
     </div>
   </nav>

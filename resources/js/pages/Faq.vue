@@ -121,18 +121,19 @@ const structuredData = computed(() => {
       <script type="application/ld+json" v-html="JSON.stringify(structuredData)"></script>
     </Head>
 
-    <div class="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+    <div class="my-page">
       <!-- Navbar -->
       <PublicNavbar :can-register="canRegister" current-page="faq" />
 
       <!-- Hero Section -->
       <section class="pt-32 pb-16 md:pb-24">
-        <div class="container mx-auto px-4">
+        <div class="my-container">
           <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <p class="my-label mb-4">Pusat Bantuan</p>
+            <h1 class="my-heading text-4xl md:text-5xl mb-6">
               Pertanyaan yang Sering Diajukan
             </h1>
-            <p class="text-xl text-gray-600 mb-8">
+            <p class="my-copy mb-8">
               Temukan jawaban untuk pertanyaan umum tentang MyAkad
             </p>
 
@@ -142,7 +143,7 @@ const structuredData = computed(() => {
                 v-model="searchQuery"
                 type="text"
                 placeholder="Cari pertanyaan... (contoh: subdomain, template, RSVP)"
-                class="w-full px-6 py-4 pr-12 text-lg border-2 border-gray-300 rounded-full focus:border-pink-500 focus:ring-4 focus:ring-pink-200 focus:outline-none transition"
+                class="my-input w-full px-6 py-4 pr-12 text-lg"
               />
               <svg
                 class="absolute right-5 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400"
@@ -160,7 +161,7 @@ const structuredData = computed(() => {
             </div>
 
             <!-- Search Results Count -->
-            <p v-if="searchQuery" class="mt-4 text-gray-600">
+            <p v-if="searchQuery" class="mt-4 text-[var(--my-muted)]">
               Ditemukan {{ filteredFaqs.reduce((sum, cat) => sum + cat.questions.length, 0) }} pertanyaan
             </p>
           </div>
@@ -169,20 +170,20 @@ const structuredData = computed(() => {
 
       <!-- FAQ Content -->
       <section class="pb-20">
-        <div class="container mx-auto px-4">
+        <div class="my-container">
           <div class="max-w-5xl mx-auto">
             <!-- Categories -->
             <div v-for="(category, categoryIndex) in filteredFaqs" :key="categoryIndex" class="mb-12">
               <!-- Category Header -->
               <div class="flex items-center mb-6">
-                <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
+                <div class="w-12 h-12 bg-[var(--my-primary)] rounded-xl flex items-center justify-center mr-4">
                   <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getIconClass(category.icon)" />
                   </svg>
                 </div>
                 <div>
-                  <h2 class="text-2xl font-bold text-gray-900">{{ category.category }}</h2>
-                  <p class="text-gray-600">{{ category.questions.length }} pertanyaan</p>
+                  <h2 class="my-heading text-2xl">{{ category.category }}</h2>
+                  <p class="text-[var(--my-muted)]">{{ category.questions.length }} pertanyaan</p>
                 </div>
               </div>
 
@@ -191,17 +192,17 @@ const structuredData = computed(() => {
                 <div
                   v-for="(question, questionIndex) in category.questions"
                   :key="questionIndex"
-                  class="bg-white rounded-xl shadow-md overflow-hidden border-2 border-transparent hover:border-pink-200 transition"
+                  class="my-card overflow-hidden transition hover:border-[var(--my-primary)]/40"
                 >
                   <button
                     @click="toggleQuestion(categoryIndex, questionIndex)"
-                    class="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition"
+                    class="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[var(--my-surface-soft)]/70 transition"
                   >
-                    <h3 class="text-lg font-semibold text-gray-900 pr-4">
+                    <h3 class="text-lg font-semibold text-[var(--my-neutral)] pr-4">
                       {{ question.question }}
                     </h3>
                     <svg
-                      class="w-6 h-6 text-pink-600 flex-shrink-0 transition-transform"
+                      class="w-6 h-6 text-[var(--my-primary)] flex-shrink-0 transition-transform"
                       :class="{ 'rotate-180': isExpanded(categoryIndex, questionIndex) }"
                       fill="none"
                       stroke="currentColor"
@@ -213,7 +214,7 @@ const structuredData = computed(() => {
 
                   <div
                     v-show="isExpanded(categoryIndex, questionIndex)"
-                    class="px-6 pb-5 text-gray-700 leading-relaxed border-t border-gray-100"
+                    class="px-6 pb-5 text-[var(--my-muted)] leading-relaxed border-t border-[var(--my-border)]"
                   >
                     <p class="pt-4">{{ question.answer }}</p>
                   </div>
@@ -231,11 +232,11 @@ const structuredData = computed(() => {
                   d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <h3 class="text-xl font-semibold text-gray-900 mb-2">Tidak ada hasil ditemukan</h3>
-              <p class="text-gray-600 mb-6">Coba kata kunci lain atau hubungi support kami</p>
+              <h3 class="my-heading text-xl mb-2">Tidak ada hasil ditemukan</h3>
+              <p class="text-[var(--my-muted)] mb-6">Coba kata kunci lain atau hubungi support kami</p>
               <a
                 href="mailto:support@myakad.com"
-                class="inline-flex items-center bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition"
+                class="my-btn-primary inline-flex items-center px-6"
               >
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -253,18 +254,18 @@ const structuredData = computed(() => {
       </section>
 
       <!-- CTA Section -->
-      <section class="py-16 bg-gradient-to-r from-pink-600 to-purple-600">
-        <div class="container mx-auto px-4 text-center">
-          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+      <section class="py-16 bg-[var(--my-primary)]">
+        <div class="my-container text-center">
+          <h2 class="my-heading text-3xl md:text-4xl text-white mb-4">
             Masih Ada Pertanyaan?
           </h2>
-          <p class="text-xl text-pink-100 mb-8 max-w-2xl mx-auto">
+          <p class="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
             Tim support kami siap membantu Anda. Hubungi kami melalui email atau WhatsApp.
           </p>
           <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="mailto:support@myakad.com"
-              class="inline-flex items-center bg-white text-pink-600 px-8 py-4 rounded-full font-semibold hover:shadow-xl transition"
+              class="inline-flex items-center bg-white text-[var(--my-primary)] px-8 py-4 rounded-lg font-semibold hover:shadow-xl transition"
             >
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -279,7 +280,7 @@ const structuredData = computed(() => {
             <a
               href="https://wa.me/6281234567890"
               target="_blank"
-              class="inline-flex items-center bg-green-500 text-white px-8 py-4 rounded-full font-semibold hover:shadow-xl transition"
+              class="inline-flex items-center bg-[var(--my-neutral)] text-white px-8 py-4 rounded-lg font-semibold hover:shadow-xl transition"
             >
               <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                 <path

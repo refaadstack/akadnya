@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
+
 @import 'tailwindcss';
 
 @import 'tw-animate-css';
@@ -12,9 +14,10 @@
 
 @theme inline {
     --font-sans:
-        Instrument Sans, ui-sans-serif, system-ui, sans-serif,
+        'Source Sans 3', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+    --font-serif: 'Playfair Display', Georgia, serif;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -68,9 +71,6 @@
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
   looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
 */
 @layer base {
     *,
@@ -86,103 +86,301 @@
     body,
     html {
         --font-sans:
-            'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+            'Source Sans 3', ui-sans-serif, system-ui, sans-serif,
             'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
             'Noto Color Emoji';
     }
 }
 
 :root {
-    --background: hsl(0 0% 100%);
-    --foreground: hsl(0 0% 3.9%);
+    --background: hsl(20 27% 98%);
+    --foreground: hsl(0 0% 20%);
     --card: hsl(0 0% 100%);
-    --card-foreground: hsl(0 0% 3.9%);
+    --card-foreground: hsl(0 0% 20%);
     --popover: hsl(0 0% 100%);
-    --popover-foreground: hsl(0 0% 3.9%);
-    --primary: hsl(0 0% 9%);
-    --primary-foreground: hsl(0 0% 98%);
-    --secondary: hsl(0 0% 92.1%);
-    --secondary-foreground: hsl(0 0% 9%);
-    --muted: hsl(0 0% 96.1%);
-    --muted-foreground: hsl(0 0% 45.1%);
-    --accent: hsl(0 0% 96.1%);
-    --accent-foreground: hsl(0 0% 9%);
+    --popover-foreground: hsl(0 0% 20%);
+    --primary: hsl(75 25% 48%);
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(10 55% 75%);
+    --secondary-foreground: hsl(0 0% 20%);
+    --muted: hsl(24 20% 94%);
+    --muted-foreground: hsl(34 10% 39%);
+    --accent: hsl(29 34% 77%);
+    --accent-foreground: hsl(0 0% 20%);
     --destructive: hsl(0 84.2% 60.2%);
     --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(0 0% 92.8%);
-    --input: hsl(0 0% 89.8%);
-    --ring: hsl(0 0% 3.9%);
-    --chart-1: hsl(12 76% 61%);
-    --chart-2: hsl(173 58% 39%);
-    --chart-3: hsl(197 37% 24%);
-    --chart-4: hsl(43 74% 66%);
-    --chart-5: hsl(27 87% 67%);
+    --border: hsl(45 12% 84%);
+    --input: hsl(45 12% 84%);
+    --ring: hsl(75 25% 48%);
+    --chart-1: hsl(75 25% 48%);
+    --chart-2: hsl(10 55% 75%);
+    --chart-3: hsl(29 34% 77%);
+    --chart-4: hsl(34 18% 42%);
+    --chart-5: hsl(0 0% 20%);
     --radius: 0.5rem;
-    --sidebar-background: hsl(0 0% 98%);
-    --sidebar-foreground: hsl(240 5.3% 26.1%);
-    --sidebar-primary: hsl(0 0% 10%);
-    --sidebar-primary-foreground: hsl(0 0% 98%);
-    --sidebar-accent: hsl(0 0% 94%);
-    --sidebar-accent-foreground: hsl(0 0% 30%);
-    --sidebar-border: hsl(0 0% 91%);
-    --sidebar-ring: hsl(217.2 91.2% 59.8%);
-    --sidebar: hsl(0 0% 98%);
+    --sidebar-background: hsl(20 27% 98%);
+    --sidebar-foreground: hsl(0 0% 20%);
+    --sidebar-primary: hsl(75 25% 48%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(24 20% 94%);
+    --sidebar-accent-foreground: hsl(0 0% 20%);
+    --sidebar-border: hsl(45 12% 84%);
+    --sidebar-ring: hsl(75 25% 48%);
+    --sidebar: hsl(20 27% 98%);
+    --my-primary: #8a9a5b;
+    --my-secondary: #e2a69a;
+    --my-tertiary: #d9c5b2;
+    --my-neutral: #333333;
+    --my-background: #fbf9f8;
+    --my-surface: #ffffff;
+    --my-surface-soft: #f4f0ed;
+    --my-muted: #655f57;
+    --my-border: #d8d1c8;
+    --my-shadow: 0 24px 70px rgb(51 51 51 / 10%);
 }
 
 .dark {
-    --background: hsl(0 0% 3.9%);
-    --foreground: hsl(0 0% 98%);
-    --card: hsl(0 0% 3.9%);
-    --card-foreground: hsl(0 0% 98%);
-    --popover: hsl(0 0% 3.9%);
-    --popover-foreground: hsl(0 0% 98%);
-    --primary: hsl(0 0% 98%);
-    --primary-foreground: hsl(0 0% 9%);
-    --secondary: hsl(0 0% 14.9%);
-    --secondary-foreground: hsl(0 0% 98%);
-    --muted: hsl(0 0% 16.08%);
-    --muted-foreground: hsl(0 0% 63.9%);
-    --accent: hsl(0 0% 14.9%);
-    --accent-foreground: hsl(0 0% 98%);
-    --destructive: hsl(0 84% 60%);
+    --background: hsl(20 27% 98%);
+    --foreground: hsl(0 0% 20%);
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(0 0% 20%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(0 0% 20%);
+    --primary: hsl(75 25% 48%);
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(10 55% 75%);
+    --secondary-foreground: hsl(0 0% 20%);
+    --muted: hsl(24 20% 94%);
+    --muted-foreground: hsl(34 10% 39%);
+    --accent: hsl(29 34% 77%);
+    --accent-foreground: hsl(0 0% 20%);
+    --destructive: hsl(0 84.2% 60.2%);
     --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(0 0% 14.9%);
-    --input: hsl(0 0% 14.9%);
-    --ring: hsl(0 0% 83.1%);
-    --chart-1: hsl(220 70% 50%);
-    --chart-2: hsl(160 60% 45%);
-    --chart-3: hsl(30 80% 55%);
-    --chart-4: hsl(280 65% 60%);
-    --chart-5: hsl(340 75% 55%);
-    --sidebar-background: hsl(0 0% 7%);
-    --sidebar-foreground: hsl(0 0% 95.9%);
-    --sidebar-primary: hsl(360, 100%, 100%);
+    --border: hsl(45 12% 84%);
+    --input: hsl(45 12% 84%);
+    --ring: hsl(75 25% 48%);
+    --chart-1: hsl(75 25% 48%);
+    --chart-2: hsl(10 55% 75%);
+    --chart-3: hsl(29 34% 77%);
+    --chart-4: hsl(34 18% 42%);
+    --chart-5: hsl(0 0% 20%);
+    --sidebar-background: hsl(20 27% 98%);
+    --sidebar-foreground: hsl(0 0% 20%);
+    --sidebar-primary: hsl(75 25% 48%);
     --sidebar-primary-foreground: hsl(0 0% 100%);
-    --sidebar-accent: hsl(0 0% 15.9%);
-    --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-    --sidebar-border: hsl(0 0% 15.9%);
-    --sidebar-ring: hsl(217.2 91.2% 59.8%);
-    --sidebar: hsl(240 5.9% 10%);
+    --sidebar-accent: hsl(24 20% 94%);
+    --sidebar-accent-foreground: hsl(0 0% 20%);
+    --sidebar-border: hsl(45 12% 84%);
+    --sidebar-ring: hsl(75 25% 48%);
+    --sidebar: hsl(20 27% 98%);
 }
 
 @layer base {
     * {
         @apply border-border outline-ring/50;
     }
+
     body {
-        @apply bg-white text-gray-900;
+        @apply bg-background text-foreground;
+        font-family: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
+        background-image:
+            radial-gradient(circle at 1px 1px, rgb(138 154 91 / 0.07) 1px, transparent 0),
+            linear-gradient(180deg, rgb(251 249 248 / 1), rgb(244 240 237 / 0.55));
+        background-size: 28px 28px, auto;
     }
-    
-    /* Force light mode - disable dark theme */
+
+    h1,
+    h2,
+    h3,
+    .font-display,
+    .font-serif-brand {
+        font-family: 'Playfair Display', Georgia, serif;
+    }
+
     html,
     body {
-        background-color: white !important;
-        color: #111827 !important;
+        background-color: var(--my-background) !important;
+        color: var(--my-neutral) !important;
     }
-    
-    /* Remove dark class effects */
+
     .dark body {
-        background-color: white !important;
-        color: #111827 !important;
+        background-color: var(--my-background) !important;
+        color: var(--my-neutral) !important;
+    }
+}
+
+@layer components {
+    .my-page {
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at 15% 8%, rgb(217 197 178 / 0.24), transparent 30%),
+            linear-gradient(180deg, var(--my-background), #f4f0ed);
+        color: var(--my-neutral);
+    }
+
+    .my-container {
+        width: min(1200px, calc(100% - 48px));
+        margin-inline: auto;
+    }
+
+    .my-label {
+        color: var(--my-primary);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .my-heading {
+        color: var(--my-neutral);
+        font-family: 'Playfair Display', Georgia, serif;
+        font-weight: 700;
+        letter-spacing: 0;
+    }
+
+    .my-heading-accent {
+        color: var(--my-primary);
+        font-family: 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        font-weight: 700;
+    }
+
+    .my-copy {
+        color: var(--my-muted);
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    .my-card {
+        border: 1px solid rgb(216 209 200 / 0.76);
+        border-radius: 0.75rem;
+        background: rgb(255 255 255 / 0.72);
+        box-shadow: var(--my-shadow);
+        backdrop-filter: blur(14px);
+    }
+
+    .my-btn-primary {
+        display: inline-flex;
+        min-height: 3rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        background: var(--my-primary);
+        padding-inline: 1.5rem;
+        color: white;
+        font-weight: 700;
+        transition:
+            transform 180ms ease,
+            box-shadow 180ms ease,
+            background 180ms ease;
+    }
+
+    .my-btn-primary:hover {
+        transform: translateY(-1px);
+        background: #748348;
+        box-shadow: 0 18px 38px rgb(138 154 91 / 0.2);
+    }
+
+    .my-btn-secondary {
+        display: inline-flex;
+        min-height: 3rem;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #9f6b61;
+        border-radius: 0.5rem;
+        background: rgb(255 255 255 / 0.42);
+        padding-inline: 1.5rem;
+        color: #8b5b52;
+        font-weight: 700;
+        transition:
+            transform 180ms ease,
+            background 180ms ease,
+            color 180ms ease;
+    }
+
+    .my-btn-secondary:hover {
+        transform: translateY(-1px);
+        background: rgb(226 166 154 / 0.12);
+    }
+
+    .my-input {
+        width: 100%;
+        border: 1px solid var(--my-border);
+        border-radius: 0.5rem;
+        background: rgb(251 249 248 / 0.74);
+        color: var(--my-neutral);
+    }
+
+    .my-input:focus {
+        border-color: var(--my-primary);
+        box-shadow: 0 0 0 3px rgb(138 154 91 / 0.18);
+        outline: none;
+    }
+
+    .my-page .from-pink-600,
+    .my-page .from-pink-500,
+    .my-page .from-red-500,
+    .my-page .from-blue-500,
+    .my-page .from-orange-500 {
+        --tw-gradient-from: var(--my-primary) var(--tw-gradient-from-position);
+        --tw-gradient-to: rgb(138 154 91 / 0) var(--tw-gradient-to-position);
+        --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+    }
+
+    .my-page .to-purple-600,
+    .my-page .to-indigo-600,
+    .my-page .to-orange-600,
+    .my-page .to-red-600 {
+        --tw-gradient-to: #748348 var(--tw-gradient-to-position);
+    }
+
+    .my-page .text-pink-600,
+    .my-page .hover\:text-pink-600:hover,
+    .my-page .text-purple-600,
+    .my-page .text-red-600,
+    .my-page .hover\:text-red-600:hover,
+    .my-page .text-blue-600,
+    .my-page .hover\:text-blue-600:hover,
+    .my-page .text-indigo-600 {
+        color: var(--my-primary);
+    }
+
+    .my-page .bg-pink-600,
+    .my-page .bg-red-600,
+    .my-page .bg-blue-600,
+    .my-page .hover\:bg-pink-700:hover {
+        background-color: var(--my-primary);
+    }
+
+    .my-page .bg-pink-50,
+    .my-page .from-pink-50 {
+        background-color: rgb(138 154 91 / 0.08);
+        --tw-gradient-from: rgb(138 154 91 / 0.08) var(--tw-gradient-from-position);
+        --tw-gradient-to: rgb(138 154 91 / 0) var(--tw-gradient-to-position);
+        --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+    }
+
+    .my-page .to-purple-50 {
+        --tw-gradient-to: rgb(217 197 178 / 0.28) var(--tw-gradient-to-position);
+    }
+
+    .my-page .border-pink-600 {
+        border-color: var(--my-primary);
+    }
+
+    .my-page .border-pink-200 {
+        border-color: rgb(138 154 91 / 0.28);
+    }
+
+    .my-page .bg-pink-100,
+    .my-page .bg-purple-100,
+    .my-page .bg-red-100,
+    .my-page .bg-blue-100,
+    .my-page .bg-indigo-100 {
+        background-color: rgb(138 154 91 / 0.12);
+    }
+
+    .my-page .shadow-pink-600\/20 {
+        --tw-shadow-color: rgb(138 154 91 / 0.2);
     }
 }

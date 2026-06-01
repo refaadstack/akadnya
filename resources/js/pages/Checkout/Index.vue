@@ -181,17 +181,17 @@ const submitOrder = async () => {
   <div>
     <Head title="Checkout" />
 
-    <div class="min-h-screen bg-gray-50">
+    <div class="my-page">
       <!-- Navigation -->
-      <nav class="bg-white border-b border-gray-200">
+      <nav class="border-b border-[var(--my-border)] bg-[var(--my-background)]/86 backdrop-blur-md">
         <div class="container mx-auto px-4">
           <div class="flex items-center justify-between h-16">
             <!-- Logo -->
             <Link href="/dashboard" class="flex items-center space-x-2">
-              <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div class="w-10 h-10 bg-[var(--my-primary)] rounded-lg flex items-center justify-center">
                 <span class="text-white font-bold text-xl">M</span>
               </div>
-              <span class="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+              <span class="font-display text-2xl font-bold text-[var(--my-primary)]">
                 MyAkad
               </span>
             </Link>
@@ -200,13 +200,13 @@ const submitOrder = async () => {
             <div class="hidden md:flex items-center space-x-8">
               <Link
                 href="/dashboard"
-                class="text-gray-700 hover:text-pink-600 font-medium transition"
+                class="text-[var(--my-neutral)] hover:text-[var(--my-primary)] font-medium transition"
               >
                 Dashboard
               </Link>
               <Link
                 href="/templates"
-                class="text-gray-700 hover:text-pink-600 font-medium transition"
+                class="text-[var(--my-neutral)] hover:text-[var(--my-primary)] font-medium transition"
               >
                 Template
               </Link>
@@ -218,12 +218,12 @@ const submitOrder = async () => {
                 @click="showUserMenu = !showUserMenu"
                 class="flex items-center space-x-3 focus:outline-none"
               >
-                <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                <div class="w-10 h-10 bg-[var(--my-primary)] rounded-full flex items-center justify-center">
                   <span class="text-white font-semibold text-sm">
                     {{ $page.props.auth?.user?.name?.charAt(0).toUpperCase() || 'U' }}
                   </span>
                 </div>
-                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-[var(--my-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
@@ -232,16 +232,16 @@ const submitOrder = async () => {
               <div
                 v-show="showUserMenu"
                 @click="showUserMenu = false"
-                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50"
+                class="absolute right-0 mt-2 w-48 my-card py-2 z-50"
               >
                 <div class="px-4 py-2 border-b border-gray-100">
-                  <p class="text-sm font-semibold text-gray-900">{{ $page.props.auth?.user?.name }}</p>
-                  <p class="text-xs text-gray-600">{{ $page.props.auth?.user?.email }}</p>
+                  <p class="text-sm font-semibold text-[var(--my-neutral)]">{{ $page.props.auth?.user?.name }}</p>
+                  <p class="text-xs text-[var(--my-muted)]">{{ $page.props.auth?.user?.email }}</p>
                 </div>
                 
                 <Link
                   href="/settings/profile"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                  class="block px-4 py-2 text-sm text-[var(--my-neutral)] hover:bg-[var(--my-surface-soft)] transition"
                 >
                   <div class="flex items-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -253,7 +253,7 @@ const submitOrder = async () => {
 
                 <Link
                   href="/settings/security"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                  class="block px-4 py-2 text-sm text-[var(--my-neutral)] hover:bg-[var(--my-surface-soft)] transition"
                 >
                   <div class="flex items-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -282,23 +282,23 @@ const submitOrder = async () => {
         </div>
       </nav>
 
-    <div class="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 py-8">
+    <div class="min-h-screen py-8">
       <div class="container mx-auto px-4 max-w-6xl">
-        <h1 class="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+        <h1 class="my-heading text-4xl mb-8">Checkout</h1>
 
         <div class="grid lg:grid-cols-3 gap-8">
         <!-- Order Summary -->
         <div class="lg:col-span-2 space-y-6">
           <!-- Template -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Template Terpilih</h2>
+          <div class="my-card p-6">
+            <h2 class="my-heading text-2xl mb-4">Template Terpilih</h2>
             <div class="flex items-center justify-between">
               <div>
-                <h3 class="text-lg font-semibold text-gray-800">{{ template.name }}</h3>
-                <p class="text-sm text-gray-600">Template undangan digital</p>
+                <h3 class="text-lg font-semibold text-[var(--my-neutral)]">{{ template.name }}</h3>
+                <p class="text-sm text-[var(--my-muted)]">Template undangan digital</p>
               </div>
               <div class="text-right">
-                <p class="text-2xl font-bold text-pink-600">
+                <p class="text-2xl font-bold text-[var(--my-primary)]">
                   Rp {{ template.price.toLocaleString('id-ID') }}
                 </p>
               </div>
@@ -306,8 +306,8 @@ const submitOrder = async () => {
           </div>
 
           <!-- Base Package -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Pilih Paket</h2>
+          <div class="my-card p-6">
+            <h2 class="my-heading text-2xl mb-4">Pilih Paket</h2>
             <div class="space-y-3">
               <div
                 v-for="pkg in basePackages"
@@ -315,8 +315,8 @@ const submitOrder = async () => {
                 @click="selectedBasePackage = pkg.id"
                 class="border-2 rounded-lg p-4 cursor-pointer transition-all"
                 :class="selectedBasePackage === pkg.id 
-                  ? 'border-pink-600 bg-pink-50' 
-                  : 'border-gray-200 hover:border-gray-300'"
+                  ? 'border-[var(--my-primary)] bg-[var(--my-primary)]/10' 
+                  : 'border-[var(--my-border)] hover:border-[var(--my-primary)]/40'"
               >
                 <div class="flex items-start justify-between">
                   <div class="flex items-start flex-1">
@@ -327,25 +327,25 @@ const submitOrder = async () => {
                       @change="selectedBasePackage = pkg.id"
                     />
                     <div class="flex-1">
-                      <h3 class="font-semibold text-gray-800">{{ pkg.name }}</h3>
-                      <p class="text-sm text-gray-600 mt-1">{{ pkg.description }}</p>
+                      <h3 class="font-semibold text-[var(--my-neutral)]">{{ pkg.name }}</h3>
+                      <p class="text-sm text-[var(--my-muted)] mt-1">{{ pkg.description }}</p>
                       <div class="mt-3 space-y-1">
-                        <p class="text-sm text-gray-700">✓ Undangan digital {{ pkg.is_recurring ? 'berlangganan' : 'selamanya' }}</p>
-                        <p class="text-sm text-gray-700">✓ Subdomain gratis (namaanda.{{ $page.props.appDomain }})</p>
-                        <p class="text-sm text-gray-700">✓ Unlimited tamu</p>
-                        <p class="text-sm text-gray-700">✓ RSVP & ucapan</p>
-                        <p class="text-sm text-gray-700">✓ Galeri foto</p>
+                        <p class="text-sm text-[var(--my-muted)]">✓ Undangan digital {{ pkg.is_recurring ? 'berlangganan' : 'selamanya' }}</p>
+                        <p class="text-sm text-[var(--my-muted)]">✓ Subdomain gratis (namaanda.{{ $page.props.appDomain }})</p>
+                        <p class="text-sm text-[var(--my-muted)]">✓ Unlimited tamu</p>
+                        <p class="text-sm text-[var(--my-muted)]">✓ RSVP & ucapan</p>
+                        <p class="text-sm text-[var(--my-muted)]">✓ Galeri foto</p>
                       </div>
                     </div>
                   </div>
                   <div class="text-right ml-4">
-                    <p class="text-2xl font-bold text-gray-900">
+                    <p class="text-2xl font-bold text-[var(--my-neutral)]">
                       Rp {{ pkg.price.toLocaleString('id-ID') }}
                     </p>
-                    <p v-if="pkg.is_recurring" class="text-xs text-gray-500 mt-1">
+                    <p v-if="pkg.is_recurring" class="text-xs text-[var(--my-muted)] mt-1">
                       /{{ pkg.recurring_interval === 'monthly' ? 'bulan' : 'tahun' }}
                     </p>
-                    <p v-else class="text-xs text-gray-500 mt-1">Sekali bayar</p>
+                    <p v-else class="text-xs text-[var(--my-muted)] mt-1">Sekali bayar</p>
                   </div>
                 </div>
               </div>
@@ -353,8 +353,8 @@ const submitOrder = async () => {
           </div>
 
           <!-- Add-ons -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Tambahan (Opsional)</h2>
+          <div class="my-card p-6">
+            <h2 class="my-heading text-2xl mb-4">Tambahan (Opsional)</h2>
             <div class="space-y-4">
               <div
                 v-for="addon in addons"
@@ -362,8 +362,8 @@ const submitOrder = async () => {
                 @click="toggleAddon(addon.id)"
                 class="border-2 rounded-lg p-4 cursor-pointer transition-all"
                 :class="selectedAddons.includes(addon.id) 
-                  ? 'border-pink-600 bg-pink-50' 
-                  : 'border-gray-200 hover:border-gray-300'"
+                  ? 'border-[var(--my-primary)] bg-[var(--my-primary)]/10' 
+                  : 'border-[var(--my-border)] hover:border-[var(--my-primary)]/40'"
               >
                 <div class="flex items-start justify-between">
                   <div class="flex items-start flex-1">
@@ -374,15 +374,15 @@ const submitOrder = async () => {
                       @change="toggleAddon(addon.id)"
                     />
                     <div class="flex-1">
-                      <h3 class="font-semibold text-gray-800">{{ addon.name }}</h3>
-                      <p class="text-sm text-gray-600 mt-1">{{ addon.description }}</p>
+                      <h3 class="font-semibold text-[var(--my-neutral)]">{{ addon.name }}</h3>
+                      <p class="text-sm text-[var(--my-muted)] mt-1">{{ addon.description }}</p>
                     </div>
                   </div>
                   <div class="text-right ml-4">
-                    <p class="text-lg font-bold text-gray-900">
+                    <p class="text-lg font-bold text-[var(--my-neutral)]">
                       Rp {{ addon.price.toLocaleString('id-ID') }}
                     </p>
-                    <p v-if="addon.is_recurring" class="text-xs text-gray-500">
+                    <p v-if="addon.is_recurring" class="text-xs text-[var(--my-muted)]">
                       /{{ addon.recurring_interval }}
                     </p>
                   </div>
@@ -423,17 +423,17 @@ const submitOrder = async () => {
 
         <!-- Order Total & Payment -->
         <div class="lg:col-span-1">
-          <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Ringkasan Order</h2>
+          <div class="my-card p-6 sticky top-24">
+            <h2 class="my-heading text-2xl mb-4">Ringkasan Order</h2>
             
             <div class="space-y-3 mb-4">
               <div class="flex justify-between text-sm">
-                <span class="text-gray-600">Template {{ template.name }}</span>
+                <span class="text-[var(--my-muted)]">Template {{ template.name }}</span>
                 <span class="font-medium">Rp {{ template.price.toLocaleString('id-ID') }}</span>
               </div>
               
               <div v-if="selectedBasePackageData" class="flex justify-between text-sm">
-                <span class="text-gray-600">{{ selectedBasePackageData.name }}</span>
+                <span class="text-[var(--my-muted)]">{{ selectedBasePackageData.name }}</span>
                 <span class="font-medium">Rp {{ selectedBasePackageData.price.toLocaleString('id-ID') }}</span>
               </div>
 
@@ -442,15 +442,15 @@ const submitOrder = async () => {
                 :key="addonId"
                 class="flex justify-between text-sm"
               >
-                <span class="text-gray-600">{{ addons.find(a => a.id === addonId)?.name }}</span>
+                <span class="text-[var(--my-muted)]">{{ addons.find(a => a.id === addonId)?.name }}</span>
                 <span class="font-medium">Rp {{ addons.find(a => a.id === addonId)?.price.toLocaleString('id-ID') }}</span>
               </div>
             </div>
 
             <div class="border-t pt-4 mb-6">
               <div class="flex justify-between items-center">
-                <span class="text-lg font-bold text-gray-900">Total</span>
-                <span class="text-2xl font-bold text-pink-600">
+                <span class="text-lg font-bold text-[var(--my-neutral)]">Total</span>
+                <span class="text-2xl font-bold text-[var(--my-primary)]">
                   Rp {{ total.toLocaleString('id-ID') }}
                 </span>
               </div>
@@ -459,12 +459,12 @@ const submitOrder = async () => {
             <button
               @click="submitOrder"
               :disabled="isSubmitting"
-              class="w-full bg-pink-600 text-white py-3 rounded-lg font-semibold hover:bg-pink-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              class="my-btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ isSubmitting ? 'Memproses...' : 'Lanjut ke Pembayaran' }}
             </button>
 
-            <p class="text-xs text-gray-500 text-center mt-4">
+            <p class="text-xs text-[var(--my-muted)] text-center mt-4">
               Dengan melanjutkan, Anda menyetujui syarat dan ketentuan kami
             </p>
           </div>

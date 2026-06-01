@@ -1,10 +1,30 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3'
-import { ref, computed } from 'vue'
+import {
+  BarChart3,
+  BookOpen,
+  CalendarCheck,
+  ChevronDown,
+  ChevronUp,
+  CircleHelp,
+  Eye,
+  Image,
+  LayoutDashboard,
+  Link2,
+  LockKeyhole,
+  LogOut,
+  MessageCircle,
+  Palette,
+  Send,
+  Sparkles,
+  UserRound,
+  Users,
+} from 'lucide-vue-next'
+import { computed, ref } from 'vue'
+import type { Component } from 'vue'
 
-// Disable default layout
 defineOptions({
-  layout: undefined
+  layout: undefined,
 })
 
 interface InvitationData {
@@ -69,6 +89,12 @@ interface RecentWish {
   created_at: string
 }
 
+interface StatCard {
+  label: string
+  value: number
+  icon: Component
+}
+
 const props = defineProps<{
   stats: Stats
   invitation: InvitationData | null
@@ -79,7 +105,39 @@ const props = defineProps<{
 }>()
 
 const showUserMenu = ref(false)
-const showQuickStartGuide = ref(true) // Show by default for new users
+const showQuickStartGuide = ref(true)
+
+const hasInvitation = computed(() => props.invitation !== null)
+const isPublished = computed(() => props.invitation?.status === 'published')
+
+const navItems = computed(() => [
+  { label: 'Dashboard', href: '/dashboard', show: true },
+  { label: 'Editor', href: '/dashboard/editor', show: hasInvitation.value },
+  { label: 'Kustomisasi', href: '/dashboard/customize', show: hasInvitation.value },
+  { label: 'Galeri', href: '/dashboard/gallery', show: hasInvitation.value },
+  { label: 'Tamu', href: '/dashboard/guests', show: hasInvitation.value },
+  { label: 'Template', href: '/templates', show: true },
+])
+
+const statCards = computed<StatCard[]>(() => [
+  { label: 'Total Undangan', value: props.stats.total_invitations, icon: LayoutDashboard },
+  { label: 'Total Tamu', value: props.stats.total_guests, icon: Users },
+  { label: 'Konfirmasi Hadir', value: props.stats.confirmed_rsvps, icon: CalendarCheck },
+  { label: 'Total Views', value: props.stats.total_views, icon: Eye },
+])
+
+const quickSteps = [
+  { title: 'Isi Konten Undangan', text: 'Lengkapi data mempelai, acara, dan informasi penting.', href: '/dashboard/editor', icon: BookOpen },
+  { title: 'Atur Subdomain', text: 'Pilih alamat unik yang mudah dibagikan ke tamu.', href: '/dashboard/settings', icon: Link2 },
+  { title: 'Kustomisasi Tampilan', text: 'Rapikan urutan section, warna, dan ornamen.', href: '/dashboard/customize', icon: Palette },
+  { title: 'Publikasikan', text: 'Cek preview lalu bagikan undangan saat sudah siap.', href: '/dashboard/settings', icon: Send },
+]
+
+const quickActions = [
+  { title: 'Panduan Lengkap', text: 'Pelajari alur membuat undangan dari template sampai publish.', icon: BookOpen },
+  { title: 'Bantuan & Support', text: 'Butuh bantuan saat setup? Tim MyAkad siap membantu.', icon: CircleHelp },
+  { title: 'Fitur Premium', text: 'Kelola galeri, RSVP, amplop digital, dan detail personal.', icon: Sparkles },
+]
 
 const logout = () => {
   router.post('/logout')
@@ -96,715 +154,291 @@ const unpublishInvitation = () => {
 }
 
 const selectInvitation = (invitationId: number) => {
-  router.post(`/dashboard/invitations/${invitationId}/select`, {}, {
-    preserveScroll: true,
-  })
+  router.post(
+    `/dashboard/invitations/${invitationId}/select`,
+    {},
+    {
+      preserveScroll: true,
+    },
+  )
 }
-
-const hasInvitation = computed(() => props.invitation !== null)
-const isPublished = computed(() => props.invitation?.status === 'published')
 </script>
 
 <template>
-  <div>
+  <div class="my-page min-h-screen">
     <Head title="Dashboard" />
 
-    <div class="my-page">
-      <!-- Navigation -->
-      <nav class="border-b border-[var(--my-border)] bg-[var(--my-background)]/86 backdrop-blur-md">
-        <div class="container mx-auto px-4">
-          <div class="flex items-center justify-between h-16">
-            <!-- Logo -->
-            <Link href="/dashboard" class="flex items-center space-x-2">
-              <div class="w-10 h-10 bg-[var(--my-primary)] rounded-lg flex items-center justify-center">
-                <span class="text-white font-bold text-xl">M</span>
-              </div>
-              <span class="font-display text-2xl font-bold text-[var(--my-primary)]">
-                MyAkad
-              </span>
-            </Link>
-
-            <!-- Navigation Links -->
-            <div class="hidden md:flex items-center space-x-8">
-              <Link
-                href="/dashboard"
-                class="text-pink-600 font-medium transition"
-              >
-                Dashboard
-              </Link>
-              <Link
-                v-if="hasInvitation"
-                href="/dashboard/editor"
-                class="text-gray-700 hover:text-pink-600 font-medium transition"
-              >
-                Editor
-              </Link>
-              <Link
-                v-if="hasInvitation"
-                href="/dashboard/customize"
-                class="text-gray-700 hover:text-pink-600 font-medium transition"
-              >
-                Kustomisasi
-              </Link>
-              <Link
-                v-if="hasInvitation"
-                href="/dashboard/gallery"
-                class="text-gray-700 hover:text-pink-600 font-medium transition"
-              >
-                Galeri
-              </Link>
-              <Link
-                v-if="hasInvitation"
-                href="/dashboard/guests"
-                class="text-gray-700 hover:text-pink-600 font-medium transition"
-              >
-                Tamu
-              </Link>
-              <Link
-                href="/templates"
-                class="text-gray-700 hover:text-pink-600 font-medium transition"
-              >
-                Template
-              </Link>
-            </div>
-
-            <!-- User Menu -->
-            <div class="relative">
-              <button
-                @click="showUserMenu = !showUserMenu"
-                class="flex items-center space-x-3 focus:outline-none"
-              >
-                <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
-                  <span class="text-white font-semibold text-sm">
-                    {{ $page.props.auth?.user?.name?.charAt(0).toUpperCase() || 'U' }}
-                  </span>
-                </div>
-                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              <!-- Dropdown Menu -->
-              <div
-                v-show="showUserMenu"
-                @click="showUserMenu = false"
-                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50"
-              >
-                <div class="px-4 py-2 border-b border-gray-100">
-                  <p class="text-sm font-semibold text-gray-900">{{ $page.props.auth?.user?.name }}</p>
-                  <p class="text-xs text-gray-600">{{ $page.props.auth?.user?.email }}</p>
-                </div>
-                
-                <Link
-                  href="/settings/profile"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                >
-                  <div class="flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    Profil
-                  </div>
-                </Link>
-
-                <Link
-                  href="/settings/security"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                >
-                  <div class="flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                    Keamanan
-                  </div>
-                </Link>
-
-                <div class="border-t border-gray-100 mt-2 pt-2">
-                  <button
-                    @click="logout"
-                    class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition"
-                  >
-                    <div class="flex items-center">
-                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                      </svg>
-                      Keluar
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-    <div class="min-h-screen py-8">
-      <div class="container mx-auto px-4">
-        <!-- Page Header -->
-        <div class="flex items-center justify-between mb-8">
-          <div>
-            <h1 class="my-heading text-4xl">Dashboard</h1>
-            <p class="text-gray-600 mt-1">Kelola undangan digital Anda</p>
-          </div>
-          <Link
-            href="/templates"
-            class="bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition"
-          >
-            + Buat Undangan Baru
+    <nav class="sticky top-0 z-40 border-b border-[var(--my-border)]/70 bg-[var(--my-background)]/88 backdrop-blur-md">
+      <div class="my-container">
+        <div class="flex min-h-16 items-center justify-between gap-5">
+          <Link href="/dashboard" class="font-display text-3xl font-bold leading-none text-[var(--my-primary)]">
+            MyAkad
           </Link>
-        </div>
 
-        <!-- Purchased Template Selector -->
-        <div v-if="invitationOptions.length > 0" class="bg-white rounded-xl shadow-md p-6 mb-8">
-          <div class="flex flex-col gap-2 mb-5 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2 class="text-xl font-bold text-gray-900">Template yang Anda miliki</h2>
-              <p class="text-sm text-gray-600 mt-1">Pilih template aktif sebelum mengedit, preview, atau publish undangan.</p>
-            </div>
-            <span class="text-sm font-semibold text-pink-600">
-              {{ invitationOptions.length }} template tersedia
-            </span>
-          </div>
-
-          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <button
-              v-for="option in invitationOptions"
-              :key="option.id"
-              type="button"
-              class="text-left border-2 rounded-lg p-4 transition bg-white hover:border-pink-300"
-              :class="option.is_active ? 'border-pink-600 ring-2 ring-pink-100' : 'border-gray-200'"
-              @click="selectInvitation(option.id)"
+          <div class="hidden items-center gap-6 lg:flex">
+            <Link
+              v-for="item in navItems.filter((navItem) => navItem.show)"
+              :key="item.href"
+              :href="item.href"
+              class="text-sm font-semibold transition"
+              :class="$page.url === item.href || (item.href !== '/dashboard' && $page.url.startsWith(item.href)) ? 'text-[var(--my-primary)]' : 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'"
             >
-              <div class="flex gap-4">
-                <div class="w-16 h-20 rounded-lg overflow-hidden bg-pink-50 flex-shrink-0">
-                  <img
-                    v-if="option.template?.thumbnail_url"
-                    :src="option.template.thumbnail_url"
-                    :alt="option.template.name"
-                    class="w-full h-full object-cover"
-                  />
-                  <div v-else class="w-full h-full flex items-center justify-center text-pink-600 font-bold">M</div>
-                </div>
-                <div class="min-w-0 flex-1">
-                  <div class="flex items-center gap-2 mb-1">
-                    <h3 class="font-semibold text-gray-900 truncate">{{ option.template?.name || 'Template' }}</h3>
-                    <span
-                      v-if="option.is_active"
-                      class="px-2 py-0.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700"
-                    >
-                      Aktif
-                    </span>
-                  </div>
-                  <p class="text-xs text-gray-500 truncate">{{ option.template?.slug }}</p>
-                  <p class="text-xs text-gray-600 mt-2">
-                    Status:
-                    <span :class="option.status === 'published' ? 'text-green-700' : 'text-yellow-700'">
-                      {{ option.status === 'published' ? 'Published' : 'Draft' }}
-                    </span>
-                  </p>
-                </div>
-              </div>
+              {{ item.label }}
+            </Link>
+          </div>
+
+          <div class="relative">
+            <button type="button" class="flex items-center gap-3" @click="showUserMenu = !showUserMenu">
+              <span class="grid size-10 place-items-center rounded-lg bg-[var(--my-primary)] text-sm font-bold text-white">
+                {{ $page.props.auth?.user?.name?.charAt(0).toUpperCase() || 'U' }}
+              </span>
+              <ChevronDown class="size-4 text-[var(--my-muted)]" />
             </button>
-          </div>
-        </div>
 
-        <!-- Flash Messages -->
-        <div v-if="$page.props.flash?.success" class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6 flex items-center">
-          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-          </svg>
-          {{ $page.props.flash.success }}
-        </div>
-
-        <div v-if="$page.props.flash?.error" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6 flex items-center">
-          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-          </svg>
-          {{ $page.props.flash.error }}
-        </div>
-
-        <!-- Quick Start Guide -->
-        <div v-if="hasInvitation" class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-xl p-6 mb-8 text-white">
-          <div class="flex items-start justify-between">
-            <div class="flex-1">
-              <div class="flex items-center mb-3">
-                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-                <h3 class="text-xl font-bold">Panduan Cepat</h3>
-                <button
-                  @click="showQuickStartGuide = !showQuickStartGuide"
-                  class="ml-auto text-white hover:text-blue-100 transition"
-                >
-                  <svg v-if="showQuickStartGuide" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                  </svg>
-                  <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+            <div
+              v-show="showUserMenu"
+              class="my-card absolute right-0 mt-3 w-56 overflow-hidden py-2"
+              @click="showUserMenu = false"
+            >
+              <div class="border-b border-[var(--my-border)] px-4 py-3">
+                <p class="truncate text-sm font-bold text-[var(--my-neutral)]">{{ $page.props.auth?.user?.name }}</p>
+                <p class="truncate text-xs text-[var(--my-muted)]">{{ $page.props.auth?.user?.email }}</p>
               </div>
-              
-              <div v-if="showQuickStartGuide" class="space-y-4">
-                <p class="text-blue-100">Ikuti langkah-langkah berikut untuk menyelesaikan undangan Anda:</p>
-                
-                <div class="grid md:grid-cols-2 gap-4">
-                  <!-- Step 1 -->
-                  <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                    <div class="flex items-start">
-                      <div class="flex-shrink-0 w-8 h-8 bg-white text-blue-600 rounded-full flex items-center justify-center font-bold mr-3">
-                        1
-                      </div>
-                      <div class="flex-1">
-                        <h4 class="font-semibold mb-1">Isi Konten Undangan</h4>
-                        <p class="text-sm text-blue-100 mb-2">Lengkapi data mempelai, acara, dan informasi lainnya</p>
-                        <Link
-                          href="/dashboard/editor"
-                          class="inline-flex items-center text-sm font-medium hover:underline"
-                        >
-                          Buka Editor
-                          <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Step 2 -->
-                  <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                    <div class="flex items-start">
-                      <div class="flex-shrink-0 w-8 h-8 bg-white text-blue-600 rounded-full flex items-center justify-center font-bold mr-3">
-                        2
-                      </div>
-                      <div class="flex-1">
-                        <h4 class="font-semibold mb-1">Atur Subdomain</h4>
-                        <p class="text-sm text-blue-100 mb-2">Pilih alamat unik untuk undangan Anda</p>
-                        <Link
-                          href="/dashboard/settings"
-                          class="inline-flex items-center text-sm font-medium hover:underline"
-                        >
-                          Atur Subdomain
-                          <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Step 3 -->
-                  <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                    <div class="flex items-start">
-                      <div class="flex-shrink-0 w-8 h-8 bg-white text-blue-600 rounded-full flex items-center justify-center font-bold mr-3">
-                        3
-                      </div>
-                      <div class="flex-1">
-                        <h4 class="font-semibold mb-1">Kustomisasi Tampilan</h4>
-                        <p class="text-sm text-blue-100 mb-2">Atur urutan section dan ornamen</p>
-                        <Link
-                          href="/dashboard/customize"
-                          class="inline-flex items-center text-sm font-medium hover:underline"
-                        >
-                          Kustomisasi
-                          <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Step 4 -->
-                  <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                    <div class="flex items-start">
-                      <div class="flex-shrink-0 w-8 h-8 bg-white text-blue-600 rounded-full flex items-center justify-center font-bold mr-3">
-                        4
-                      </div>
-                      <div class="flex-1">
-                        <h4 class="font-semibold mb-1">Publikasikan</h4>
-                        <p class="text-sm text-blue-100 mb-2">Bagikan undangan ke tamu Anda</p>
-                        <Link
-                          href="/dashboard/settings"
-                          class="inline-flex items-center text-sm font-medium hover:underline"
-                        >
-                          Publikasikan
-                          <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Additional Tips -->
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                  <h4 class="font-semibold mb-2 flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Tips Berguna
-                  </h4>
-                  <ul class="text-sm text-blue-100 space-y-1 ml-7">
-                    <li>• Gunakan tombol <strong>Preview</strong> untuk melihat hasil undangan</li>
-                    <li>• Upload foto mempelai untuk tampilan lebih personal</li>
-                    <li>• Tambahkan galeri foto untuk kenangan indah</li>
-                    <li>• Jangan lupa isi amplop digital untuk terima hadiah</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Stats Cards -->
-        <div class="grid md:grid-cols-4 gap-6 mb-8">
-          <div class="bg-white rounded-xl shadow-md p-6">
-            <div class="flex items-center justify-between mb-4">
-              <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                </svg>
-              </div>
-            </div>
-            <div class="text-3xl font-bold text-gray-900 mb-1">{{ stats.total_invitations }}</div>
-            <div class="text-sm text-gray-600">Total Undangan</div>
-          </div>
-
-          <div class="bg-white rounded-xl shadow-md p-6">
-            <div class="flex items-center justify-between mb-4">
-              <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              </div>
-            </div>
-            <div class="text-3xl font-bold text-gray-900 mb-1">{{ stats.total_guests }}</div>
-            <div class="text-sm text-gray-600">Total Tamu</div>
-          </div>
-
-          <div class="bg-white rounded-xl shadow-md p-6">
-            <div class="flex items-center justify-between mb-4">
-              <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-            <div class="text-3xl font-bold text-gray-900 mb-1">{{ stats.confirmed_rsvps }}</div>
-            <div class="text-sm text-gray-600">Konfirmasi Hadir</div>
-          </div>
-
-          <div class="bg-white rounded-xl shadow-md p-6">
-            <div class="flex items-center justify-between mb-4">
-              <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-              </div>
-            </div>
-            <div class="text-3xl font-bold text-gray-900 mb-1">{{ stats.total_views }}</div>
-            <div class="text-sm text-gray-600">Total Views</div>
-          </div>
-        </div>
-
-        <!-- Invitation Status Card -->
-        <div v-if="hasInvitation" class="bg-white rounded-xl shadow-md p-6 mb-8">
-          <div class="flex items-start justify-between">
-            <div class="flex-1">
-              <div class="flex items-center mb-3">
-                <h2 class="text-xl font-bold text-gray-900 mr-3">Undangan Anda</h2>
-                <span 
-                  class="px-3 py-1 rounded-full text-xs font-semibold"
-                  :class="isPublished ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'"
-                >
-                  {{ isPublished ? 'Published' : 'Draft' }}
-                </span>
-              </div>
-              
-              <div class="space-y-2 mb-4">
-                <div class="flex items-center text-sm text-gray-600">
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                  </svg>
-                  Template: {{ invitation.template?.name || 'Tidak ada template' }}
-                </div>
-                
-                <div v-if="isPublished" class="flex items-center text-sm text-gray-600">
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                  </svg>
-                  <a :href="invitation.url" target="_blank" class="text-pink-600 hover:text-pink-700 font-medium">
-                    {{ invitation.url }}
-                  </a>
-                </div>
-                
-                <div v-if="invitation.published_at" class="flex items-center text-sm text-gray-600">
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  Dipublikasikan: {{ invitation.published_at }}
-                </div>
-              </div>
-
-              <div class="flex space-x-3">
-                <Link
-                  href="/dashboard/editor"
-                  class="bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition"
-                >
-                  Edit Konten
-                </Link>
-                <Link
-                  href="/dashboard/customize"
-                  class="border-2 border-pink-600 text-pink-600 px-6 py-2 rounded-lg font-semibold hover:bg-pink-50 transition"
-                >
-                  Kustomisasi
-                </Link>
-                <a
-                  v-if="isPublished"
-                  :href="invitation.url"
-                  target="_blank"
-                  class="border-2 border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:border-gray-400 transition"
-                >
-                  Lihat Undangan
-                </a>
-                <button
-                  v-if="isPublished"
-                  @click="unpublishInvitation"
-                  class="border-2 border-red-600 text-red-600 px-6 py-2 rounded-lg font-semibold hover:bg-red-50 transition"
-                >
-                  Unpublish
-                </button>
-                <button
-                  v-else
-                  @click="publishInvitation"
-                  class="border-2 border-green-600 text-green-600 px-6 py-2 rounded-lg font-semibold hover:bg-green-50 transition"
-                >
-                  Publikasikan
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Analytics & Recent Activity -->
-        <div v-if="hasInvitation && analytics" class="grid md:grid-cols-2 gap-6 mb-8">
-          <!-- Recent RSVPs -->
-          <div class="bg-white rounded-xl shadow-md p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-bold text-gray-900">RSVP Terbaru</h3>
-              <Link href="/dashboard/guests" class="text-sm text-pink-600 hover:text-pink-700 font-medium">
-                Lihat Semua →
+              <Link href="/settings/profile" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:bg-[var(--my-surface-soft)]">
+                <UserRound class="size-4" />
+                Profil
               </Link>
-            </div>
-
-            <div v-if="recentRsvps.length > 0" class="space-y-3">
-              <div
-                v-for="rsvp in recentRsvps"
-                :key="rsvp.id"
-                class="flex items-start justify-between p-3 bg-gray-50 rounded-lg"
-              >
-                <div class="flex-1">
-                  <p class="font-semibold text-gray-900">{{ rsvp.name }}</p>
-                  <div class="flex items-center mt-1 space-x-2">
-                    <span
-                      class="px-2 py-0.5 rounded-full text-xs font-medium"
-                      :class="rsvp.attendance === 'yes' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
-                    >
-                      {{ rsvp.attendance === 'yes' ? 'Hadir' : 'Tidak Hadir' }}
-                    </span>
-                    <span v-if="rsvp.attendance === 'yes'" class="text-xs text-gray-600">
-                      {{ rsvp.pax_count }} orang
-                    </span>
-                  </div>
-                  <p v-if="rsvp.message" class="text-xs text-gray-600 mt-1">{{ rsvp.message }}</p>
-                </div>
-                <span class="text-xs text-gray-500">{{ rsvp.created_at }}</span>
-              </div>
-            </div>
-
-            <div v-else class="text-center py-8 text-gray-500">
-              <svg class="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <p class="text-sm">Belum ada RSVP</p>
-            </div>
-          </div>
-
-          <!-- Recent Wishes -->
-          <div class="bg-white rounded-xl shadow-md p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-bold text-gray-900">Ucapan & Doa Terbaru</h3>
-              <Link href="/dashboard/guests" class="text-sm text-pink-600 hover:text-pink-700 font-medium">
-                Lihat Semua →
+              <Link href="/settings/security" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:bg-[var(--my-surface-soft)]">
+                <LockKeyhole class="size-4" />
+                Keamanan
               </Link>
-            </div>
-
-            <div v-if="recentWishes.length > 0" class="space-y-3">
-              <div
-                v-for="wish in recentWishes"
-                :key="wish.id"
-                class="p-3 bg-gray-50 rounded-lg"
-              >
-                <div class="flex items-start justify-between mb-2">
-                  <p class="font-semibold text-gray-900">{{ wish.name }}</p>
-                  <span class="text-xs text-gray-500">{{ wish.created_at }}</span>
-                </div>
-                <p class="text-sm text-gray-700">{{ wish.message }}</p>
-              </div>
-            </div>
-
-            <div v-else class="text-center py-8 text-gray-500">
-              <svg class="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-              </svg>
-              <p class="text-sm">Belum ada ucapan</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Detailed Analytics -->
-        <div v-if="hasInvitation && analytics" class="bg-white rounded-xl shadow-md p-6 mb-8">
-          <h3 class="text-lg font-bold text-gray-900 mb-6">Statistik Detail</h3>
-          
-          <div class="grid md:grid-cols-4 gap-6">
-            <div class="text-center">
-              <div class="text-3xl font-bold text-pink-600 mb-1">{{ analytics.total_rsvp }}</div>
-              <div class="text-sm text-gray-600">Total RSVP</div>
-            </div>
-
-            <div class="text-center">
-              <div class="text-3xl font-bold text-green-600 mb-1">{{ analytics.rsvp_attending }}</div>
-              <div class="text-sm text-gray-600">Hadir</div>
-            </div>
-
-            <div class="text-center">
-              <div class="text-3xl font-bold text-red-600 mb-1">{{ analytics.rsvp_not_attending }}</div>
-              <div class="text-sm text-gray-600">Tidak Hadir</div>
-            </div>
-
-            <div class="text-center">
-              <div class="text-3xl font-bold text-purple-600 mb-1">{{ analytics.total_pax }}</div>
-              <div class="text-sm text-gray-600">Total Tamu Hadir</div>
-            </div>
-          </div>
-
-          <div class="mt-6 pt-6 border-t border-gray-200">
-            <div class="grid md:grid-cols-3 gap-6">
-              <div class="text-center">
-                <div class="text-2xl font-bold text-blue-600 mb-1">{{ analytics.total_wishes }}</div>
-                <div class="text-sm text-gray-600">Ucapan & Doa</div>
-              </div>
-
-              <div class="text-center">
-                <div class="text-2xl font-bold text-amber-600 mb-1">{{ analytics.total_gallery_photos }}</div>
-                <div class="text-sm text-gray-600">Foto Galeri</div>
-              </div>
-
-              <div class="text-center">
-                <div class="text-2xl font-bold text-indigo-600 mb-1">{{ analytics.total_views }}</div>
-                <div class="text-sm text-gray-600">Total Views</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Empty State -->
-        <div v-else class="bg-white rounded-xl shadow-md p-12 text-center">
-          <div class="max-w-md mx-auto">
-            <div class="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-full mx-auto mb-6 flex items-center justify-center">
-              <svg class="w-12 h-12 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-              </svg>
-            </div>
-            
-            <h2 class="text-2xl font-bold text-gray-900 mb-3">
-              Belum Ada Undangan
-            </h2>
-            <p class="text-gray-600 mb-8">
-              Mulai buat undangan digital pertama Anda dengan memilih template yang sesuai dengan tema pernikahan Anda.
-            </p>
-
-            <div class="space-y-4">
-              <Link
-                href="/templates"
-                class="inline-block bg-gradient-to-r from-pink-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl transition transform hover:scale-105"
-              >
-                Pilih Template
-              </Link>
-
-              <div class="flex items-center justify-center space-x-8 text-sm text-gray-600">
-                <div class="flex items-center">
-                  <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span>Mudah digunakan</span>
-                </div>
-                <div class="flex items-center">
-                  <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span>Siap dalam 5 menit</span>
-                </div>
-                <div class="flex items-center">
-                  <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span>Harga terjangkau</span>
-                </div>
-              </div>
-            </div>
-            </div>
-          </div>
-
-        <!-- Quick Actions -->
-        <div class="grid md:grid-cols-3 gap-6 mt-8">
-          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition cursor-pointer">
-            <div class="flex items-start">
-              <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mr-4">
-                <svg class="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-gray-900 mb-1">Panduan Lengkap</h3>
-                <p class="text-sm text-gray-600">Pelajari cara membuat undangan digital yang sempurna</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition cursor-pointer">
-            <div class="flex items-start">
-              <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-gray-900 mb-1">Bantuan & Support</h3>
-                <p class="text-sm text-gray-600">Butuh bantuan? Tim kami siap membantu Anda</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition cursor-pointer">
-            <div class="flex items-start">
-              <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
-                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-gray-900 mb-1">Fitur Premium</h3>
-                <p class="text-sm text-gray-600">Upgrade untuk mendapatkan fitur tambahan</p>
-              </div>
+              <button type="button" class="flex w-full items-center gap-2 border-t border-[var(--my-border)] px-4 py-2 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50" @click="logout">
+                <LogOut class="size-4" />
+                Keluar
+              </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    </div>
+    </nav>
+
+    <main class="my-container py-10">
+      <section class="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="my-label mb-3">Ruang Kerja Undangan</p>
+          <h1 class="my-heading text-4xl md:text-5xl">Dashboard</h1>
+          <p class="my-copy mt-3">Kelola template, konten, tamu, RSVP, dan publikasi undanganmu.</p>
+        </div>
+        <Link href="/templates" class="my-btn-primary w-fit">
+          Buat Undangan Baru
+        </Link>
+      </section>
+
+      <div v-if="$page.props.flash?.success" class="mb-6 rounded-lg border border-[var(--my-primary)]/25 bg-[var(--my-primary)]/10 px-4 py-3 font-semibold text-[var(--my-neutral)]">
+        {{ $page.props.flash.success }}
+      </div>
+
+      <div v-if="$page.props.flash?.error" class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 font-semibold text-red-700">
+        {{ $page.props.flash.error }}
+      </div>
+
+      <section v-if="invitationOptions.length > 0" class="my-card mb-8 p-6">
+        <div class="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 class="my-heading text-2xl">Template yang kamu miliki</h2>
+            <p class="mt-1 text-[var(--my-muted)]">Pilih template aktif sebelum mengedit, preview, atau publish undangan.</p>
+          </div>
+          <span class="text-sm font-bold text-[var(--my-primary)]">{{ invitationOptions.length }} template tersedia</span>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <button
+            v-for="option in invitationOptions"
+            :key="option.id"
+            type="button"
+            class="rounded-lg border p-4 text-left transition hover:-translate-y-0.5 hover:border-[var(--my-primary)]"
+            :class="option.is_active ? 'border-[var(--my-primary)] bg-[var(--my-primary)]/8' : 'border-[var(--my-border)] bg-white/60'"
+            @click="selectInvitation(option.id)"
+          >
+            <div class="flex gap-4">
+              <div class="grid h-20 w-16 shrink-0 place-items-center overflow-hidden rounded-lg bg-[var(--my-surface-soft)]">
+                <img
+                  v-if="option.template?.thumbnail_url"
+                  :src="option.template.thumbnail_url"
+                  :alt="option.template.name"
+                  class="h-full w-full object-cover"
+                />
+                <span v-else class="font-display text-xl font-bold text-[var(--my-primary)]">My</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="mb-1 flex items-center gap-2">
+                  <h3 class="truncate font-bold text-[var(--my-neutral)]">{{ option.template?.name || 'Template' }}</h3>
+                  <span v-if="option.is_active" class="rounded-full bg-[var(--my-primary)]/12 px-2 py-0.5 text-xs font-bold text-[var(--my-primary)]">
+                    Aktif
+                  </span>
+                </div>
+                <p class="truncate text-xs text-[var(--my-muted)]">{{ option.template?.slug }}</p>
+                <p class="mt-2 text-xs font-semibold text-[var(--my-muted)]">
+                  {{ option.status === 'published' ? 'Published' : 'Draft' }}
+                </p>
+              </div>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <section v-if="hasInvitation" class="my-card mb-8 p-6">
+        <div class="mb-4 flex items-center gap-3">
+          <Sparkles class="size-6 text-[var(--my-primary)]" />
+          <h2 class="my-heading text-2xl">Panduan Cepat</h2>
+          <button type="button" class="ml-auto text-[var(--my-muted)] transition hover:text-[var(--my-primary)]" @click="showQuickStartGuide = !showQuickStartGuide">
+            <ChevronUp v-if="showQuickStartGuide" class="size-5" />
+            <ChevronDown v-else class="size-5" />
+          </button>
+        </div>
+
+        <div v-if="showQuickStartGuide" class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Link v-for="step in quickSteps" :key="step.title" :href="step.href" class="rounded-lg border border-[var(--my-border)] bg-white/55 p-4 transition hover:-translate-y-0.5 hover:border-[var(--my-primary)]">
+            <component :is="step.icon" class="mb-4 size-6 text-[var(--my-primary)]" />
+            <h3 class="font-bold text-[var(--my-neutral)]">{{ step.title }}</h3>
+            <p class="mt-2 text-sm leading-6 text-[var(--my-muted)]">{{ step.text }}</p>
+          </Link>
+        </div>
+      </section>
+
+      <section class="mb-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <article v-for="card in statCards" :key="card.label" class="my-card p-6">
+          <component :is="card.icon" class="mb-5 size-7 text-[var(--my-primary)]" />
+          <p class="text-3xl font-bold text-[var(--my-neutral)]">{{ card.value }}</p>
+          <p class="mt-1 text-sm font-semibold text-[var(--my-muted)]">{{ card.label }}</p>
+        </article>
+      </section>
+
+      <section v-if="hasInvitation" class="my-card mb-8 p-6">
+        <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <div class="mb-3 flex flex-wrap items-center gap-3">
+              <h2 class="my-heading text-2xl">Undangan kamu</h2>
+              <span class="rounded-full px-3 py-1 text-xs font-bold" :class="isPublished ? 'bg-[var(--my-primary)]/12 text-[var(--my-primary)]' : 'bg-[var(--my-secondary)]/20 text-[#8b5b52]'">
+                {{ isPublished ? 'Published' : 'Draft' }}
+              </span>
+            </div>
+
+            <div class="grid gap-2 text-sm text-[var(--my-muted)]">
+              <p>Template: <span class="font-bold text-[var(--my-neutral)]">{{ invitation?.template?.name || 'Tidak ada template' }}</span></p>
+              <p v-if="isPublished">
+                Link:
+                <a :href="invitation?.url" target="_blank" class="font-bold text-[var(--my-primary)]">{{ invitation?.url }}</a>
+              </p>
+              <p v-if="invitation?.published_at">Dipublikasikan: {{ invitation.published_at }}</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <Link href="/dashboard/editor" class="my-btn-primary">Edit Konten</Link>
+            <Link href="/dashboard/customize" class="my-btn-secondary">Kustomisasi</Link>
+            <a v-if="isPublished" :href="invitation?.url" target="_blank" class="my-btn-secondary">Lihat Undangan</a>
+            <button v-if="isPublished" type="button" class="my-btn-secondary border-red-300 text-red-600 hover:bg-red-50" @click="unpublishInvitation">Unpublish</button>
+            <button v-else type="button" class="my-btn-secondary border-[var(--my-primary)] text-[var(--my-primary)]" @click="publishInvitation">Publikasikan</button>
+          </div>
+        </div>
+      </section>
+
+      <section v-if="hasInvitation && analytics" class="mb-8 grid gap-6 lg:grid-cols-2">
+        <article class="my-card p-6">
+          <div class="mb-5 flex items-center justify-between gap-4">
+            <h3 class="my-heading text-2xl">RSVP Terbaru</h3>
+            <Link href="/dashboard/guests" class="text-sm font-bold text-[var(--my-primary)]">Lihat Semua</Link>
+          </div>
+
+          <div v-if="recentRsvps.length > 0" class="grid gap-3">
+            <div v-for="rsvp in recentRsvps" :key="rsvp.id" class="rounded-lg border border-[var(--my-border)] bg-white/55 p-4">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <p class="font-bold text-[var(--my-neutral)]">{{ rsvp.name }}</p>
+                  <p class="mt-1 text-sm text-[var(--my-muted)]">
+                    {{ rsvp.attendance === 'yes' ? `Hadir, ${rsvp.pax_count} orang` : 'Tidak hadir' }}
+                  </p>
+                </div>
+                <span class="text-xs text-[var(--my-muted)]">{{ rsvp.created_at }}</span>
+              </div>
+              <p v-if="rsvp.message" class="mt-2 text-sm text-[var(--my-muted)]">{{ rsvp.message }}</p>
+            </div>
+          </div>
+          <p v-else class="rounded-lg bg-[var(--my-surface-soft)] px-4 py-8 text-center text-[var(--my-muted)]">Belum ada RSVP.</p>
+        </article>
+
+        <article class="my-card p-6">
+          <div class="mb-5 flex items-center justify-between gap-4">
+            <h3 class="my-heading text-2xl">Ucapan & Doa</h3>
+            <Link href="/dashboard/guests" class="text-sm font-bold text-[var(--my-primary)]">Lihat Semua</Link>
+          </div>
+
+          <div v-if="recentWishes.length > 0" class="grid gap-3">
+            <div v-for="wish in recentWishes" :key="wish.id" class="rounded-lg border border-[var(--my-border)] bg-white/55 p-4">
+              <div class="mb-2 flex items-start justify-between gap-4">
+                <p class="font-bold text-[var(--my-neutral)]">{{ wish.name }}</p>
+                <span class="text-xs text-[var(--my-muted)]">{{ wish.created_at }}</span>
+              </div>
+              <p class="text-sm leading-6 text-[var(--my-muted)]">{{ wish.message }}</p>
+            </div>
+          </div>
+          <p v-else class="rounded-lg bg-[var(--my-surface-soft)] px-4 py-8 text-center text-[var(--my-muted)]">Belum ada ucapan.</p>
+        </article>
+      </section>
+
+      <section v-if="hasInvitation && analytics" class="my-card mb-8 p-6">
+        <h3 class="my-heading mb-6 text-2xl">Statistik Detail</h3>
+        <div class="grid gap-5 md:grid-cols-3 xl:grid-cols-6">
+          <div class="rounded-lg bg-white/55 p-4 text-center">
+            <BarChart3 class="mx-auto mb-3 size-6 text-[var(--my-primary)]" />
+            <p class="text-2xl font-bold text-[var(--my-neutral)]">{{ analytics.total_rsvp }}</p>
+            <p class="text-sm text-[var(--my-muted)]">Total RSVP</p>
+          </div>
+          <div class="rounded-lg bg-white/55 p-4 text-center">
+            <CalendarCheck class="mx-auto mb-3 size-6 text-[var(--my-primary)]" />
+            <p class="text-2xl font-bold text-[var(--my-neutral)]">{{ analytics.rsvp_attending }}</p>
+            <p class="text-sm text-[var(--my-muted)]">Hadir</p>
+          </div>
+          <div class="rounded-lg bg-white/55 p-4 text-center">
+            <Users class="mx-auto mb-3 size-6 text-[var(--my-primary)]" />
+            <p class="text-2xl font-bold text-[var(--my-neutral)]">{{ analytics.total_pax }}</p>
+            <p class="text-sm text-[var(--my-muted)]">Tamu Hadir</p>
+          </div>
+          <div class="rounded-lg bg-white/55 p-4 text-center">
+            <MessageCircle class="mx-auto mb-3 size-6 text-[var(--my-primary)]" />
+            <p class="text-2xl font-bold text-[var(--my-neutral)]">{{ analytics.total_wishes }}</p>
+            <p class="text-sm text-[var(--my-muted)]">Ucapan</p>
+          </div>
+          <div class="rounded-lg bg-white/55 p-4 text-center">
+            <Image class="mx-auto mb-3 size-6 text-[var(--my-primary)]" />
+            <p class="text-2xl font-bold text-[var(--my-neutral)]">{{ analytics.total_gallery_photos }}</p>
+            <p class="text-sm text-[var(--my-muted)]">Foto</p>
+          </div>
+          <div class="rounded-lg bg-white/55 p-4 text-center">
+            <Eye class="mx-auto mb-3 size-6 text-[var(--my-primary)]" />
+            <p class="text-2xl font-bold text-[var(--my-neutral)]">{{ analytics.total_views }}</p>
+            <p class="text-sm text-[var(--my-muted)]">Views</p>
+          </div>
+        </div>
+      </section>
+
+      <section v-if="!hasInvitation" class="my-card px-6 py-14 text-center">
+        <Sparkles class="mx-auto mb-5 size-12 text-[var(--my-primary)]" />
+        <h2 class="my-heading text-3xl">Belum ada undangan</h2>
+        <p class="my-copy mx-auto mt-3 max-w-xl">
+          Mulai dari koleksi template, lihat preview aslinya, lalu isi detail acara saat kamu sudah menemukan gaya yang cocok.
+        </p>
+        <Link href="/templates" class="my-btn-primary mt-8">Pilih Template</Link>
+      </section>
+
+      <section class="mt-8 grid gap-5 md:grid-cols-3">
+        <article v-for="action in quickActions" :key="action.title" class="my-card p-6">
+          <component :is="action.icon" class="mb-4 size-7 text-[var(--my-primary)]" />
+          <h3 class="text-lg font-bold text-[var(--my-neutral)]">{{ action.title }}</h3>
+          <p class="mt-2 text-sm leading-6 text-[var(--my-muted)]">{{ action.text }}</p>
+        </article>
+      </section>
+    </main>
   </div>
 </template>

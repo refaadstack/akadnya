@@ -25,3 +25,30 @@ it('keeps public landing copy free from developer jargon', function () {
         }
     }
 });
+
+it('keeps auth and dashboard pages on the current visual system', function () {
+    $pagePaths = [
+        dirname(__DIR__, 2).'/resources/js/pages/auth/Login.vue',
+        dirname(__DIR__, 2).'/resources/js/pages/auth/Register.vue',
+        dirname(__DIR__, 2).'/resources/js/pages/Dashboard.vue',
+    ];
+
+    $legacyClasses = [
+        'from-pink-50',
+        'to-purple-50',
+        'from-pink-600',
+        'to-purple-600',
+        'rounded-2xl',
+    ];
+
+    foreach ($pagePaths as $path) {
+        $contents = file_get_contents($path);
+
+        expect($contents)->not->toBeFalse();
+        expect($contents)->toContain('my-page');
+
+        foreach ($legacyClasses as $legacyClass) {
+            expect($contents)->not->toContain($legacyClass);
+        }
+    }
+});

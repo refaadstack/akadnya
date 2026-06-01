@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CustomerInvitationService;
 use App\Services\InvitationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,7 +12,8 @@ use Inertia\Response;
 class InvitationController extends Controller
 {
     public function __construct(
-        private InvitationService $invitationService
+        private InvitationService $invitationService,
+        private CustomerInvitationService $customerInvitations
     ) {}
 
     /**
@@ -20,7 +22,8 @@ class InvitationController extends Controller
     public function customize(Request $request): Response
     {
         $user = $request->user();
-        $invitation = $user->invitations()->with(['template', 'sections.templateSection', 'ornaments.templateOrnament'])->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user, ['template', 'sections.templateSection', 'ornaments.templateOrnament']);
+        abort_if(! $invitation, 404);
 
         return Inertia::render('Dashboard/Customize', [
             'invitation' => [
@@ -59,7 +62,8 @@ class InvitationController extends Controller
         ]);
 
         $user = $request->user();
-        $invitation = $user->invitations()->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         $this->invitationService->reorderSections($invitation, $request->section_ids);
 
@@ -72,7 +76,8 @@ class InvitationController extends Controller
     public function toggleSection(Request $request, int $sectionId): JsonResponse
     {
         $user = $request->user();
-        $invitation = $user->invitations()->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         try {
             $isVisible = $this->invitationService->toggleSectionVisibility($invitation, $sectionId);
@@ -95,7 +100,8 @@ class InvitationController extends Controller
     public function toggleOrnament(Request $request, int $ornamentId): JsonResponse
     {
         $user = $request->user();
-        $invitation = $user->invitations()->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         $isActive = $this->invitationService->toggleOrnament($invitation, $ornamentId);
 
@@ -111,7 +117,8 @@ class InvitationController extends Controller
     public function publish(Request $request)
     {
         $user = $request->user();
-        $invitation = $user->invitations()->with('content')->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user, ['content']);
+        abort_if(! $invitation, 404);
 
         try {
             $this->invitationService->publish($invitation);
@@ -128,7 +135,8 @@ class InvitationController extends Controller
     public function unpublish(Request $request)
     {
         $user = $request->user();
-        $invitation = $user->invitations()->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         $this->invitationService->unpublish($invitation);
 

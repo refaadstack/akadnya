@@ -184,17 +184,24 @@ class OrderService
             );
         }
 
-        // Create invitation if template was purchased and user doesn't have one yet
-        $templateItem = $order->items()
+        $templateItems = $order->items()
             ->where('item_type', 'template')
-            ->first();
+            ->get();
 
-        if ($templateItem && ! $user->invitation()->exists()) {
+        foreach ($templateItems as $templateItem) {
+            if ($user->invitations()->where('template_id', $templateItem->item_id)->exists()) {
+                continue;
+            }
+
             $template = Template::find($templateItem->item_id);
             $previewData = $order->metadata['preview_data'] ?? null;
 
             if ($template) {
-                $this->createInvitationFromOrder($user, $template, $previewData);
+                $invitation = $this->createInvitationFromOrder($user, $template, $previewData);
+
+                if (! $user->active_invitation_id) {
+                    $user->forceFill(['active_invitation_id' => $invitation->id])->save();
+                }
             }
         }
     }
@@ -202,9 +209,9 @@ class OrderService
     /**
      * Create invitation from order preview data
      */
-    protected function createInvitationFromOrder(User $user, Template $template, ?array $previewData): void
+    public function createInvitationFromOrder(User $user, Template $template, ?array $previewData): Invitation
     {
-        DB::transaction(function () use ($user, $template, $previewData) {
+        return DB::transaction(function () use ($user, $template, $previewData) {
             // Generate unique subdomain from user name
             $baseName = $previewData['bride_name'] ?? $previewData['bride']['name'] ?? $user->name;
             $subdomain = $this->generateInvitationSubdomain($baseName);
@@ -253,6 +260,8 @@ class OrderService
                     'is_active' => $ornament->default_active,
                 ]);
             }
+
+            return $invitation;
         });
     }
 

@@ -23,7 +23,20 @@ class DataContractBuilder
     public function build(Invitation $invitation, ?string $guestName = null): array
     {
         $content = $invitation->content;
-        $gallery = $invitation->gallery()->orderBy('sort_order')->get();
+        $gallery = $invitation->gallery()
+            ->orderBy('sort_order')
+            ->get()
+            ->map(fn ($item) => [
+                'url' => $item->image_url,
+                'caption' => $item->caption,
+            ]);
+
+        $contentGallery = collect($content?->gallery_photos ?? [])
+            ->filter(fn ($item) => is_array($item) && ! empty($item['url']))
+            ->map(fn ($item) => [
+                'url' => $item['url'],
+                'caption' => $item['caption'] ?? null,
+            ]);
 
         // Base contract with all keys guaranteed to exist
         $contract = [
@@ -65,10 +78,7 @@ class DataContractBuilder
             'dana_number' => $content?->dana_number ?? null,
 
             // Gallery
-            'gallery' => $gallery->map(fn ($item) => [
-                'url' => $item->image_url,
-                'caption' => $item->caption,
-            ])->toArray(),
+            'gallery' => $gallery->concat($contentGallery)->values()->toArray(),
 
             // RSVP
             'rsvp_action' => route('invitation.rsvp', ['subdomain' => $invitation->subdomain]),

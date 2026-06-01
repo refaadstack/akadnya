@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Invitation extends Model
@@ -77,9 +76,9 @@ class Invitation extends Model
         return $this->hasMany(Guest::class);
     }
 
-    public function rsvps(): HasManyThrough
+    public function rsvps(): HasMany
     {
-        return $this->hasManyThrough(Rsvp::class, Guest::class);
+        return $this->hasMany(Rsvp::class);
     }
 
     // Scopes

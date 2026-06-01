@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\InvitationGallery;
+use App\Services\CustomerInvitationService;
 use App\Services\MediaService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -10,7 +11,8 @@ use Inertia\Inertia;
 class GalleryController extends Controller
 {
     public function __construct(
-        private MediaService $mediaService
+        private MediaService $mediaService,
+        private CustomerInvitationService $customerInvitations
     ) {}
 
     /**
@@ -19,7 +21,8 @@ class GalleryController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $invitation = $user->invitations()->with('gallery')->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user, ['gallery']);
+        abort_if(! $invitation, 404);
 
         return Inertia::render('Dashboard/Gallery', [
             'gallery' => $invitation->gallery->map(fn ($photo) => [
@@ -37,7 +40,8 @@ class GalleryController extends Controller
     public function store(Request $request)
     {
         $user = $request->user();
-        $invitation = $user->invitations()->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         $request->validate([
             'file' => 'required|image|max:5120', // 5MB
@@ -110,7 +114,8 @@ class GalleryController extends Controller
     public function reorder(Request $request)
     {
         $user = $request->user();
-        $invitation = $user->invitations()->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         $validated = $request->validate([
             'photos' => 'required|array',

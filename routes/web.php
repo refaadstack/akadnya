@@ -72,6 +72,7 @@ if (app()->environment('local')) {
 // Dashboard routes (requires authentication)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('dashboard/invitations/{invitation}/select', [DashboardController::class, 'selectInvitation'])->name('dashboard.invitations.select');
 
     // Admin panel is now handled by Filament at /admin
 

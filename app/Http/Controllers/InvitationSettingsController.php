@@ -3,19 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invitation;
+use App\Services\CustomerInvitationService;
+use App\Services\InvitationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class InvitationSettingsController extends Controller
 {
+    public function __construct(
+        private CustomerInvitationService $customerInvitations,
+        private InvitationService $invitationService
+    ) {}
+
     /**
      * Show invitation settings
      */
     public function index(Request $request)
     {
         $user = $request->user();
-        $invitation = $user->invitations()->with('content')->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user, ['content']);
+        abort_if(! $invitation, 404);
 
         return Inertia::render('Dashboard/Settings', [
             'invitation' => [
@@ -36,7 +44,8 @@ class InvitationSettingsController extends Controller
     public function updateSubdomain(Request $request)
     {
         $user = $request->user();
-        $invitation = $user->invitations()->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         $validated = $request->validate([
             'subdomain' => [
@@ -63,7 +72,8 @@ class InvitationSettingsController extends Controller
     public function updateCustomDomain(Request $request)
     {
         $user = $request->user();
-        $invitation = $user->invitations()->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         $validated = $request->validate([
             'custom_domain' => [
@@ -89,24 +99,16 @@ class InvitationSettingsController extends Controller
     public function publish(Request $request)
     {
         $user = $request->user();
-        $invitation = $user->invitations()->with('content')->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user, ['content']);
+        abort_if(! $invitation, 404);
 
-        // Validate required content
-        if (! $invitation->content) {
-            return back()->withErrors(['error' => 'Harap isi konten undangan terlebih dahulu']);
+        try {
+            $this->invitationService->publish($invitation);
+
+            return back()->with('success', 'Undangan berhasil dipublikasikan! 🎉');
+        } catch (\InvalidArgumentException $e) {
+            return back()->with('error', $e->getMessage());
         }
-
-        if (! $invitation->content->bride_name || ! $invitation->content->groom_name) {
-            return back()->withErrors(['error' => 'Nama mempelai wajib diisi']);
-        }
-
-        if (! $invitation->content->akad_datetime || ! $invitation->content->akad_venue) {
-            return back()->withErrors(['error' => 'Informasi akad nikah wajib diisi']);
-        }
-
-        $invitation->update(['status' => 'published']);
-
-        return back()->with('success', 'Undangan berhasil dipublikasikan! 🎉');
     }
 
     /**
@@ -115,9 +117,10 @@ class InvitationSettingsController extends Controller
     public function unpublish(Request $request)
     {
         $user = $request->user();
-        $invitation = $user->invitations()->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
-        $invitation->update(['status' => 'draft']);
+        $this->invitationService->unpublish($invitation);
 
         return back()->with('success', 'Undangan berhasil di-unpublish');
     }
@@ -128,7 +131,8 @@ class InvitationSettingsController extends Controller
     public function generateSubdomain(Request $request)
     {
         $user = $request->user();
-        $invitation = $user->invitations()->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         // Generate random subdomain
         do {

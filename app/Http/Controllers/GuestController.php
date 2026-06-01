@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guest;
-use App\Models\Invitation;
+use App\Services\CustomerInvitationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class GuestController extends Controller
 {
+    public function __construct(
+        private CustomerInvitationService $customerInvitations
+    ) {}
+
     /**
      * Display guest list
      */
     public function index(Request $request)
     {
         $user = $request->user();
-        $invitation = Invitation::where('user_id', $user->id)->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         // Get guests with RSVP data
         $guestsQuery = $invitation->guests()
@@ -44,8 +49,8 @@ class GuestController extends Controller
             'friends' => $invitation->guests()->where('category', 'friends')->count(),
             'colleagues' => $invitation->guests()->where('category', 'colleagues')->count(),
             'others' => $invitation->guests()->where('category', 'others')->count(),
-            'confirmed' => $invitation->rsvps()->where('attendance', 'hadir')->count(),
-            'declined' => $invitation->rsvps()->where('attendance', 'tidak_hadir')->count(),
+            'confirmed' => $invitation->rsvps()->where('attendance', 'yes')->count(),
+            'declined' => $invitation->rsvps()->where('attendance', 'no')->count(),
             'pending' => $invitation->guests()->count() - $invitation->guests()->whereHas('rsvp')->count(),
         ];
 
@@ -80,7 +85,8 @@ class GuestController extends Controller
     public function store(Request $request)
     {
         $user = $request->user();
-        $invitation = Invitation::where('user_id', $user->id)->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -143,7 +149,8 @@ class GuestController extends Controller
     public function import(Request $request)
     {
         $user = $request->user();
-        $invitation = Invitation::where('user_id', $user->id)->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         $request->validate([
             'file' => 'required|file|mimes:csv,txt|max:2048',
@@ -221,7 +228,8 @@ class GuestController extends Controller
     public function export(Request $request)
     {
         $user = $request->user();
-        $invitation = Invitation::where('user_id', $user->id)->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         $guests = $invitation->guests()->with('rsvp')->get();
 

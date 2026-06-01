@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\InvitationContentRequest;
 use App\Services\BladeRenderService;
+use App\Services\CustomerInvitationService;
 use App\Services\DataContractBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,8 @@ class EditorController extends Controller
 {
     public function __construct(
         protected BladeRenderService $bladeRenderer,
-        protected DataContractBuilder $dataBuilder
+        protected DataContractBuilder $dataBuilder,
+        protected CustomerInvitationService $customerInvitations
     ) {}
 
     /**
@@ -24,7 +26,8 @@ class EditorController extends Controller
     public function index(Request $request): Response
     {
         $user = $request->user();
-        $invitation = $user->invitations()->with(['template', 'content'])->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user, ['template', 'content']);
+        abort_if(! $invitation, 404);
 
         return Inertia::render('Dashboard/Editor', [
             'invitation' => [
@@ -39,9 +42,11 @@ class EditorController extends Controller
                 'bride_name' => $invitation->content->bride_name,
                 'bride_father' => $invitation->content->bride_father,
                 'bride_mother' => $invitation->content->bride_mother,
+                'bride_photo_url' => $invitation->content->bride_photo_url,
                 'groom_name' => $invitation->content->groom_name,
                 'groom_father' => $invitation->content->groom_father,
                 'groom_mother' => $invitation->content->groom_mother,
+                'groom_photo_url' => $invitation->content->groom_photo_url,
                 'akad_datetime' => $invitation->content->akad_datetime?->format('Y-m-d\TH:i'),
                 'akad_venue' => $invitation->content->akad_venue,
                 'akad_maps_url' => $invitation->content->akad_maps_url,
@@ -52,6 +57,7 @@ class EditorController extends Controller
                 'special_message' => $invitation->content->special_message,
                 'cover_photo_url' => $invitation->content->cover_photo_url,
                 'music_url' => $invitation->content->music_url,
+                'gallery_photos' => $invitation->content->gallery_photos ?? [],
                 'bank_name' => $invitation->content->bank_name,
                 'account_number' => $invitation->content->account_number,
                 'account_name' => $invitation->content->account_name,
@@ -69,7 +75,8 @@ class EditorController extends Controller
     public function save(InvitationContentRequest $request): RedirectResponse
     {
         $user = $request->user();
-        $invitation = $user->invitations()->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user);
+        abort_if(! $invitation, 404);
 
         $invitation->content()->updateOrCreate(
             ['invitation_id' => $invitation->id],
@@ -85,9 +92,8 @@ class EditorController extends Controller
     public function preview(Request $request): SymfonyResponse
     {
         $user = $request->user();
-        $invitation = $user->invitations()
-            ->with(['template', 'content', 'sections.templateSection', 'ornaments.templateOrnament', 'gallery'])
-            ->firstOrFail();
+        $invitation = $this->customerInvitations->activeInvitation($user, ['template', 'content', 'sections.templateSection', 'ornaments.templateOrnament', 'gallery']);
+        abort_if(! $invitation, 404);
 
         if (! $invitation->content) {
             return response(

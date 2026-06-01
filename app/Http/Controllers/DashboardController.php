@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Invitation;
+use App\Services\CustomerInvitationService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        private CustomerInvitationService $customerInvitations
+    ) {}
+
     /**
      * Display the dashboard.
      */
@@ -15,8 +21,22 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        // Get user's invitation
-        $invitation = $user->invitations()->with(['template', 'content'])->first();
+        $ownedInvitations = $this->customerInvitations->ownedInvitations($user);
+        $invitation = $this->customerInvitations->activeInvitation($user, ['template', 'content']);
+        $invitationOptions = $ownedInvitations->map(fn (Invitation $ownedInvitation) => [
+            'id' => $ownedInvitation->id,
+            'status' => $ownedInvitation->status,
+            'subdomain' => $ownedInvitation->subdomain,
+            'custom_domain' => $ownedInvitation->custom_domain,
+            'url' => $ownedInvitation->getPublicUrl(),
+            'template' => $ownedInvitation->template ? [
+                'id' => $ownedInvitation->template->id,
+                'name' => $ownedInvitation->template->name,
+                'slug' => $ownedInvitation->template->slug,
+                'thumbnail_url' => $ownedInvitation->template->thumbnail_url,
+            ] : null,
+            'is_active' => $invitation?->id === $ownedInvitation->id,
+        ])->values();
 
         // If no invitation, show empty state
         if (! $invitation) {
@@ -31,6 +51,7 @@ class DashboardController extends Controller
                 'analytics' => null,
                 'recentRsvps' => [],
                 'recentWishes' => [],
+                'invitationOptions' => $invitationOptions,
             ]);
         }
 
@@ -106,6 +127,14 @@ class DashboardController extends Controller
             'analytics' => $analytics,
             'recentRsvps' => $recentRsvps,
             'recentWishes' => $recentWishes,
+            'invitationOptions' => $invitationOptions,
         ]);
+    }
+
+    public function selectInvitation(Request $request, Invitation $invitation)
+    {
+        $this->customerInvitations->selectInvitation($request->user(), $invitation);
+
+        return back()->with('success', 'Template aktif berhasil dipilih.');
     }
 }

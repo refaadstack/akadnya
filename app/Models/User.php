@@ -10,13 +10,14 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-#[Fillable(['name', 'email', 'password', 'role'])]
+#[Fillable(['name', 'email', 'password', 'role', 'active_invitation_id'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
@@ -48,6 +49,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->hasOne(Invitation::class);
     }
 
+    public function activeInvitation(): BelongsTo
+    {
+        return $this->belongsTo(Invitation::class, 'active_invitation_id');
+    }
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
@@ -56,6 +62,34 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function features(): HasMany
     {
         return $this->hasMany(UserFeature::class);
+    }
+
+    /**
+     * @param  array<int, string>  $with
+     */
+    public function currentInvitation(array $with = []): ?Invitation
+    {
+        $invitation = null;
+
+        if ($this->active_invitation_id) {
+            $invitation = $this->invitations()
+                ->with($with)
+                ->whereKey($this->active_invitation_id)
+                ->first();
+        }
+
+        if (! $invitation) {
+            $invitation = $this->invitations()
+                ->with($with)
+                ->latest('id')
+                ->first();
+        }
+
+        if ($invitation && $this->active_invitation_id !== $invitation->id) {
+            $this->forceFill(['active_invitation_id' => $invitation->id])->save();
+        }
+
+        return $invitation;
     }
 
     // Helper methods

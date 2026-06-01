@@ -20,6 +20,21 @@ interface InvitationData {
   } | null
 }
 
+interface InvitationOption {
+  id: number
+  status: string
+  subdomain: string | null
+  custom_domain: string | null
+  url: string
+  is_active: boolean
+  template: {
+    id: number
+    name: string
+    slug: string
+    thumbnail_url: string | null
+  } | null
+}
+
 interface Stats {
   total_invitations: number
   total_guests: number
@@ -60,6 +75,7 @@ const props = defineProps<{
   analytics: Analytics | null
   recentRsvps: RecentRsvp[]
   recentWishes: RecentWish[]
+  invitationOptions: InvitationOption[]
 }>()
 
 const showUserMenu = ref(false)
@@ -77,6 +93,12 @@ const unpublishInvitation = () => {
   if (confirm('Yakin ingin unpublish undangan? Tamu tidak akan bisa mengakses undangan.')) {
     router.post('/dashboard/unpublish')
   }
+}
+
+const selectInvitation = (invitationId: number) => {
+  router.post(`/dashboard/invitations/${invitationId}/select`, {}, {
+    preserveScroll: true,
+  })
 }
 
 const hasInvitation = computed(() => props.invitation !== null)
@@ -230,6 +252,60 @@ const isPublished = computed(() => props.invitation?.status === 'published')
           >
             + Buat Undangan Baru
           </Link>
+        </div>
+
+        <!-- Purchased Template Selector -->
+        <div v-if="invitationOptions.length > 0" class="bg-white rounded-xl shadow-md p-6 mb-8">
+          <div class="flex flex-col gap-2 mb-5 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-gray-900">Template yang Anda miliki</h2>
+              <p class="text-sm text-gray-600 mt-1">Pilih template aktif sebelum mengedit, preview, atau publish undangan.</p>
+            </div>
+            <span class="text-sm font-semibold text-pink-600">
+              {{ invitationOptions.length }} template tersedia
+            </span>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <button
+              v-for="option in invitationOptions"
+              :key="option.id"
+              type="button"
+              class="text-left border-2 rounded-lg p-4 transition bg-white hover:border-pink-300"
+              :class="option.is_active ? 'border-pink-600 ring-2 ring-pink-100' : 'border-gray-200'"
+              @click="selectInvitation(option.id)"
+            >
+              <div class="flex gap-4">
+                <div class="w-16 h-20 rounded-lg overflow-hidden bg-pink-50 flex-shrink-0">
+                  <img
+                    v-if="option.template?.thumbnail_url"
+                    :src="option.template.thumbnail_url"
+                    :alt="option.template.name"
+                    class="w-full h-full object-cover"
+                  />
+                  <div v-else class="w-full h-full flex items-center justify-center text-pink-600 font-bold">M</div>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <h3 class="font-semibold text-gray-900 truncate">{{ option.template?.name || 'Template' }}</h3>
+                    <span
+                      v-if="option.is_active"
+                      class="px-2 py-0.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700"
+                    >
+                      Aktif
+                    </span>
+                  </div>
+                  <p class="text-xs text-gray-500 truncate">{{ option.template?.slug }}</p>
+                  <p class="text-xs text-gray-600 mt-2">
+                    Status:
+                    <span :class="option.status === 'published' ? 'text-green-700' : 'text-yellow-700'">
+                      {{ option.status === 'published' ? 'Published' : 'Draft' }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </button>
+          </div>
         </div>
 
         <!-- Flash Messages -->

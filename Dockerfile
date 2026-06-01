@@ -103,9 +103,12 @@ RUN mkdir -p \
     && ln -s ../storage/app/public public/storage \
     && chown -R www-data:www-data storage bootstrap/cache
 
-ENV APP_ENV=production \
-    APP_DEBUG=false \
+ENV APP_ENV=local \
+    APP_DEBUG=true \
     LOG_CHANNEL=stderr \
+    MIDTRANS_IS_PRODUCTION=false \
+    MIDTRANS_IS_SANITIZED=true \
+    MIDTRANS_IS_3DS=true \
     OCTANE_SERVER=frankenphp \
     SERVER_NAME=:8080
 

@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Payment;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Midtrans\Config;
 use Midtrans\Snap;
 
@@ -23,6 +25,10 @@ class PaymentService
      */
     public function requestSnapToken(Order $order): string
     {
+        if (blank(config('services.midtrans.server_key'))) {
+            throw new \RuntimeException('Midtrans server key is not configured.');
+        }
+
         $params = [
             'transaction_details' => [
                 'order_id' => $order->order_number,
@@ -34,13 +40,21 @@ class PaymentService
             ],
             'item_details' => $order->items->map(function ($item) {
                 return [
-                    'id' => $item->id,
+                    'id' => (string) $item->id,
                     'price' => (int) $item->price,
                     'quantity' => $item->quantity,
-                    'name' => $item->name,
+                    'name' => Str::limit($item->name, 50, ''),
                 ];
             })->toArray(),
         ];
+
+        Log::info('Requesting Midtrans Snap token', [
+            'order_id' => $order->id,
+            'order_number' => $order->order_number,
+            'gross_amount' => (int) $order->total_amount,
+            'item_count' => $order->items->count(),
+            'is_production' => config('services.midtrans.is_production'),
+        ]);
 
         $snapToken = Snap::getSnapToken($params);
 

@@ -6,7 +6,10 @@ use App\Models\Product;
 use App\Models\Template;
 use App\Services\OrderService;
 use App\Services\PaymentService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -72,13 +75,13 @@ class CheckoutController extends Controller
     /**
      * Store order
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'template_id' => 'required|exists:templates,id',
-            'base_package_id' => 'required|exists:products,id',
+            'template_id' => 'required|exists:templates,id,is_active,1',
+            'base_package_id' => 'required|exists:products,id,type,base_package,is_active,1',
             'addon_ids' => 'nullable|array',
-            'addon_ids.*' => 'exists:products,id',
+            'addon_ids.*' => 'exists:products,id,type,addon,is_active,1',
             'preview_data' => 'nullable|array',
         ]);
 
@@ -86,19 +89,21 @@ class CheckoutController extends Controller
         $basePackage = Product::findOrFail($validated['base_package_id']);
         $addonIds = $validated['addon_ids'] ?? [];
         $previewData = $validated['preview_data'] ?? null;
+        $order = null;
 
         try {
-            // Create order
-            $orderService = app(OrderService::class);
-            $order = $orderService->createOrder(
-                $request->user(),
-                $template,
-                $basePackage,
-                $addonIds,
-                $previewData
-            );
+            $order = DB::transaction(function () use ($request, $template, $basePackage, $addonIds, $previewData) {
+                $orderService = app(OrderService::class);
 
-            // Get Midtrans Snap token
+                return $orderService->createOrder(
+                    $request->user(),
+                    $template,
+                    $basePackage,
+                    $addonIds,
+                    $previewData
+                );
+            });
+
             $paymentService = app(PaymentService::class);
             $snapToken = $paymentService->requestSnapToken($order);
 
@@ -110,12 +115,23 @@ class CheckoutController extends Controller
                 'total_amount' => $order->total_amount,
             ]);
         } catch (\Throwable $e) {
-            \Log::error('Checkout store error', [
+            if ($order) {
+                $order->forceFill(['status' => 'failed'])->save();
+            }
+
+            Log::error('Checkout store error', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'user_id' => $request->user()->id,
                 'template_id' => $validated['template_id'],
+                'base_package_id' => $validated['base_package_id'],
+                'addon_ids' => $addonIds,
+                'order_id' => $order?->id,
+                'order_number' => $order?->order_number,
+                'midtrans_is_production' => config('services.midtrans.is_production'),
+                'midtrans_server_key_configured' => filled(config('services.midtrans.server_key')),
+                'midtrans_client_key_configured' => filled(config('services.midtrans.client_key')),
             ]);
 
             return response()->json([

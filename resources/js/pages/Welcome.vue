@@ -11,9 +11,19 @@ interface BasePackage {
   description: string
 }
 
+interface FeaturedTemplate {
+  id: number
+  slug: string
+  name: string
+  thumbnail_url: string | null
+  price: number
+  is_free: boolean
+}
+
 const props = defineProps<{
   canRegister: boolean
   basePackage: BasePackage | null
+  featuredTemplates: FeaturedTemplate[]
 }>()
 
 const isLocal = import.meta.env.DEV
@@ -25,30 +35,6 @@ const formattedPrice = computed(() => {
 
   return `Rp ${props.basePackage.price.toLocaleString('id-ID')}`
 })
-
-const templates = [
-  {
-    name: 'Minang Songket Gadang',
-    slug: 'minang-songket-gadang',
-    tone: 'Tradisional, hangat, dan megah',
-    story: 'Untuk pasangan yang ingin membawa kehangatan adat Minangkabau ke setiap tamu undangan.',
-    image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    name: 'Bugis Royal Mappacci',
-    slug: 'bugis-royal-mappacci',
-    tone: 'Editorial, royal, dan romantis',
-    story: 'Nuansa keagungan Bugis yang elegan untuk acara pernikahan yang terasa penuh martabat.',
-    image: 'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    name: 'Chinese Imperial Luxe',
-    slug: 'chinese-imperial-luxe',
-    tone: 'Merah emas, formal, dan mewah',
-    story: 'Merah emas yang kaya makna untuk momen bahagia yang dirayakan dengan penuh kebanggaan.',
-    image: 'https://images.unsplash.com/photo-1529634899331-b52ed4ee8d7b?auto=format&fit=crop&w=900&q=80',
-  },
-]
 
 const features = [
   { icon: Eye, title: 'Lihat dulu, baru putuskan', text: 'Kamu bisa cek tampilan asli setiap template sebelum checkout. Yang kamu lihat adalah yang tamu akan buka.' },
@@ -121,19 +107,30 @@ const steps = [
             <Link href="/templates" class="my-btn-secondary w-fit px-7">Lihat semua</Link>
           </div>
 
-          <div class="grid gap-6 md:grid-cols-3">
-            <article v-for="template in templates" :key="template.slug" class="my-card group overflow-hidden p-3">
+          <div v-if="featuredTemplates.length > 0" class="grid gap-6 md:grid-cols-3">
+            <article v-for="template in featuredTemplates" :key="template.id" class="my-card group overflow-hidden p-3">
               <div class="overflow-hidden rounded-lg">
                 <img
-                  :src="template.image"
+                  v-if="template.thumbnail_url"
+                  :src="template.thumbnail_url"
                   :alt="template.name"
                   class="aspect-[3/4] w-full object-cover transition duration-700 group-hover:scale-105"
                 />
+                <div v-else class="grid aspect-[3/4] place-items-center bg-[var(--my-tertiary)]/35">
+                  <span class="font-display text-6xl text-[var(--my-primary)]">My</span>
+                </div>
               </div>
               <div class="p-4">
                 <h3 class="my-heading text-2xl">{{ template.name }}</h3>
-                <p class="mt-2 text-sm text-[var(--my-muted)]">{{ template.tone }}</p>
-                <p class="mt-3 text-sm leading-6 text-[var(--my-neutral)]">{{ template.story }}</p>
+                <div class="mt-3 flex items-end justify-between gap-4">
+                  <p class="text-2xl font-bold text-[var(--my-primary)]">
+                    {{ template.is_free ? 'Gratis' : `Rp ${template.price.toLocaleString('id-ID')}` }}
+                  </p>
+                  <p class="text-sm font-semibold uppercase tracking-[0.12em] text-[var(--my-muted)]">Premium</p>
+                </div>
+                <p class="mt-3 text-sm leading-6 text-[var(--my-neutral)]">
+                  Preview tampilan asli template sebelum checkout, lalu lanjutkan ke editor untuk mengisi detail undangan.
+                </p>
                 <a
                   :href="`/templates/${template.slug}/render`"
                   target="_blank"
@@ -144,6 +141,11 @@ const steps = [
                 </a>
               </div>
             </article>
+          </div>
+
+          <div v-else class="my-card py-14 text-center">
+            <p class="my-heading text-3xl">Template segera tersedia</p>
+            <p class="my-copy mx-auto mt-3 max-w-md">Koleksi template akan tampil otomatis setelah diaktifkan dari database.</p>
           </div>
         </div>
       </section>

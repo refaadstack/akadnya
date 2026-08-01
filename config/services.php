@@ -25,8 +25,8 @@ return [
     'brevo' => [
         'key' => env('BREVO_API_KEY'),
         'endpoint' => env('BREVO_API_ENDPOINT', 'https://api.brevo.com/v3/smtp/email'),
-        'from_address' => env('MAIL_FROM_ADDRESS'),
-        'from_name' => env('MAIL_FROM_NAME'),
+        'from_address' => env('MAIL_FROM_ADDRESS', 'no-reply@myakad.refaadstack.com'),
+        'from_name' => env('MAIL_FROM_NAME', 'MyAkad'),
     ],
 
     'ses' => [

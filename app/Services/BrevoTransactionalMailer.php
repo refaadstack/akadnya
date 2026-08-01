@@ -17,10 +17,13 @@ class BrevoTransactionalMailer
             throw new \RuntimeException('BREVO_API_KEY is not configured.');
         }
 
+        $fromEmail = config('services.brevo.from_address') ?? config('mail.from.address');
+        $fromName = config('services.brevo.from_name') ?? config('mail.from.name');
+
         $payload = [
             'sender' => [
-                'name' => config('services.brevo.from_name', config('mail.from.name')),
-                'email' => config('services.brevo.from_address', config('mail.from.address')),
+                'name' => $fromName,
+                'email' => $fromEmail,
             ],
             'to' => $to,
             'subject' => $subject,

@@ -118,6 +118,19 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 - Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
 
+## Post-Change Workflow (MANDATORY)
+
+- After all code changes are verified with no errors (tests pass, lint clean, no type errors), you MUST commit and push the changes immediately.
+- After pushing, you MUST rebuild the Docker image so production stays in sync. Use `docker compose build` or the project's build command, then redeploy.
+- Never leave uncommitted changes that have been verified as correct. Push them before finishing the task.
+
+## Database Safety (CRITICAL)
+
+- NEVER run `migrate:refresh`, `migrate:fresh`, `migrate:reset`, `db:wipe`, or any destructive migration command on the production database.
+- NEVER drop, truncate, or delete production tables or data under any circumstances.
+- For feature tests or unit tests that require a fresh database, use a separate testing database configured via `DB_CONNECTION` (e.g., `sqlite` in-memory or a dedicated `myakad_testing` database).
+- The `.env.testing` file should point to a separate database, never the production one.
+
 === tests rules ===
 
 # Test Enforcement

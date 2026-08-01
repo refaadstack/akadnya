@@ -16,8 +16,8 @@ services:
       DB_HOST: mysql
       DB_PORT: 3306
       DB_DATABASE: myakad
-      DB_USERNAME: myakad
-      DB_PASSWORD: myakad_secret
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
       MIDTRANS_SERVER_KEY: ${MIDTRANS_SERVER_KEY:-SB-Mid-server-avYbbijOCiUpuBiB32snZg9R}
       MIDTRANS_CLIENT_KEY: ${MIDTRANS_CLIENT_KEY:-SB-Mid-client-Kw3o7zBIgNS3Ftk1}
       MIDTRANS_IS_PRODUCTION: "false"
@@ -26,39 +26,9 @@ services:
     volumes:
       - ./storage/app/public:/app/storage/app/public
       - ./storage/logs:/app/storage/logs
-    depends_on:
-      mysql:
-        condition: service_healthy
+    networks:
+      - infra_default
 
-  mysql:
-    image: mysql:8.0
-    container_name: myakad-mysql
-    ports:
-      - "3307:3306"
-    environment:
-      MYSQL_DATABASE: myakad
-      MYSQL_USER: myakad
-      MYSQL_PASSWORD: myakad_secret
-      MYSQL_ROOT_PASSWORD: root_secret
-    volumes:
-      - ./docker/mysql/data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_secret"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: myakad-pma
-    ports:
-      - "8082:80"
-    environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
-      PMA_USER: myakad
-      PMA_PASSWORD: myakad_secret
-      MYSQL_ROOT_PASSWORD: root_secret
-    depends_on:
-      mysql:
-        condition: service_healthy
+networks:
+  infra_default:
+    external: true

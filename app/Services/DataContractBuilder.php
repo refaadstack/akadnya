@@ -60,20 +60,28 @@ class DataContractBuilder
             ])
             ->values();
 
+        $groomInitial = $this->initialOf($content?->groom_nickname) ?? $this->initialOf($content?->groom_name);
+        $brideInitial = $this->initialOf($content?->bride_nickname) ?? $this->initialOf($content?->bride_name);
+
         // Base contract with all keys guaranteed to exist
         $contract = [
             // Bride
             'bride_name' => $content?->bride_name ?? null,
+            'bride_nickname' => $content?->bride_nickname ?? null,
             'bride_father' => $content?->bride_father ?? null,
             'bride_mother' => $content?->bride_mother ?? null,
             'bride_photo_url' => $content?->bride_photo_url ?? null,
+            'bride_initial' => $brideInitial,
 
             // Groom
             'groom_name' => $content?->groom_name ?? null,
+            'groom_nickname' => $content?->groom_nickname ?? null,
             'groom_father' => $content?->groom_father ?? null,
             'groom_mother' => $content?->groom_mother ?? null,
             'groom_photo_url' => $content?->groom_photo_url ?? null,
+            'groom_initial' => $groomInitial,
             'couple_photo_url' => $content?->couple_photo_url ?? null,
+            'couple_initials' => $groomInitial && $brideInitial ? "{$groomInitial} & {$brideInitial}" : null,
 
             // Akad venue
             'akad_venue' => $content?->akad_venue ?? null,
@@ -147,7 +155,9 @@ class DataContractBuilder
     {
         $contract = array_replace($this->buildEmptyPreviewContract(), $this->readTemplateDefaults($template));
 
-        return $this->hydrateDatetimeVariables($contract);
+        $contract = $this->hydrateDatetimeVariables($contract);
+
+        return $this->hydrateInitials($contract);
     }
 
     /**
@@ -191,14 +201,19 @@ class DataContractBuilder
     {
         return [
             'bride_name' => null,
+            'bride_nickname' => null,
             'bride_father' => null,
             'bride_mother' => null,
             'bride_photo_url' => null,
+            'bride_initial' => null,
             'groom_name' => null,
+            'groom_nickname' => null,
             'groom_father' => null,
             'groom_mother' => null,
             'groom_photo_url' => null,
+            'groom_initial' => null,
             'couple_photo_url' => null,
+            'couple_initials' => null,
             'akad_datetime' => null,
             'akad_venue' => null,
             'akad_maps_url' => null,
@@ -287,5 +302,32 @@ class DataContractBuilder
         } catch (\Exception) {
             return null;
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $contract
+     * @return array<string, mixed>
+     */
+    protected function hydrateInitials(array $contract): array
+    {
+        $groom = $this->initialOf($contract['groom_nickname'] ?? null) ?? $this->initialOf($contract['groom_name'] ?? null);
+        $bride = $this->initialOf($contract['bride_nickname'] ?? null) ?? $this->initialOf($contract['bride_name'] ?? null);
+
+        $contract['groom_initial'] = $groom;
+        $contract['bride_initial'] = $bride;
+        $contract['couple_initials'] = $groom && $bride ? "{$groom} & {$bride}" : null;
+
+        return $contract;
+    }
+
+    protected function initialOf(mixed $name): ?string
+    {
+        $name = trim((string) ($name ?? ''));
+
+        if ($name === '') {
+            return null;
+        }
+
+        return mb_strtoupper(mb_substr($name, 0, 1));
     }
 }

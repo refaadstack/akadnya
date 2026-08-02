@@ -22,10 +22,12 @@ class InvitationContentRequest extends FormRequest
         return [
             // Identitas Mempelai
             'bride_name' => 'required|string|max:255',
+            'bride_nickname' => 'nullable|string|max:255',
             'bride_father' => 'nullable|string|max:255',
             'bride_mother' => 'nullable|string|max:255',
             'bride_photo_url' => 'nullable|url|max:500',
             'groom_name' => 'required|string|max:255',
+            'groom_nickname' => 'nullable|string|max:255',
             'groom_father' => 'nullable|string|max:255',
             'groom_mother' => 'nullable|string|max:255',
             'groom_photo_url' => 'nullable|url|max:500',

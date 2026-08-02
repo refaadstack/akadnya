@@ -39,14 +39,19 @@ test('build returns all data contract keys even with null content', function () 
     // Verify all required keys exist
     expect($contract)->toHaveKeys([
         'bride_name',
+        'bride_nickname',
         'bride_father',
         'bride_mother',
         'bride_photo_url',
+        'bride_initial',
         'groom_name',
+        'groom_nickname',
         'groom_father',
         'groom_mother',
         'groom_photo_url',
+        'groom_initial',
         'couple_photo_url',
+        'couple_initials',
         'akad_venue',
         'akad_maps_url',
         'akad_datetime_formatted',
@@ -268,6 +273,75 @@ test('build includes akad datetime in ISO format', function () {
     $contract = $this->builder->build($invitation);
 
     expect($contract['akad_datetime'])->toBe($akad->toIso8601String());
+});
+
+test('build includes nicknames and initials derived from nicknames', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'groom_name' => 'Redho Fadillah Adha',
+        'groom_nickname' => 'Redho',
+        'bride_name' => 'Yeliani Putri Tandyana',
+        'bride_nickname' => 'Yeli',
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['groom_nickname'])->toBe('Redho');
+    expect($contract['bride_nickname'])->toBe('Yeli');
+    expect($contract['groom_initial'])->toBe('R');
+    expect($contract['bride_initial'])->toBe('Y');
+    expect($contract['couple_initials'])->toBe('R & Y');
+});
+
+test('build falls back to full name initials when nickname is empty', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'groom_name' => 'Redho Fadillah Adha',
+        'bride_name' => 'Yeliani Putri Tandyana',
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['groom_nickname'])->toBeNull();
+    expect($contract['groom_initial'])->toBe('R');
+    expect($contract['bride_initial'])->toBe('Y');
+    expect($contract['couple_initials'])->toBe('R & Y');
+});
+
+test('buildTemplateDefaults computes initials from template defaults', function () {
+    $slug = 'test-'.uniqid();
+    $template = Template::factory()->create(['slug' => $slug]);
+    $templatePath = storage_path("app/public/templates/{$slug}");
+
+    File::makeDirectory($templatePath, 0755, true);
+    File::put($templatePath.'/template.json', json_encode([
+        'defaults' => [
+            'bride_name' => 'Ayu Template',
+            'bride_nickname' => 'Ayu',
+            'groom_name' => 'Raka Template',
+            'groom_nickname' => 'Raka',
+        ],
+    ]));
+
+    $contract = $this->builder->buildTemplateDefaults($template);
+
+    expect($contract['groom_initial'])->toBe('R');
+    expect($contract['bride_initial'])->toBe('A');
+    expect($contract['couple_initials'])->toBe('R & A');
 });
 
 test('buildTemplateDefaults returns template-owned preview data', function () {

@@ -40,10 +40,12 @@ class EditorController extends Controller
             ],
             'content' => $invitation->content ? [
                 'bride_name' => $invitation->content->bride_name,
+                'bride_nickname' => $invitation->content->bride_nickname,
                 'bride_father' => $invitation->content->bride_father,
                 'bride_mother' => $invitation->content->bride_mother,
                 'bride_photo_url' => $invitation->content->bride_photo_url,
                 'groom_name' => $invitation->content->groom_name,
+                'groom_nickname' => $invitation->content->groom_nickname,
                 'groom_father' => $invitation->content->groom_father,
                 'groom_mother' => $invitation->content->groom_mother,
                 'groom_photo_url' => $invitation->content->groom_photo_url,

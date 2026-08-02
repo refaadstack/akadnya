@@ -130,3 +130,45 @@ test('client preview renders love stories and wishes from database', function ()
     $response->assertSee('Budi|Selamat menempuh hidup baru!', false);
     $response->assertDontSee('Pertemuan Pertama</h4>', false);
 });
+
+test('client preview cover renders initials from nicknames', function () {
+    $this->withoutMiddleware(HasBasePackage::class);
+
+    $user = User::factory()->create();
+    $slug = 'test-'.uniqid();
+    $template = Template::factory()->create(['slug' => $slug]);
+    $templateSection = $template->sections()->create([
+        'file' => 'hero.html',
+        'label' => 'Hero',
+        'sort_order' => 1,
+        'is_required' => true,
+    ]);
+
+    $templatePath = storage_path("app/public/templates/{$slug}");
+    File::makeDirectory($templatePath.'/sections', 0755, true);
+    File::makeDirectory($templatePath.'/assets', 0755, true);
+    File::put($templatePath.'/sections/hero.html', '<h1 class="cover-title">{{ $couple_initials ?? "" }}</h1>');
+    File::put($templatePath.'/assets/style.css', '');
+    File::put($templatePath.'/assets/script.js', '');
+
+    $invitation = Invitation::factory()->for($user)->for($template)->create();
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'bride_name' => 'Ayu Nadia Putri',
+        'bride_nickname' => 'Ayu',
+        'groom_name' => 'Raka Pradana',
+        'groom_nickname' => 'Raka',
+    ]);
+
+    $invitation->sections()->create([
+        'template_section_id' => $templateSection->id,
+        'sort_order' => 1,
+        'is_visible' => true,
+    ]);
+
+    $response = $this->actingAs($user)->get('/dashboard/editor/preview');
+
+    $response->assertOk();
+    $response->assertSee('<h1 class="cover-title">R &amp; A</h1>', false);
+    $response->assertDontSee('class="cover-title">Ayu Nadia Putri', false);
+});

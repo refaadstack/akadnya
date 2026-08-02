@@ -14,10 +14,12 @@ interface GalleryPhoto {
 
 interface InvitationContent {
     bride_name: string | null;
+    bride_nickname: string | null;
     bride_father: string | null;
     bride_mother: string | null;
     bride_photo_url: string | null;
     groom_name: string | null;
+    groom_nickname: string | null;
     groom_father: string | null;
     groom_mother: string | null;
     groom_photo_url: string | null;
@@ -56,10 +58,12 @@ const props = defineProps<{
 
 const form = useForm({
     bride_name: props.content?.bride_name || '',
+    bride_nickname: props.content?.bride_nickname || '',
     bride_father: props.content?.bride_father || '',
     bride_mother: props.content?.bride_mother || '',
     bride_photo_url: props.content?.bride_photo_url || '',
     groom_name: props.content?.groom_name || '',
+    groom_nickname: props.content?.groom_nickname || '',
     groom_father: props.content?.groom_father || '',
     groom_mother: props.content?.groom_mother || '',
     groom_photo_url: props.content?.groom_photo_url || '',
@@ -474,6 +478,19 @@ const submit = () => {
                                 </p>
                             </div>
 
+                            <div>
+                                <label
+                                    class="mb-2 block text-sm font-medium text-gray-700"
+                                    >Nama Panggilan</label
+                                >
+                                <input
+                                    v-model="form.bride_nickname"
+                                    type="text"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-pink-500"
+                                    placeholder="Contoh: Yeli"
+                                />
+                            </div>
+
                             <div class="grid gap-4 md:grid-cols-2">
                                 <div>
                                     <label
@@ -611,6 +628,19 @@ const submit = () => {
                                 >
                                     {{ form.errors.groom_name }}
                                 </p>
+                            </div>
+
+                            <div>
+                                <label
+                                    class="mb-2 block text-sm font-medium text-gray-700"
+                                    >Nama Panggilan</label
+                                >
+                                <input
+                                    v-model="form.groom_nickname"
+                                    type="text"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-pink-500"
+                                    placeholder="Contoh: Redho"
+                                />
                             </div>
 
                             <div class="grid gap-4 md:grid-cols-2">

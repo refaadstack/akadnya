@@ -13,7 +13,9 @@ class InvitationContent extends Model
     protected $fillable = [
         'invitation_id',
         'bride_name',
+        'bride_nickname',
         'groom_name',
+        'groom_nickname',
         'bride_father',
         'bride_mother',
         'bride_photo_url',

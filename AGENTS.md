@@ -35,6 +35,16 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 This project has domain-specific skills available in `**/skills/**`. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
 
+## Git & Commit Rules
+
+- Commit and push after EVERY change you make to the project. Do not leave work uncommitted at the end of a task.
+- Only push when there are no errors: verify tests pass (and lint/typecheck where applicable) before pushing. Never push failing or half-finished work.
+- Never perform actions that can break the project without explicit user permission, including:
+  - Dropping or truncating databases (`DROP DATABASE`, `TRUNCATE`, destructive migrations).
+  - Deleting core files (Laravel core, `app/`, `config/`, `database/`, `resources/`, `routes/`, tests, docker config) without asking first.
+  - Force-pushing or rewriting shared git history.
+- If a change is still incomplete or in a broken state, say so instead of pushing.
+
 ## Conventions
 
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.

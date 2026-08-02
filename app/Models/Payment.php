@@ -17,6 +17,7 @@ class Payment extends Model
         'provider',
         'provider_transaction_id',
         'snap_token',
+        'payment_url',
         'payment_method',
         'amount',
         'status',

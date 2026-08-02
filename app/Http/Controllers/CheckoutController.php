@@ -105,13 +105,13 @@ class CheckoutController extends Controller
             });
 
             $paymentService = app(PaymentService::class);
-            $snapToken = $paymentService->requestSnapToken($order);
+            $payment = $paymentService->createTransaction($order);
 
             return response()->json([
                 'success' => true,
                 'order_id' => $order->id,
                 'order_number' => $order->order_number,
-                'snap_token' => $snapToken,
+                'payment_url' => $payment->payment_url,
                 'total_amount' => $order->total_amount,
             ]);
         } catch (\Throwable $e) {
@@ -129,9 +129,8 @@ class CheckoutController extends Controller
                 'addon_ids' => $addonIds,
                 'order_id' => $order?->id,
                 'order_number' => $order?->order_number,
-                'midtrans_is_production' => config('services.midtrans.is_production'),
-                'midtrans_server_key_configured' => filled(config('services.midtrans.server_key')),
-                'midtrans_client_key_configured' => filled(config('services.midtrans.client_key')),
+                'payment_service_url' => config('services.payment_service.base_url'),
+                'payment_service_key_configured' => filled(config('services.payment_service.product_key')),
             ]);
 
             return response()->json([

@@ -141,32 +141,10 @@ const submitOrder = async () => {
       return
     }
     
-    if (data.snap_token) {
-      const snapToken = data.snap_token
-      
-      // @ts-ignore - Midtrans Snap global
-      window.snap.pay(snapToken, {
-        onSuccess: function(result: any) {
-          console.log('Payment success:', result)
-          router.visit('/dashboard')
-        },
-        onPending: function(result: any) {
-          console.log('Payment pending:', result)
-          alert('Menunggu pembayaran. Silakan selesaikan pembayaran Anda.')
-          router.visit('/dashboard')
-        },
-        onError: function(result: any) {
-          console.log('Payment error:', result)
-          alert('Terjadi kesalahan saat memproses pembayaran. Silakan coba lagi.')
-          isSubmitting.value = false
-        },
-        onClose: function() {
-          console.log('Payment popup closed')
-          isSubmitting.value = false
-        }
-      })
+    if (data.payment_url) {
+      window.location.href = data.payment_url
     } else {
-      alert('Gagal mendapatkan token pembayaran. Silakan coba lagi.')
+      alert('Gagal mendapatkan URL pembayaran. Silakan coba lagi.')
       isSubmitting.value = false
     }
   } catch (error) {

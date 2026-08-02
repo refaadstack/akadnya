@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Dev\PaymentSimulatorController;
 use App\Http\Controllers\EditorController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
@@ -10,13 +9,12 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\InvitationSettingsController;
 use App\Http\Controllers\MediaController;
-use App\Http\Controllers\MidtransWebhookController;
+use App\Http\Controllers\PaymentFinishController;
 use App\Http\Controllers\PublicInvitationController;
 use App\Http\Controllers\TemplateAssetController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\TemplatePreviewController;
 use App\Http\Controllers\WelcomeController;
-use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
@@ -50,24 +48,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 });
 
-// Midtrans webhook (no CSRF, no auth)
-Route::post('/webhook/midtrans', [MidtransWebhookController::class, 'handle'])
-    ->name('webhook.midtrans')
-    ->withoutMiddleware([ValidateCsrfToken::class]);
-
-// Development tools (only in local environment)
-if (app()->environment('local')) {
-    Route::prefix('dev')->group(function () {
-        Route::get('/payment-simulator', [PaymentSimulatorController::class, 'index'])
-            ->name('dev.payment-simulator');
-        Route::post('/payment-simulator/success', [PaymentSimulatorController::class, 'simulateSuccess'])
-            ->name('dev.payment-simulator.success');
-        Route::post('/payment-simulator/failure', [PaymentSimulatorController::class, 'simulateFailure'])
-            ->name('dev.payment-simulator.failure');
-        Route::post('/payment-simulator/expired', [PaymentSimulatorController::class, 'simulateExpired'])
-            ->name('dev.payment-simulator.expired');
-    });
-}
+// Payment finish page (public, shows order status)
+Route::get('/payment/finish', [PaymentFinishController::class, '__invoke'])->name('payment.finish');
 
 // Dashboard routes (requires authentication)
 Route::middleware(['auth', 'verified'])->group(function () {

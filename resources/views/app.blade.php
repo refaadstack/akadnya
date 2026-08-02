@@ -50,11 +50,6 @@
 
         @fonts
 
-        <!-- Midtrans Snap -->
-        <script type="text/javascript"
-            src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}"
-            data-client-key="{{ config('services.midtrans.client_key') }}"></script>
-
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         <x-inertia::head>
             <title>{{ config('app.name', 'Laravel') }}</title>

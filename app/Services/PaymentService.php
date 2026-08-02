@@ -4,143 +4,110 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Payment;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-use Midtrans\Config;
-use Midtrans\Snap;
 
 class PaymentService
 {
-    public function __construct()
+    public function createTransaction(Order $order): Payment
     {
-        // Configure Midtrans
-        Config::$serverKey = config('services.midtrans.server_key');
-        Config::$isProduction = config('services.midtrans.is_production', false);
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
-    }
+        $baseUrl = config('services.payment_service.base_url');
+        $productKey = config('services.payment_service.product_key');
 
-    /**
-     * Request Snap token from Midtrans
-     */
-    public function requestSnapToken(Order $order): string
-    {
-        if (blank(config('services.midtrans.server_key'))) {
-            throw new \RuntimeException('Midtrans server key is not configured.');
+        if (blank($baseUrl) || blank($productKey)) {
+            throw new \RuntimeException('Payment service configuration is missing.');
         }
 
-        $params = [
-            'transaction_details' => [
-                'order_id' => $order->order_number,
-                'gross_amount' => (int) $order->total_amount,
-            ],
-            'customer_details' => [
-                'first_name' => $order->user->name,
+        $items = $order->items->map(function ($item) {
+            return [
+                'id' => (string) $item->id,
+                'name' => $item->name,
+                'price' => (int) $item->price,
+                'quantity' => $item->quantity,
+            ];
+        })->toArray();
+
+        $payload = [
+            'product_order_id' => $order->order_number,
+            'amount' => (int) $order->total_amount,
+            'items' => $items,
+            'customer' => [
+                'name' => $order->user->name,
                 'email' => $order->user->email,
             ],
-            'item_details' => $order->items->map(function ($item) {
-                return [
-                    'id' => (string) $item->id,
-                    'price' => (int) $item->price,
-                    'quantity' => $item->quantity,
-                    'name' => Str::limit($item->name, 50, ''),
-                ];
-            })->toArray(),
+            'callback_url' => route('payment-service.callback'),
         ];
 
-        Log::info('Requesting Midtrans Snap token', [
+        Log::info('Requesting payment service transaction', [
             'order_id' => $order->id,
             'order_number' => $order->order_number,
-            'gross_amount' => (int) $order->total_amount,
-            'item_count' => $order->items->count(),
-            'is_production' => config('services.midtrans.is_production'),
+            'amount' => (int) $order->total_amount,
         ]);
 
-        $snapToken = Snap::getSnapToken($params);
+        $response = Http::timeout(30)
+            ->withHeaders([
+                'X-Product-Key' => $productKey,
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ])
+            ->post($baseUrl.'/api/v1/transactions', $payload);
 
-        // Store payment record
-        Payment::create([
+        if (! $response->successful()) {
+            throw new \RuntimeException('Failed to create transaction: '.$response->body());
+        }
+
+        $data = $response->json();
+
+        $paymentUrl = $data['payment_url'];
+        if (! str_starts_with($paymentUrl, 'http')) {
+            $publicUrl = rtrim(config('services.payment_service.public_url') ?? config('services.payment_service.base_url'), '/');
+            $paymentUrl = $publicUrl.'/'.ltrim($paymentUrl, '/');
+        }
+
+        $payment = Payment::create([
             'order_id' => $order->id,
-            'provider' => 'midtrans',
-            'provider_transaction_id' => $order->order_number,
+            'provider' => 'payment_service',
+            'provider_transaction_id' => $data['transaction_number'],
             'amount' => $order->total_amount,
             'status' => 'pending',
-            'snap_token' => $snapToken,
+            'payment_url' => $paymentUrl,
         ]);
 
-        return $snapToken;
+        return $payment;
     }
 
-    /**
-     * Handle Midtrans webhook notification
-     */
-    public function handleWebhook(array $notification): void
+    public function handlePaymentServiceCallback(array $payload): void
     {
-        $orderNumber = $notification['order_id'];
-        $transactionStatus = $notification['transaction_status'];
-        $fraudStatus = $notification['fraud_status'] ?? null;
+        $transactionNumber = $payload['transaction_number'];
+        $productOrderId = $payload['product_order_id'];
+        $status = $payload['status'];
 
-        $order = Order::where('order_number', $orderNumber)->firstOrFail();
-        $payment = Payment::where('order_id', $order->id)
-            ->where('provider_transaction_id', $orderNumber)
-            ->firstOrFail();
+        $order = \App\Models\Order::where('order_number', $productOrderId)->firstOrFail();
+        $payment = Payment::where('provider_transaction_id', $transactionNumber)->firstOrFail();
 
-        // Verify signature
-        $this->verifySignature($notification);
-
-        // Update payment based on transaction status
-        if ($transactionStatus == 'capture') {
-            if ($fraudStatus == 'accept') {
-                $this->updatePaymentStatus($payment, $order, 'paid');
-            }
-        } elseif ($transactionStatus == 'settlement') {
-            $this->updatePaymentStatus($payment, $order, 'paid');
-        } elseif ($transactionStatus == 'pending') {
-            $this->updatePaymentStatus($payment, $order, 'pending');
-        } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
-            $this->updatePaymentStatus($payment, $order, 'failed');
-        }
-    }
-
-    /**
-     * Verify Midtrans signature
-     */
-    protected function verifySignature(array $notification): void
-    {
-        // Skip signature verification for simulated payments (dev only)
-        if (isset($notification['signature_key']) && $notification['signature_key'] === 'simulated') {
-            if (! app()->environment('local')) {
-                throw new \Exception('Simulated payments are only allowed in local environment');
-            }
+        if ($payment->status === $status) {
+            Log::info('Payment callback idempotent - status unchanged', [
+                'transaction_number' => $transactionNumber,
+                'status' => $status,
+            ]);
 
             return;
         }
 
-        $serverKey = config('services.midtrans.server_key');
-        $orderId = $notification['order_id'];
-        $statusCode = $notification['status_code'];
-        $grossAmount = $notification['gross_amount'];
-        $signatureKey = $notification['signature_key'];
-
-        $mySignature = hash('sha512', $orderId.$statusCode.$grossAmount.$serverKey);
-
-        if ($signatureKey !== $mySignature) {
-            throw new \Exception('Invalid signature');
-        }
-    }
-
-    /**
-     * Update payment and order status
-     */
-    protected function updatePaymentStatus(Payment $payment, Order $order, string $status): void
-    {
         $payment->update([
             'status' => $status,
-            'paid_at' => $status === 'paid' ? now() : null,
+            'paid_at' => $status === 'paid' ? now() : $payment->paid_at,
+            'payment_method' => $payload['payment_method'] ?? null,
+            'raw_response' => $payload['raw'] ?? null,
         ]);
 
-        // Update order status and activate features if paid
         $orderService = app(OrderService::class);
         $orderService->updateOrderStatus($order, $status);
+
+        Log::info('Payment callback processed', [
+            'transaction_number' => $transactionNumber,
+            'order_number' => $productOrderId,
+            'status' => $status,
+        ]);
     }
 }

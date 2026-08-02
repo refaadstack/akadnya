@@ -7,6 +7,8 @@ use App\Models\LoveStory;
 use App\Models\Rsvp;
 use App\Models\Template;
 use App\Models\User;
+use App\Services\BladeRenderService;
+use App\Services\DataContractBuilder;
 use Illuminate\Support\Facades\File;
 
 afterEach(function () {
@@ -171,4 +173,49 @@ test('client preview cover renders initials from nicknames', function () {
     $response->assertOk();
     $response->assertSee('<h1 class="cover-title">R &amp; A</h1>', false);
     $response->assertDontSee('class="cover-title">Ayu Nadia Putri', false);
+});
+
+test('single-file template renders as standalone html without wrapper', function () {
+    $user = User::factory()->create();
+    $slug = 'test-'.uniqid();
+    $template = Template::factory()->create(['slug' => $slug]);
+    $template->sections()->create([
+        'file' => 'full.html',
+        'label' => 'Full Page',
+        'sort_order' => 1,
+        'is_required' => true,
+    ]);
+
+    $templatePath = storage_path("app/public/templates/{$slug}");
+    File::makeDirectory($templatePath.'/sections', 0755, true);
+    File::put($templatePath.'/sections/full.html', '<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>{{ $bride_name }} & {{ $groom_name }}</title></head><body class="standalone-page"><h1 id="cover-name">{{ $couple_initials ?? "" }}</h1></body></html>');
+    File::put($templatePath.'/template.json', json_encode([
+        'name' => 'Single File',
+        'slug' => $slug,
+        'version' => '1.0.0',
+        'single_file' => true,
+        'sections' => [
+            ['file' => 'full.html', 'label' => 'Full Page'],
+        ],
+        'assets' => [],
+    ]));
+
+    $invitation = Invitation::factory()->for($user)->for($template)->create();
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'bride_name' => 'Nadia Putri',
+        'groom_name' => 'Raka Pradana',
+        'bride_nickname' => 'Nadia',
+        'groom_nickname' => 'Raka',
+    ]);
+
+    $data = (new DataContractBuilder)->build($invitation);
+    $html = (new BladeRenderService)->renderInvitation($invitation, $data);
+
+    expect($html)->toStartWith('<!DOCTYPE html>');
+    expect($html)->toContain('<title>Nadia Putri & Raka Pradana</title>');
+    expect($html)->toContain('<h1 id="cover-name">R &amp; N</h1>');
+    expect($html)->toContain('standalone-page');
+    expect($html)->not->toContain("template-{$slug}");
+    expect($html)->not->toContain('<meta name="csrf-token"');
 });

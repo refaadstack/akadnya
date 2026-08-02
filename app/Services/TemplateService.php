@@ -10,6 +10,7 @@ use App\Models\TemplateOrnament;
 use App\Models\TemplateSection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use ZipArchive;
 
 class TemplateService
@@ -19,11 +20,101 @@ class TemplateService
     ) {}
 
     /**
+     * Process uploaded template file: single HTML file or ZIP.
+     *
+     * @return array{success: bool, message: string, template?: Template}
+     */
+    public function processUpload(string $filePath): array
+    {
+        $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+
+        if (in_array($extension, ['html', 'htm'], true)) {
+            return $this->processHtmlUpload($filePath);
+        }
+
+        return $this->processZipUpload($filePath);
+    }
+
+    /**
+     * Process a single-file HTML template upload.
+     *
+     * @return array{success: bool, message: string, template?: Template}
+     */
+    protected function processHtmlUpload(string $filePath): array
+    {
+        try {
+            $content = File::get($filePath);
+
+            if (trim($content) === '') {
+                throw new TemplateValidationException('Template validation failed: HTML file is empty');
+            }
+
+            if (strlen($content) > 2_000_000) {
+                throw new TemplateValidationException('Template validation failed: HTML file exceeds the 2MB limit');
+            }
+
+            if (stripos($content, '<html') === false && stripos($content, '<body') === false) {
+                throw new TemplateValidationException('Template validation failed: file is not a valid HTML document');
+            }
+
+            $fileName = basename($filePath, '.'.pathinfo($filePath, PATHINFO_EXTENSION));
+            $slug = Str::slug($fileName);
+
+            if ($slug === '') {
+                throw new TemplateValidationException('Template validation failed: could not derive a valid slug from the file name');
+            }
+
+            $finalPath = storage_path('app/public/templates/'.$slug);
+
+            if (File::exists($finalPath)) {
+                File::deleteDirectory($finalPath);
+            }
+
+            File::ensureDirectoryExists($finalPath.'/sections');
+            File::copy($filePath, $finalPath.'/sections/full.html');
+
+            $manifest = [
+                'name' => Str::headline($slug),
+                'slug' => $slug,
+                'version' => '1.0.0',
+                'single_file' => true,
+                'sections' => [
+                    [
+                        'file' => 'full.html',
+                        'label' => 'Full Page',
+                        'sort_order' => 1,
+                        'is_required' => true,
+                    ],
+                ],
+                'assets' => [
+                    'css' => [],
+                    'js' => [],
+                ],
+            ];
+
+            File::put($finalPath.'/template.json', json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+            $template = $this->syncTemplateFromDirectory($finalPath, $manifest);
+
+            return [
+                'success' => true,
+                'message' => "Template '{$manifest['name']}' uploaded successfully.",
+                'template' => $template,
+            ];
+        } catch (TemplateValidationException|TemplateSecurityException|TemplateManifestException $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
      * Process uploaded ZIP file: validate, extract, and sync to database.
      *
      * @return array{success: bool, message: string, template?: Template}
      */
-    public function processUpload(string $zipPath): array
+    protected function processZipUpload(string $zipPath): array
     {
         $tempDir = null;
 
@@ -140,11 +231,11 @@ class TemplateService
     /**
      * Scan storage/app/public/templates/ and sync to database
      */
-    public function syncTemplates(): array
+    public function syncTemplates(?string $templatesPath = null): array
     {
         $synced = 0;
         $errors = [];
-        $templatesPath = storage_path('app/public/templates');
+        $templatesPath = $templatesPath ?? storage_path('app/public/templates');
 
         if (! File::exists($templatesPath)) {
             File::makeDirectory($templatesPath, 0755, true);

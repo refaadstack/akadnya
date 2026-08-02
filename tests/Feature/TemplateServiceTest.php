@@ -29,7 +29,7 @@ afterEach(function () {
     }
 
     // Cleanup public/templates/test-* directories
-    $publicTemplates = public_path('templates');
+    $publicTemplates = storage_path('app/public/templates');
     if (is_dir($publicTemplates)) {
         $dirs = glob($publicTemplates.'/test-*');
         foreach ($dirs as $dir) {
@@ -37,8 +37,7 @@ afterEach(function () {
                 File::deleteDirectory($dir);
             }
         }
-    }
-});
+    }});
 
 test('processUpload with valid ZIP creates template in public/templates', function () {
     $zipPath = $this->tempDir.'/test.zip';
@@ -62,9 +61,9 @@ test('processUpload with valid ZIP creates template in public/templates', functi
     expect($result['template'])->toBeInstanceOf(Template::class);
 
     $slug = $result['template']->slug;
-    expect(File::exists(public_path("templates/{$slug}/template.json")))->toBeTrue();
-    expect(File::exists(public_path("templates/{$slug}/sections/cover.html")))->toBeTrue();
-    expect(File::exists(public_path("templates/{$slug}/assets/style.css")))->toBeTrue();
+    expect(File::exists(storage_path("app/public/templates/{$slug}/template.json")))->toBeTrue();
+    expect(File::exists(storage_path("app/public/templates/{$slug}/sections/cover.html")))->toBeTrue();
+    expect(File::exists(storage_path("app/public/templates/{$slug}/assets/style.css")))->toBeTrue();
 
     // Verify database record
     $template = Template::where('slug', $slug)->first();
@@ -93,28 +92,53 @@ test('processUpload with invalid ZIP does not create partial files', function ()
 
     // Verify no files were created in public/templates
     $slug = 'test-invalid-'.substr($zipPath, -13);
-    expect(File::exists(public_path("templates/{$slug}")))->toBeFalse();
+    expect(File::exists(storage_path("app/public/templates/{$slug}")))->toBeFalse();
+});
+
+test('processUpload with valid HTML file creates single-file template', function () {
+    $slug = 'test-html-'.uniqid();
+    $htmlPath = $this->tempDir.'/'.$slug.'.html';
+    File::put($htmlPath, '<!DOCTYPE html><html lang="id"><head><title>Undangan</title></head><body><h1>{{ $bride_name }}</h1></body></html>');
+
+    $result = $this->service->processUpload($htmlPath);
+
+    expect($result['success'])->toBeTrue();
+    expect($result['template'])->toBeInstanceOf(Template::class);
+    expect($result['template']->slug)->toBe($slug);
+
+    expect(File::exists(storage_path("app/public/templates/{$slug}/sections/full.html")))->toBeTrue();
+    expect(File::exists(storage_path("app/public/templates/{$slug}/template.json")))->toBeTrue();
+
+    $config = json_decode(File::get(storage_path("app/public/templates/{$slug}/template.json")), true);
+    expect($config['single_file'])->toBeTrue();
+    expect($config['sections'][0]['file'])->toBe('full.html');
+    expect($config['assets'])->toBeArray();
+});
+
+test('processUpload with invalid HTML file fails without creating files', function () {
+    $slug = 'test-bad-'.uniqid();
+    $htmlPath = $this->tempDir.'/'.$slug.'.html';
+    File::put($htmlPath, 'this is not html');
+
+    $result = $this->service->processUpload($htmlPath);
+
+    expect($result['success'])->toBeFalse();
+    expect($result['message'])->toContain('validation failed');
+    expect(File::exists(storage_path("app/public/templates/{$slug}")))->toBeFalse();
 });
 
 test('syncTemplates from empty directory returns zero synced', function () {
-    // Ensure public/templates exists but is empty
-    $templatesPath = public_path('templates');
-    if (File::exists($templatesPath)) {
-        // Clean it
-        $dirs = File::directories($templatesPath);
-        foreach ($dirs as $dir) {
-            File::deleteDirectory($dir);
-        }
-    }
+    $emptyPath = $this->tempDir.'/empty-templates';
+    File::makeDirectory($emptyPath, 0755, true);
 
-    $result = $this->service->syncTemplates();
+    $result = $this->service->syncTemplates($emptyPath);
 
     expect($result['synced'])->toBe(0);
 });
 
 test('syncTemplates with valid directory creates database record', function () {
     $slug = 'test-sync-'.uniqid();
-    $templatePath = public_path("templates/{$slug}");
+    $templatePath = storage_path("app/public/templates/{$slug}");
 
     // Create template structure
     File::makeDirectory($templatePath.'/sections', 0755, true);
@@ -146,7 +170,7 @@ test('processUpload replaces existing template directory', function () {
     $slug = 'test-replace-'.uniqid();
 
     // Create existing template
-    $existingPath = public_path("templates/{$slug}");
+    $existingPath = storage_path("app/public/templates/{$slug}");
     File::makeDirectory($existingPath, 0755, true);
     File::put($existingPath.'/old-file.txt', 'old content');
 

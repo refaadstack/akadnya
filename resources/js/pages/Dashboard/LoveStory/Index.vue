@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
+import { update as updateLoveStory } from '@/routes/dashboard/love-story';
 
 interface Story {
     id: number | null;
@@ -59,7 +60,7 @@ const reorder = () => {
 };
 
 const submit = () => {
-    form.post(route('dashboard.love-story.update'), {
+    form.post(updateLoveStory(), {
         preserveScroll: true,
     });
 };

@@ -15,24 +15,22 @@ class TemplateUploadAction
     public static function make(): Action
     {
         return Action::make('uploadTemplate')
-            ->label('Upload Template ZIP')
+            ->label('Upload Template')
             ->icon('heroicon-o-arrow-up-tray')
             ->color('primary')
             ->form([
-                Section::make('Upload Instructions')
-                    ->description('Please ensure your ZIP file follows the required structure')
+                Section::make('Upload Rules')
+                    ->description('Read the rules below before uploading a template')
                     ->schema([
                         Text::make(view('filament.components.template-upload-instructions')->render()),
-                    ])
-                    ->collapsible()
-                    ->collapsed(),
+                    ]),
 
-                FileUpload::make('template_zip')
-                    ->label('Template ZIP File')
-                    ->acceptedFileTypes(['application/zip', 'application/x-zip-compressed'])
+                FileUpload::make('template_file')
+                    ->label('Template File (ZIP or HTML)')
+                    ->acceptedFileTypes(['application/zip', 'application/x-zip-compressed', 'text/html', 'application/xhtml+xml'])
                     ->maxSize(51200) // 50MB
                     ->required()
-                    ->helperText('Maximum file size: 50MB')
+                    ->helperText('Upload a ZIP file (multi-section template) or a single HTML file (full-page template). Maximum file size: 50MB.')
                     ->disk('local')
                     ->directory('temp-uploads')
                     ->visibility('private')
@@ -42,7 +40,7 @@ class TemplateUploadAction
                 $templateService = app(TemplateService::class);
 
                 // Get the uploaded file path
-                $relativePath = $data['template_zip'];
+                $relativePath = $data['template_file'];
                 $fullPath = Storage::disk('local')->path($relativePath);
 
                 // Debug logging
@@ -91,10 +89,10 @@ class TemplateUploadAction
                     $action->halt();
                 }
             })
-            ->modalHeading('Upload Template ZIP')
-            ->modalDescription('Upload a ZIP file containing your template. The system will validate the structure and extract the files.')
+            ->modalHeading('Upload Template')
+            ->modalDescription('Upload a ZIP file or a single HTML file. The system will validate the structure and register the template.')
             ->modalSubmitActionLabel('Upload & Process')
-            ->modalWidth('2xl')
+            ->modalWidth('3xl')
             ->closeModalByClickingAway(false);
     }
 

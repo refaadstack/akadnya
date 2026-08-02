@@ -20,6 +20,10 @@ class BladeRenderService
     {
         $template = $invitation->template;
 
+        if ($this->isSingleFileTemplate($template)) {
+            return $this->renderFullPage($template, $data);
+        }
+
         // Get visible sections ordered by sort_order
         $sections = $invitation->sections()
             ->where('is_visible', true)
@@ -74,6 +78,19 @@ HTML;
      */
     public function renderPreview(Template $template, array $dummyData): string
     {
+        if ($this->isSingleFileTemplate($template)) {
+            $html = $this->renderFullPage($template, $dummyData);
+
+            // Inject preview banner before closing body tag
+            $banner = <<<'HTML'
+<div style="position: fixed; top: 0; left: 0; right: 0; background: #f59e0b; color: white; padding: 0.75rem; text-align: center; z-index: 9999; font-family: sans-serif; font-size: 14px; font-weight: 600;">
+    Preview Mode
+</div>
+HTML;
+
+            return str_ireplace('</body>', $banner."\n</body>", $html);
+        }
+
         // Get all sections ordered by sort_order
         $sections = $template->sections()->orderBy('sort_order')->get();
 
@@ -180,6 +197,30 @@ HTML;
 {$html}
 </div>
 HTML;
+    }
+
+    /**
+     * Determine if the template is a single-file template (full.html with inline styles).
+     */
+    public function isSingleFileTemplate(Template $template): bool
+    {
+        return (bool) ($this->getTemplateConfig($template)['single_file'] ?? false);
+    }
+
+    /**
+     * Render a single-file template as a complete standalone HTML page.
+     */
+    public function renderFullPage(Template $template, array $data): string
+    {
+        $path = $template->getFolderPath().'/sections/full.html';
+
+        if (! File::exists($path)) {
+            Log::warning("Single-file template section not found: {$path}");
+
+            return '<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Template tidak ditemukan</title></head><body><p style="font-family:sans-serif;padding:2rem;">File template (full.html) tidak ditemukan.</p></body></html>';
+        }
+
+        return Blade::render(File::get($path), $data);
     }
 
     /**

@@ -22,8 +22,37 @@ class MediaService
     private const ALLOWED_AUDIO_MIMES = [
         'audio/mpeg',
         'audio/mp3',
+        'audio/x-mp3',
+        'audio/x-mpeg',
+        'audio/mpeg3',
         'audio/wav',
+        'audio/x-wav',
+        'audio/x-wave',
+        'audio/wave',
+        'audio/vnd.wave',
         'audio/ogg',
+        'audio/x-ogg',
+        'application/ogg',
+        'audio/mp4',
+        'audio/x-m4a',
+        'audio/aac',
+        'audio/flac',
+        'audio/x-flac',
+    ];
+
+    /**
+     * Audio extensions accepted as a fallback when finfo reports an
+     * ambiguous MIME type (e.g. application/octet-stream for some MP3s,
+     * or video/mp4 for M4A files).
+     */
+    private const ALLOWED_AUDIO_EXTENSIONS = [
+        'mp3',
+        'wav',
+        'ogg',
+        'oga',
+        'm4a',
+        'aac',
+        'flac',
     ];
 
     /**
@@ -68,9 +97,17 @@ class MediaService
             default => self::ALLOWED_IMAGE_MIMES,
         };
 
-        if (! in_array($mimeType, $allowedMimes)) {
+        // finfo can misdetect real-world audio (odd ID3 tags, VBR frames,
+        // M4A boxes, etc.) as non-audio MIME types. For music uploads, also
+        // accept files whose extension is a known audio extension so valid
+        // songs are never blocked.
+        $hasAllowedAudioExtension = $type === 'music'
+            && in_array(strtolower($file->getClientOriginalExtension()), self::ALLOWED_AUDIO_EXTENSIONS);
+
+        if (! in_array($mimeType, $allowedMimes) && ! $hasAllowedAudioExtension) {
             throw new \InvalidArgumentException(
-                "File type not allowed. Detected MIME type: {$mimeType}"
+                "File type not allowed. Detected MIME type: {$mimeType}. "
+                .'Supported: MP3, WAV, OGG, M4A, AAC, FLAC'
             );
         }
     }

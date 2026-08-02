@@ -11,16 +11,14 @@ import {
   Image,
   LayoutDashboard,
   Link2,
-  LockKeyhole,
-  LogOut,
   MessageCircle,
   Palette,
   Send,
   Sparkles,
-  UserRound,
   Users,
 } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import type { Component } from 'vue'
 
 defineOptions({
@@ -104,20 +102,10 @@ const props = defineProps<{
   invitationOptions: InvitationOption[]
 }>()
 
-const showUserMenu = ref(false)
 const showQuickStartGuide = ref(true)
 
 const hasInvitation = computed(() => props.invitation !== null)
 const isPublished = computed(() => props.invitation?.status === 'published')
-
-const navItems = computed(() => [
-  { label: 'Dashboard', href: '/dashboard', show: true },
-  { label: 'Editor', href: '/dashboard/editor', show: hasInvitation.value },
-  { label: 'Kustomisasi', href: '/dashboard/customize', show: hasInvitation.value },
-  { label: 'Galeri', href: '/dashboard/gallery', show: hasInvitation.value },
-  { label: 'Tamu', href: '/dashboard/guests', show: hasInvitation.value },
-  { label: 'Template', href: '/templates', show: true },
-])
 
 const statCards = computed<StatCard[]>(() => [
   { label: 'Total Undangan', value: props.stats.total_invitations, icon: LayoutDashboard },
@@ -138,10 +126,6 @@ const quickActions = [
   { title: 'Bantuan & Support', text: 'Butuh bantuan saat setup? Tim MyAkad siap membantu.', icon: CircleHelp },
   { title: 'Fitur Premium', text: 'Kelola galeri, RSVP, amplop digital, dan detail personal.', icon: Sparkles },
 ]
-
-const logout = () => {
-  router.post('/logout')
-}
 
 const publishInvitation = () => {
   router.post('/dashboard/publish')
@@ -165,62 +149,8 @@ const selectInvitation = (invitationId: number) => {
 </script>
 
 <template>
-  <div class="my-page min-h-screen">
+  <DashboardLayout>
     <Head title="Dashboard" />
-
-    <nav class="sticky top-0 z-40 border-b border-[var(--my-border)]/70 bg-[var(--my-background)]/88 backdrop-blur-md">
-      <div class="my-container">
-        <div class="flex min-h-16 items-center justify-between gap-5">
-          <Link href="/dashboard" class="font-display text-3xl font-bold leading-none text-[var(--my-primary)]">
-            MyAkad
-          </Link>
-
-          <div class="hidden items-center gap-6 lg:flex">
-            <Link
-              v-for="item in navItems.filter((navItem) => navItem.show)"
-              :key="item.href"
-              :href="item.href"
-              class="text-sm font-semibold transition"
-              :class="$page.url === item.href || (item.href !== '/dashboard' && $page.url.startsWith(item.href)) ? 'text-[var(--my-primary)]' : 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'"
-            >
-              {{ item.label }}
-            </Link>
-          </div>
-
-          <div class="relative">
-            <button type="button" class="flex items-center gap-3" @click="showUserMenu = !showUserMenu">
-              <span class="grid size-10 place-items-center rounded-lg bg-[var(--my-primary)] text-sm font-bold text-white">
-                {{ $page.props.auth?.user?.name?.charAt(0).toUpperCase() || 'U' }}
-              </span>
-              <ChevronDown class="size-4 text-[var(--my-muted)]" />
-            </button>
-
-            <div
-              v-show="showUserMenu"
-              class="my-card absolute right-0 mt-3 w-56 overflow-hidden py-2"
-              @click="showUserMenu = false"
-            >
-              <div class="border-b border-[var(--my-border)] px-4 py-3">
-                <p class="truncate text-sm font-bold text-[var(--my-neutral)]">{{ $page.props.auth?.user?.name }}</p>
-                <p class="truncate text-xs text-[var(--my-muted)]">{{ $page.props.auth?.user?.email }}</p>
-              </div>
-              <Link href="/settings/profile" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:bg-[var(--my-surface-soft)]">
-                <UserRound class="size-4" />
-                Profil
-              </Link>
-              <Link href="/settings/security" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:bg-[var(--my-surface-soft)]">
-                <LockKeyhole class="size-4" />
-                Keamanan
-              </Link>
-              <button type="button" class="flex w-full items-center gap-2 border-t border-[var(--my-border)] px-4 py-2 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50" @click="logout">
-                <LogOut class="size-4" />
-                Keluar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
 
     <main class="my-container py-10">
       <section class="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
@@ -440,5 +370,5 @@ const selectInvitation = (invitationId: number) => {
         </article>
       </section>
     </main>
-  </div>
+  </DashboardLayout>
 </template>

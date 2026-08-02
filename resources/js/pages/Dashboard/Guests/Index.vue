@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import { Head, Link, router, useForm } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
 
@@ -210,7 +210,7 @@ const downloadTemplate = () => {
 </script>
 
 <template>
-  <AppLayout>
+  <DashboardLayout>
     <Head title="Manajemen Tamu" />
 
     <div class="py-8">
@@ -648,5 +648,5 @@ const downloadTemplate = () => {
         </form>
       </div>
     </div>
-  </AppLayout>
+  </DashboardLayout>
 </template>

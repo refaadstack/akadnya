@@ -49,8 +49,8 @@ class MediaService
         // Store file
         $storedPath = $file->storeAs($path, $filename, 'public');
 
-        // Return relative URL (works regardless of APP_URL)
-        return '/storage/'.$storedPath;
+        // Return full URL
+        return rtrim(config('app.url'), '/').'/storage/'.$storedPath;
     }
 
     /**

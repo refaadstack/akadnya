@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router, useForm } from '@inertiajs/vue3'
 import { ref } from 'vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
 
 interface Invitation {
   id: number
@@ -14,6 +15,7 @@ interface Invitation {
 
 const props = defineProps<{
   invitation: Invitation
+  app_domain: string
 }>()
 
 const subdomainForm = useForm({
@@ -80,43 +82,25 @@ const unpublish = () => {
 </script>
 
 <template>
-  <div>
+  <DashboardLayout>
     <Head title="Pengaturan Undangan" />
 
-    <div class="min-h-screen bg-gray-50">
-      <!-- Header -->
-      <div class="bg-white border-b border-gray-200">
-        <div class="container mx-auto px-4 py-6">
-          <div class="flex items-center space-x-4">
-            <Link href="/dashboard" class="text-gray-600 hover:text-gray-900">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-              </svg>
-            </Link>
-            <div>
-              <h1 class="text-3xl font-bold text-gray-900">Pengaturan Undangan</h1>
-              <p class="text-gray-600 mt-1">Kelola domain dan publikasi undangan</p>
-            </div>
-          </div>
-        </div>
+    <!-- Content -->
+    <div class="container mx-auto px-4 py-8">
+      <!-- Flash Messages -->
+      <div v-if="$page.props.flash?.success" class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6 flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
+        {{ $page.props.flash.success }}
       </div>
 
-      <!-- Content -->
-      <div class="container mx-auto px-4 py-8">
-        <!-- Flash Messages -->
-        <div v-if="$page.props.flash?.success" class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6 flex items-center">
-          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-          </svg>
-          {{ $page.props.flash.success }}
-        </div>
-
-        <div v-if="$page.props.flash?.error" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6 flex items-center">
-          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-          </svg>
-          {{ $page.props.flash.error }}
-        </div>
+      <div v-if="$page.props.flash?.error" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6 flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+        {{ $page.props.flash.error }}
+      </div>
 
         <div class="max-w-3xl">
           <!-- Status & Publish -->
@@ -214,7 +198,7 @@ const unpublish = () => {
               <div class="space-y-3 text-sm text-blue-900">
                 <div>
                   <p class="font-semibold mb-1">📌 Apa itu Subdomain?</p>
-                  <p class="text-blue-800">Subdomain adalah alamat unik untuk undangan Anda. Contoh: <code class="bg-blue-100 px-2 py-0.5 rounded">siti-budi-2024.myakad.test</code></p>
+                  <p class="text-blue-800">Subdomain adalah alamat unik untuk undangan Anda. Contoh: <code class="bg-blue-100 px-2 py-0.5 rounded">siti-budi-2024.{{ app_domain }}</code></p>
                 </div>
 
                 <div>
@@ -270,7 +254,7 @@ const unpublish = () => {
                       placeholder="nama-undangan"
                       required
                     />
-                    <span class="text-gray-600">.myakad.test</span>
+                    <span class="text-gray-600">.{{ app_domain }}</span>
                   </div>
                   <p v-if="subdomainForm.errors.subdomain" class="text-red-600 text-sm mt-1">
                     {{ subdomainForm.errors.subdomain }}
@@ -353,7 +337,7 @@ const unpublish = () => {
                       <div class="bg-white rounded p-2 mt-1 border border-purple-200">
                         <p class="text-xs">Type: <code class="bg-purple-100 px-1 rounded">CNAME</code></p>
                         <p class="text-xs">Name: <code class="bg-purple-100 px-1 rounded">undangan</code> (atau subdomain lain)</p>
-                        <p class="text-xs">Value: <code class="bg-purple-100 px-1 rounded">myakad.test</code></p>
+                        <p class="text-xs">Value: <code class="bg-purple-100 px-1 rounded">{{ app_domain }}</code></p>
                       </div>
                     </li>
                     <li>
@@ -428,7 +412,7 @@ const unpublish = () => {
                   <h4 class="font-semibold text-blue-900 mb-2">Cara Setup Custom Domain:</h4>
                   <ol class="text-sm text-blue-800 space-y-1 list-decimal list-inside">
                     <li>Buat CNAME record di DNS provider Anda</li>
-                    <li>Arahkan ke: <code class="bg-blue-100 px-2 py-0.5 rounded">myakad.test</code></li>
+                    <li>Arahkan ke: <code class="bg-blue-100 px-2 py-0.5 rounded">{{ app_domain }}</code></li>
                     <li>Tunggu propagasi DNS (5-30 menit)</li>
                     <li>Simpan domain di form ini</li>
                   </ol>
@@ -446,6 +430,5 @@ const unpublish = () => {
           </div>
         </div>
       </div>
-    </div>
-  </div>
+  </DashboardLayout>
 </template>

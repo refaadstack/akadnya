@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router, useForm } from '@inertiajs/vue3'
 import { ref } from 'vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
 
 defineOptions({
   layout: undefined
@@ -51,12 +52,6 @@ const props = defineProps<{
   }
   content: InvitationContent | null
 }>()
-
-const showUserMenu = ref(false)
-
-const logout = () => {
-  router.post('/logout')
-}
 
 const form = useForm({
   bride_name: props.content?.bride_name || '',
@@ -274,96 +269,10 @@ const submit = () => {
 </script>
 
 <template>
-  <div>
+  <DashboardLayout>
     <Head title="Edit Konten Undangan" />
 
     <div class="min-h-screen bg-gray-50">
-      <!-- Navigation -->
-      <nav class="bg-white border-b border-gray-200">
-        <div class="container mx-auto px-4">
-          <div class="flex items-center justify-between h-16">
-            <Link href="/dashboard" class="flex items-center space-x-2">
-              <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span class="text-white font-bold text-xl">M</span>
-              </div>
-              <span class="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                MyAkad
-              </span>
-            </Link>
-
-            <div class="hidden md:flex items-center space-x-8">
-              <Link href="/dashboard" class="text-gray-700 hover:text-pink-600 font-medium transition">
-                Dashboard
-              </Link>
-              <Link href="/dashboard/editor" class="text-pink-600 font-medium transition">
-                Editor
-              </Link>
-              <Link href="/dashboard/customize" class="text-gray-700 hover:text-pink-600 font-medium transition">
-                Kustomisasi
-              </Link>
-              <Link href="/dashboard/gallery" class="text-gray-700 hover:text-pink-600 font-medium transition">
-                Galeri
-              </Link>
-              <Link href="/dashboard/guests" class="text-gray-700 hover:text-pink-600 font-medium transition">
-                Tamu
-              </Link>
-              <Link href="/dashboard/rsvp" class="text-gray-700 hover:text-pink-600 font-medium transition">
-                RSVP
-              </Link>
-            </div>
-
-            <div class="relative">
-              <button @click="showUserMenu = !showUserMenu" class="flex items-center space-x-3 focus:outline-none">
-                <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
-                  <span class="text-white font-semibold text-sm">
-                    {{ $page.props.auth?.user?.name?.charAt(0).toUpperCase() || 'U' }}
-                  </span>
-                </div>
-                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              <div v-show="showUserMenu" @click="showUserMenu = false" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                <div class="px-4 py-2 border-b border-gray-100">
-                  <p class="text-sm font-semibold text-gray-900">{{ $page.props.auth?.user?.name }}</p>
-                  <p class="text-xs text-gray-600">{{ $page.props.auth?.user?.email }}</p>
-                </div>
-                
-                <Link href="/settings/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
-                  <div class="flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    Profil
-                  </div>
-                </Link>
-
-                <Link href="/settings/security" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
-                  <div class="flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                    Keamanan
-                  </div>
-                </Link>
-
-                <div class="border-t border-gray-100 mt-2 pt-2">
-                  <button @click="logout" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
-                    <div class="flex items-center">
-                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                      </svg>
-                      Keluar
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       <!-- Main Content -->
       <div class="container mx-auto px-4 py-8">
         <!-- Header -->
@@ -1021,5 +930,5 @@ const submit = () => {
         </form>
       </div>
     </div>
-  </div>
+  </DashboardLayout>
 </template>

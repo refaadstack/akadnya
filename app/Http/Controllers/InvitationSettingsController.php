@@ -35,6 +35,7 @@ class InvitationSettingsController extends Controller
                 'public_url' => $invitation->getPublicUrl(),
                 'is_published' => $invitation->status === 'published',
             ],
+            'app_domain' => parse_url(config('app.url'), PHP_URL_HOST),
         ]);
     }
 

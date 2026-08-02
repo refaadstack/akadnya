@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router, useForm } from '@inertiajs/vue3'
 import { ref } from 'vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
 
 interface Photo {
   id: number
@@ -106,52 +107,19 @@ const onDrop = (event: DragEvent, dropIndex: number) => {
 </script>
 
 <template>
-  <div>
+  <DashboardLayout>
     <Head title="Galeri Foto" />
 
-    <div class="min-h-screen bg-gray-50">
-      <!-- Header -->
-      <div class="bg-white border-b border-gray-200">
-        <div class="container mx-auto px-4">
-          <div class="flex items-center justify-between h-16">
-            <!-- Logo -->
-            <Link href="/dashboard" class="flex items-center space-x-2">
-              <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span class="text-white font-bold text-xl">M</span>
-              </div>
-              <span class="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                MyAkad
-              </span>
-            </Link>
-
-            <!-- Nav Links -->
-            <div class="hidden md:flex items-center space-x-6">
-              <Link href="/dashboard" class="text-gray-700 hover:text-pink-600 font-medium transition">Dashboard</Link>
-              <Link href="/dashboard/editor" class="text-gray-700 hover:text-pink-600 font-medium transition">Editor</Link>
-              <Link href="/dashboard/customize" class="text-gray-700 hover:text-pink-600 font-medium transition">Kustomisasi</Link>
-              <Link href="/dashboard/gallery" class="text-pink-600 font-medium transition">Galeri</Link>
-              <Link href="/dashboard/guests" class="text-gray-700 hover:text-pink-600 font-medium transition">Tamu</Link>
-              <Link href="/dashboard/rsvp" class="text-gray-700 hover:text-pink-600 font-medium transition">RSVP</Link>
-            </div>
-
-            <!-- Page Title (mobile) -->
-            <div class="md:hidden">
-              <h1 class="text-lg font-bold text-gray-900">Galeri Foto</h1>
-            </div>
-          </div>
-        </div>
+    <!-- Content -->
+    <div class="container mx-auto px-4 py-8">
+      <!-- Flash Messages -->
+      <div v-if="$page.props.flash?.success" class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6">
+        {{ $page.props.flash.success }}
       </div>
 
-      <!-- Content -->
-      <div class="container mx-auto px-4 py-8">
-        <!-- Flash Messages -->
-        <div v-if="$page.props.flash?.success" class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6">
-          {{ $page.props.flash.success }}
-        </div>
-
-        <div v-if="$page.props.flash?.error" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
-          {{ $page.props.flash.error }}
-        </div>
+      <div v-if="$page.props.flash?.error" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
+        {{ $page.props.flash.error }}
+      </div>
 
         <div class="max-w-6xl">
           <!-- Upload Section -->
@@ -266,7 +234,6 @@ const onDrop = (event: DragEvent, dropIndex: number) => {
           </div>
         </div>
       </div>
-    </div>
 
     <!-- Edit Caption Modal -->
     <div
@@ -307,5 +274,5 @@ const onDrop = (event: DragEvent, dropIndex: number) => {
         </form>
       </div>
     </div>
-  </div>
+  </DashboardLayout>
 </template>

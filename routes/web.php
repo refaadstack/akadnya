@@ -99,6 +99,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('dashboard/guests/export', [GuestController::class, 'export'])->name('dashboard.guests.export');
         Route::get('dashboard/guests/{guest}/whatsapp', [GuestController::class, 'sendWhatsApp'])->name('dashboard.guests.whatsapp');
 
+        // RSVP management
+        Route::get('dashboard/rsvp', [\App\Http\Controllers\Dashboard\RsvpController::class, 'index'])->name('dashboard.rsvp');
+
+        // Love Story
+        Route::get('dashboard/love-story', [\App\Http\Controllers\Dashboard\LoveStoryController::class, 'index'])->name('dashboard.love-story');
+        Route::post('dashboard/love-story', [\App\Http\Controllers\Dashboard\LoveStoryController::class, 'update'])->name('dashboard.love-story.update');
+
         // Media uploads
         Route::post('media/upload/cover', [MediaController::class, 'uploadCover'])->name('media.upload.cover');
         Route::post('media/upload/gallery', [MediaController::class, 'uploadGallery'])->name('media.upload.gallery');

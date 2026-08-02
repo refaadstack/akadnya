@@ -126,7 +126,7 @@ const unpublish = () => {
               <button
                 v-if="!invitation.is_published"
                 @click="publish"
-                class="bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition"
+                class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition"
               >
                 Publikasikan
               </button>
@@ -250,7 +250,7 @@ const unpublish = () => {
                     <input
                       v-model="subdomainForm.subdomain"
                       type="text"
-                      class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       placeholder="nama-undangan"
                       required
                     />
@@ -268,7 +268,7 @@ const unpublish = () => {
                   <button
                     type="submit"
                     :disabled="subdomainForm.processing"
-                    class="bg-pink-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-pink-700 transition disabled:opacity-50"
+                    class="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50"
                   >
                     {{ subdomainForm.processing ? 'Menyimpan...' : 'Simpan Subdomain' }}
                   </button>
@@ -293,13 +293,13 @@ const unpublish = () => {
                   <h2 class="text-xl font-bold text-gray-900">Custom Domain</h2>
                   <p class="text-sm text-gray-600 mt-1">Gunakan domain sendiri (opsional)</p>
                 </div>
-                <span class="ml-3 bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full">
+                <span class="ml-3 bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">
                   Premium
                 </span>
               </div>
               <button
                 @click="showCustomDomainGuide = !showCustomDomainGuide"
-                class="text-purple-600 hover:text-purple-700 text-sm font-medium flex items-center"
+                class="text-green-600 hover:text-green-700 text-sm font-medium flex items-center"
               >
                 <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -309,23 +309,23 @@ const unpublish = () => {
             </div>
 
             <!-- Guide Section -->
-            <div v-if="showCustomDomainGuide" class="mb-6 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-5">
-              <h3 class="font-bold text-purple-900 mb-3 flex items-center">
+            <div v-if="showCustomDomainGuide" class="mb-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-5">
+              <h3 class="font-bold text-green-900 mb-3 flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
                 Panduan Custom Domain
               </h3>
               
-              <div class="space-y-3 text-sm text-purple-900">
+              <div class="space-y-3 text-sm text-green-900">
                 <div>
                   <p class="font-semibold mb-1">🌐 Apa itu Custom Domain?</p>
-                  <p class="text-purple-800">Custom domain memungkinkan Anda menggunakan domain sendiri untuk undangan. Contoh: <code class="bg-purple-100 px-2 py-0.5 rounded">undangan.example.com</code> atau <code class="bg-purple-100 px-2 py-0.5 rounded">wedding.mydomain.id</code></p>
+                  <p class="text-green-800">Custom domain memungkinkan Anda menggunakan domain sendiri untuk undangan. Contoh: <code class="bg-green-100 px-2 py-0.5 rounded">undangan.example.com</code> atau <code class="bg-green-100 px-2 py-0.5 rounded">wedding.mydomain.id</code></p>
                 </div>
 
                 <div>
                   <p class="font-semibold mb-1">⚙️ Cara Setup Custom Domain:</p>
-                  <ol class="list-decimal list-inside text-purple-800 space-y-2 ml-2">
+                  <ol class="list-decimal list-inside text-green-800 space-y-2 ml-2">
                     <li>
                       <strong>Beli domain</strong> dari provider seperti Niagahoster, Dewaweb, atau Namecheap
                     </li>
@@ -334,10 +334,10 @@ const unpublish = () => {
                     </li>
                     <li>
                       <strong>Buat CNAME record:</strong>
-                      <div class="bg-white rounded p-2 mt-1 border border-purple-200">
-                        <p class="text-xs">Type: <code class="bg-purple-100 px-1 rounded">CNAME</code></p>
-                        <p class="text-xs">Name: <code class="bg-purple-100 px-1 rounded">undangan</code> (atau subdomain lain)</p>
-                        <p class="text-xs">Value: <code class="bg-purple-100 px-1 rounded">{{ app_domain }}</code></p>
+                      <div class="bg-white rounded p-2 mt-1 border border-green-200">
+                        <p class="text-xs">Type: <code class="bg-green-100 px-1 rounded">CNAME</code></p>
+                        <p class="text-xs">Name: <code class="bg-green-100 px-1 rounded">undangan</code> (atau subdomain lain)</p>
+                        <p class="text-xs">Value: <code class="bg-green-100 px-1 rounded">{{ app_domain }}</code></p>
                       </div>
                     </li>
                     <li>
@@ -354,10 +354,10 @@ const unpublish = () => {
 
                 <div>
                   <p class="font-semibold mb-1">📋 Format Domain yang Valid:</p>
-                  <ul class="list-disc list-inside text-purple-800 space-y-1 ml-2">
-                    <li><code class="bg-purple-100 px-1 rounded">undangan.example.com</code></li>
-                    <li><code class="bg-purple-100 px-1 rounded">wedding.mydomain.id</code></li>
-                    <li><code class="bg-purple-100 px-1 rounded">pernikahan.sitibudi.com</code></li>
+                  <ul class="list-disc list-inside text-green-800 space-y-1 ml-2">
+                    <li><code class="bg-green-100 px-1 rounded">undangan.example.com</code></li>
+                    <li><code class="bg-green-100 px-1 rounded">wedding.mydomain.id</code></li>
+                    <li><code class="bg-green-100 px-1 rounded">pernikahan.sitibudi.com</code></li>
                   </ul>
                 </div>
 
@@ -372,16 +372,16 @@ const unpublish = () => {
 
                 <div>
                   <p class="font-semibold mb-1">🔍 Troubleshooting:</p>
-                  <div class="space-y-2 text-purple-800">
-                    <div class="bg-white rounded p-2 border border-purple-200">
+                  <div class="space-y-2 text-green-800">
+                    <div class="bg-white rounded p-2 border border-green-200">
                       <p class="font-medium text-xs">❓ Domain tidak bisa diakses?</p>
                       <p class="text-xs">→ Tunggu propagasi DNS (bisa sampai 24 jam)</p>
                     </div>
-                    <div class="bg-white rounded p-2 border border-purple-200">
+                    <div class="bg-white rounded p-2 border border-green-200">
                       <p class="font-medium text-xs">❓ Error "Domain sudah digunakan"?</p>
                       <p class="text-xs">→ Domain sudah dipakai user lain, gunakan subdomain berbeda</p>
                     </div>
-                    <div class="bg-white rounded p-2 border border-purple-200">
+                    <div class="bg-white rounded p-2 border border-green-200">
                       <p class="font-medium text-xs">❓ Tidak punya domain?</p>
                       <p class="text-xs">→ Gunakan subdomain gratis MyAkad saja, sudah cukup!</p>
                     </div>
@@ -397,7 +397,7 @@ const unpublish = () => {
                   <input
                     v-model="customDomainForm.custom_domain"
                     type="text"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="undangan.example.com"
                   />
                   <p v-if="customDomainForm.errors.custom_domain" class="text-red-600 text-sm mt-1">
@@ -421,7 +421,7 @@ const unpublish = () => {
                 <button
                   type="submit"
                   :disabled="customDomainForm.processing"
-                  class="bg-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-purple-700 transition disabled:opacity-50"
+                  class="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50"
                 >
                   {{ customDomainForm.processing ? 'Menyimpan...' : 'Simpan Custom Domain' }}
                 </button>

@@ -48,7 +48,7 @@ const props = defineProps<{
 
             <Link
               href="/dashboard/editor"
-              class="bg-pink-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-pink-700 transition"
+              class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition"
             >
               Kembali ke Editor
             </Link>
@@ -65,7 +65,7 @@ const props = defineProps<{
         <p class="text-gray-400 mb-6">{{ error }}</p>
         <Link
           href="/dashboard/editor"
-          class="inline-block bg-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink-700 transition"
+          class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
         >
           Isi Konten Sekarang
         </Link>
@@ -74,7 +74,7 @@ const props = defineProps<{
       <!-- Preview Content -->
       <div v-else class="h-[calc(100vh-64px)]">
         <!-- Placeholder for actual template rendering -->
-        <div class="h-full bg-gradient-to-br from-pink-50 via-white to-purple-50 overflow-auto">
+        <div class="h-full bg-gradient-to-br from-green-50 via-white to-emerald-50 overflow-auto">
           <div class="container mx-auto px-4 py-16">
             <!-- Cover Section -->
             <div class="relative h-screen flex items-center justify-center mb-16">
@@ -87,7 +87,7 @@ const props = defineProps<{
               </div>
               <div
                 v-else
-                class="absolute inset-0 bg-gradient-to-br from-pink-400 to-purple-600"
+                class="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-700"
               ></div>
 
               <div class="relative z-10 text-center text-white px-4">
@@ -112,7 +112,7 @@ const props = defineProps<{
               <div class="grid md:grid-cols-2 gap-8">
                 <!-- Bride -->
                 <div class="text-center">
-                  <div class="w-48 h-48 mx-auto mb-4 rounded-full bg-gradient-to-br from-pink-200 to-purple-200"></div>
+                  <div class="w-48 h-48 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-200 to-green-200"></div>
                   <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ invitation.content.bride_name }}</h3>
                   <p v-if="invitation.content.bride_father || invitation.content.bride_mother" class="text-gray-600">
                     Putri dari<br />
@@ -124,7 +124,7 @@ const props = defineProps<{
 
                 <!-- Groom -->
                 <div class="text-center">
-                  <div class="w-48 h-48 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-200 to-purple-200"></div>
+                  <div class="w-48 h-48 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-200 to-green-200"></div>
                   <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ invitation.content.groom_name }}</h3>
                   <p v-if="invitation.content.groom_father || invitation.content.groom_mother" class="text-gray-600">
                     Putra dari<br />
@@ -142,10 +142,10 @@ const props = defineProps<{
               <div class="grid md:grid-cols-2 gap-8">
                 <!-- Akad -->
                 <div class="bg-white rounded-xl shadow-lg p-8">
-                  <h3 class="text-2xl font-bold text-pink-600 mb-4">Akad Nikah</h3>
+                  <h3 class="text-2xl font-bold text-green-600 mb-4">Akad Nikah</h3>
                   <div class="space-y-3 text-gray-700">
                     <div class="flex items-start">
-                      <svg class="w-5 h-5 mr-2 mt-0.5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-5 h-5 mr-2 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       <div>
@@ -154,7 +154,7 @@ const props = defineProps<{
                       </div>
                     </div>
                     <div class="flex items-start">
-                      <svg class="w-5 h-5 mr-2 mt-0.5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-5 h-5 mr-2 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
@@ -164,7 +164,7 @@ const props = defineProps<{
                       v-if="invitation.content.akad_maps_url"
                       :href="invitation.content.akad_maps_url"
                       target="_blank"
-                      class="inline-block bg-pink-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-pink-700 transition mt-2"
+                      class="inline-block bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition mt-2"
                     >
                       Lihat Lokasi
                     </a>
@@ -173,10 +173,10 @@ const props = defineProps<{
 
                 <!-- Reception -->
                 <div v-if="invitation.content.reception_datetime" class="bg-white rounded-xl shadow-lg p-8">
-                  <h3 class="text-2xl font-bold text-purple-600 mb-4">Resepsi</h3>
+                  <h3 class="text-2xl font-bold text-green-600 mb-4">Resepsi</h3>
                   <div class="space-y-3 text-gray-700">
                     <div class="flex items-start">
-                      <svg class="w-5 h-5 mr-2 mt-0.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-5 h-5 mr-2 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       <div>
@@ -185,7 +185,7 @@ const props = defineProps<{
                       </div>
                     </div>
                     <div class="flex items-start">
-                      <svg class="w-5 h-5 mr-2 mt-0.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-5 h-5 mr-2 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
@@ -195,7 +195,7 @@ const props = defineProps<{
                       v-if="invitation.content.reception_maps_url"
                       :href="invitation.content.reception_maps_url"
                       target="_blank"
-                      class="inline-block bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-purple-700 transition mt-2"
+                      class="inline-block bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition mt-2"
                     >
                       Lihat Lokasi
                     </a>
@@ -214,7 +214,7 @@ const props = defineProps<{
 
             <!-- Special Message -->
             <div v-if="invitation.content.special_message" class="max-w-3xl mx-auto mb-16">
-              <div class="bg-gradient-to-r from-pink-100 to-purple-100 rounded-xl p-8 text-center">
+              <div class="bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-8 text-center">
                 <p class="text-gray-800 text-lg italic">{{ invitation.content.special_message }}</p>
               </div>
             </div>

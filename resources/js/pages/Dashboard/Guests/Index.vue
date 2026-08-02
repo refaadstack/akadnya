@@ -82,9 +82,9 @@ const categoryLabels: Record<string, string> = {
 }
 
 const categoryColors: Record<string, string> = {
-  family: 'bg-pink-100 text-pink-800',
+  family: 'bg-green-100 text-green-800',
   friends: 'bg-blue-100 text-blue-800',
-  colleagues: 'bg-purple-100 text-purple-800',
+  colleagues: 'bg-green-100 text-green-800',
   others: 'bg-gray-100 text-gray-800',
 }
 
@@ -236,7 +236,7 @@ const downloadTemplate = () => {
             </button>
             <button
               @click="openAddModal"
-              class="bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition"
+              class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition"
             >
               + Tambah Tamu
             </button>
@@ -281,7 +281,7 @@ const downloadTemplate = () => {
                 @keyup.enter="search"
                 type="text"
                 placeholder="Cari nama atau telepon..."
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
 
@@ -293,7 +293,7 @@ const downloadTemplate = () => {
                 @click="filterByCategory(key)"
                 class="px-4 py-2 rounded-lg font-medium transition"
                 :class="selectedCategory === key
-                  ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white'
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
               >
                 {{ label }}
@@ -315,7 +315,7 @@ const downloadTemplate = () => {
             <p class="text-gray-600 mb-4">Mulai tambahkan tamu undangan Anda</p>
             <button
               @click="openAddModal"
-              class="bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition"
+              class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition"
             >
               + Tambah Tamu Pertama
             </button>
@@ -413,7 +413,7 @@ const downloadTemplate = () => {
                 :href="`/dashboard/guests?page=${page}&category=${selectedCategory}&search=${searchQuery}`"
                 class="px-3 py-1 rounded"
                 :class="page === guests.current_page
-                  ? 'bg-pink-600 text-white'
+                  ? 'bg-green-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
               >
                 {{ page }}
@@ -436,7 +436,7 @@ const downloadTemplate = () => {
               v-model="addForm.name"
               type="text"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
             <div v-if="addForm.errors.name" class="text-red-600 text-sm mt-1">{{ addForm.errors.name }}</div>
           </div>
@@ -447,7 +447,7 @@ const downloadTemplate = () => {
               v-model="addForm.phone"
               type="text"
               placeholder="081234567890"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
             <div v-if="addForm.errors.phone" class="text-red-600 text-sm mt-1">{{ addForm.errors.phone }}</div>
           </div>
@@ -457,7 +457,7 @@ const downloadTemplate = () => {
             <select
               v-model="addForm.category"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             >
               <option value="family">Keluarga</option>
               <option value="friends">Teman</option>
@@ -475,7 +475,7 @@ const downloadTemplate = () => {
               min="1"
               max="10"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
             <div v-if="addForm.errors.max_pax" class="text-red-600 text-sm mt-1">{{ addForm.errors.max_pax }}</div>
           </div>
@@ -485,7 +485,7 @@ const downloadTemplate = () => {
             <textarea
               v-model="addForm.notes"
               rows="3"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             ></textarea>
             <div v-if="addForm.errors.notes" class="text-red-600 text-sm mt-1">{{ addForm.errors.notes }}</div>
           </div>
@@ -501,7 +501,7 @@ const downloadTemplate = () => {
             <button
               type="submit"
               :disabled="addForm.processing"
-              class="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition disabled:opacity-50"
+              class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition disabled:opacity-50"
             >
               {{ addForm.processing ? 'Menyimpan...' : 'Simpan' }}
             </button>
@@ -522,7 +522,7 @@ const downloadTemplate = () => {
               v-model="editForm.name"
               type="text"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
             <div v-if="editForm.errors.name" class="text-red-600 text-sm mt-1">{{ editForm.errors.name }}</div>
           </div>
@@ -533,7 +533,7 @@ const downloadTemplate = () => {
               v-model="editForm.phone"
               type="text"
               placeholder="081234567890"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
             <div v-if="editForm.errors.phone" class="text-red-600 text-sm mt-1">{{ editForm.errors.phone }}</div>
           </div>
@@ -543,7 +543,7 @@ const downloadTemplate = () => {
             <select
               v-model="editForm.category"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             >
               <option value="family">Keluarga</option>
               <option value="friends">Teman</option>
@@ -561,7 +561,7 @@ const downloadTemplate = () => {
               min="1"
               max="10"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
             <div v-if="editForm.errors.max_pax" class="text-red-600 text-sm mt-1">{{ editForm.errors.max_pax }}</div>
           </div>
@@ -571,7 +571,7 @@ const downloadTemplate = () => {
             <textarea
               v-model="editForm.notes"
               rows="3"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             ></textarea>
             <div v-if="editForm.errors.notes" class="text-red-600 text-sm mt-1">{{ editForm.errors.notes }}</div>
           </div>
@@ -587,7 +587,7 @@ const downloadTemplate = () => {
             <button
               type="submit"
               :disabled="editForm.processing"
-              class="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition disabled:opacity-50"
+              class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition disabled:opacity-50"
             >
               {{ editForm.processing ? 'Menyimpan...' : 'Simpan' }}
             </button>
@@ -624,7 +624,7 @@ const downloadTemplate = () => {
               accept=".csv,.txt"
               required
               @change="handleFileChange"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
             <div v-if="importForm.errors.file" class="text-red-600 text-sm mt-1">{{ importForm.errors.file }}</div>
           </div>
@@ -640,7 +640,7 @@ const downloadTemplate = () => {
             <button
               type="submit"
               :disabled="importForm.processing"
-              class="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition disabled:opacity-50"
+              class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition disabled:opacity-50"
             >
               {{ importForm.processing ? 'Mengimport...' : 'Import' }}
             </button>

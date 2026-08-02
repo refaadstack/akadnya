@@ -194,7 +194,7 @@ const getAttendanceBadge = (attendance: string) => {
                   :href="`/dashboard/rsvp?page=${page}`"
                   class="px-3 py-1 rounded"
                   :class="page === rsvps.current_page
-                    ? 'bg-pink-600 text-white'
+                    ? 'bg-green-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
                 >
                   {{ page }}

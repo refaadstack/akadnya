@@ -60,15 +60,14 @@ class TemplateForm
                             ->maxLength(100)
                             ->disabled()
                             ->dehydrated()
-                            ->helperText('Auto-generated from template.json')
+                            ->helperText('Otomatis mengikuti nama template')
                             ->columnSpan(1),
 
                         TextInput::make('name')
                             ->required()
                             ->maxLength(255)
-                            ->disabled()
                             ->dehydrated()
-                            ->helperText('From template.json')
+                            ->helperText('Editable — disimpan ke template.json agar tidak tertimpa saat sync')
                             ->columnSpan(1),
 
                         TextInput::make('version')

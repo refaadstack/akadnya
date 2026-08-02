@@ -5,10 +5,12 @@ namespace App\Filament\Resources\Templates\Actions;
 use App\Services\TemplateService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\HtmlString;
 
 class TemplateUploadAction
 {
@@ -22,8 +24,13 @@ class TemplateUploadAction
                 Section::make('Upload Rules')
                     ->description('Read the rules below before uploading a template')
                     ->schema([
-                        Text::make(view('filament.components.template-upload-instructions')->render()),
+                        Text::make(new HtmlString(view('filament.components.template-upload-instructions')->render())),
                     ]),
+
+                TextInput::make('template_name')
+                    ->label('Nama Template')
+                    ->helperText('Opsional — kosongkan untuk memakai nama dari file. Slug otomatis mengikuti nama (spasi menjadi tanda strip).')
+                    ->columnSpanFull(),
 
                 FileUpload::make('template_file')
                     ->label('Template File (ZIP or HTML)')
@@ -64,7 +71,7 @@ class TemplateUploadAction
                 }
 
                 // Process the upload
-                $result = $templateService->processUpload($fullPath);
+                $result = $templateService->processUpload($fullPath, $data['template_name'] ?? null);
 
                 // Clean up the uploaded file
                 Storage::disk('local')->delete($relativePath);

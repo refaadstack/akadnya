@@ -166,6 +166,67 @@ test('syncTemplates with valid directory creates database record', function () {
     expect($template->synced_at)->not->toBeNull();
 });
 
+test('updateTemplateName persists the new name to manifest and survives resync', function () {
+    $slug = 'test-rename-'.uniqid();
+    $templatePath = storage_path("app/public/templates/{$slug}");
+
+    File::makeDirectory($templatePath.'/sections', 0755, true);
+    File::makeDirectory($templatePath.'/assets', 0755, true);
+    File::put($templatePath.'/template.json', json_encode([
+        'slug' => $slug,
+        'name' => 'Old Name',
+        'version' => '1.0.0',
+        'sections' => [
+            ['file' => 'cover.html', 'label' => 'Cover'],
+        ],
+    ]));
+    File::put($templatePath.'/sections/cover.html', '<h1>Cover</h1>');
+    File::put($templatePath.'/assets/style.css', 'body {}');
+
+    $this->service->syncTemplates();
+    $template = Template::where('slug', $slug)->firstOrFail();
+
+    $this->service->updateTemplateName($template, 'New Name Edited');
+
+    expect($template->fresh()->name)->toBe('New Name Edited');
+
+    $manifest = json_decode(File::get($templatePath.'/template.json'), true);
+    expect($manifest['name'])->toBe('New Name Edited');
+
+    // A later resync must not revert the edited name
+    $this->service->syncTemplates();
+    expect(Template::where('slug', $slug)->first()->name)->toBe('New Name Edited');
+});
+
+test('renameTemplateFolder moves the directory and updates the manifest slug', function () {
+    $slug = 'test-move-'.uniqid();
+    $newSlug = $slug.'-baru';
+    $templatePath = storage_path("app/public/templates/{$slug}");
+
+    File::makeDirectory($templatePath.'/sections', 0755, true);
+    File::put($templatePath.'/template.json', json_encode([
+        'slug' => $slug,
+        'name' => 'Test Move',
+        'version' => '1.0.0',
+        'sections' => [
+            ['file' => 'cover.html', 'label' => 'Cover'],
+        ],
+    ]));
+    File::put($templatePath.'/sections/cover.html', '<h1>Cover</h1>');
+
+    $this->service->syncTemplates();
+    $template = Template::where('slug', $slug)->firstOrFail();
+
+    $this->service->renameTemplateFolder($template->slug, $newSlug);
+    $template->update(['slug' => $newSlug]);
+
+    expect(File::exists(storage_path("app/public/templates/{$newSlug}/sections/cover.html")))->toBeTrue();
+    expect(File::exists(storage_path("app/public/templates/{$slug}")))->toBeFalse();
+
+    $manifest = json_decode(File::get(storage_path("app/public/templates/{$newSlug}/template.json")), true);
+    expect($manifest['slug'])->toBe($newSlug);
+});
+
 test('processUpload replaces existing template directory', function () {
     $slug = 'test-replace-'.uniqid();
 

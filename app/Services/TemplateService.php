@@ -24,12 +24,12 @@ class TemplateService
      *
      * @return array{success: bool, message: string, template?: Template}
      */
-    public function processUpload(string $filePath): array
+    public function processUpload(string $filePath, ?string $templateName = null): array
     {
         $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
 
         if (in_array($extension, ['html', 'htm'], true)) {
-            return $this->processHtmlUpload($filePath);
+            return $this->processHtmlUpload($filePath, $templateName);
         }
 
         return $this->processZipUpload($filePath);
@@ -40,7 +40,7 @@ class TemplateService
      *
      * @return array{success: bool, message: string, template?: Template}
      */
-    protected function processHtmlUpload(string $filePath): array
+    protected function processHtmlUpload(string $filePath, ?string $templateName = null): array
     {
         try {
             $content = File::get($filePath);
@@ -58,7 +58,7 @@ class TemplateService
             }
 
             $fileName = basename($filePath, '.'.pathinfo($filePath, PATHINFO_EXTENSION));
-            $slug = Str::slug($fileName);
+            $slug = Str::slug($templateName ?: $fileName);
 
             if ($slug === '') {
                 throw new TemplateValidationException('Template validation failed: could not derive a valid slug from the file name');
@@ -74,7 +74,7 @@ class TemplateService
             File::copy($filePath, $finalPath.'/sections/full.html');
 
             $manifest = [
-                'name' => Str::headline($slug),
+                'name' => $templateName ?: Str::headline($slug),
                 'slug' => $slug,
                 'version' => '1.0.0',
                 'single_file' => true,
@@ -226,6 +226,61 @@ class TemplateService
         $this->syncOrnaments($template, $templateData['ornaments'] ?? []);
 
         return $template;
+    }
+
+    /**
+     * Rename a template folder on disk and update the slug inside its
+     * template.json manifest so later syncs keep the new slug.
+     */
+    public function renameTemplateFolder(string $oldSlug, string $newSlug): void
+    {
+        $oldPath = storage_path('app/public/templates/'.$oldSlug);
+        $newPath = storage_path('app/public/templates/'.$newSlug);
+
+        if (File::exists($oldPath) && ! File::exists($newPath)) {
+            File::moveDirectory($oldPath, $newPath);
+        }
+
+        $manifestPath = $newPath.'/template.json';
+
+        if (! File::exists($manifestPath)) {
+            return;
+        }
+
+        $manifest = json_decode(File::get($manifestPath), true);
+
+        if (! is_array($manifest)) {
+            return;
+        }
+
+        $manifest['slug'] = $newSlug;
+
+        File::put($manifestPath, json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
+    /**
+     * Persist an admin-edited template name to both the database and the
+     * template.json manifest so later syncs do not revert it.
+     */
+    public function updateTemplateName(Template $template, string $name): void
+    {
+        $template->update(['name' => $name]);
+
+        $manifestPath = $template->getFolderPath().'/template.json';
+
+        if (! File::exists($manifestPath)) {
+            return;
+        }
+
+        $manifest = json_decode(File::get($manifestPath), true);
+
+        if (! is_array($manifest)) {
+            return;
+        }
+
+        $manifest['name'] = $name;
+
+        File::put($manifestPath, json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
     /**

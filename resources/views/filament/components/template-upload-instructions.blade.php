@@ -13,7 +13,7 @@
             <li>Ukuran maksimal 2MB.</li>
             <li>Nama file menjadi <strong>slug template</strong> (contoh: <code class="font-mono">undangan-rustic.html</code> → slug <code class="font-mono">undangan-rustic</code>).</li>
             <li>Judul template otomatis diambil dari nama file (contoh: <code class="font-mono">undangan-rustic</code> → "Undangan Rustic").</li>
-            <li>Gunakan variabel data undangan dengan syntax Blade <code class="font-mono">{{ $bride_name }}</code> agar konten terisi otomatis dari database.</li>
+            <li>Gunakan variabel data undangan dengan syntax Blade <code class="font-mono">&#123;&#123; $bride_name &#125;&#125;</code> agar konten terisi otomatis dari database.</li>
         </ul>
     </div>
 
@@ -47,10 +47,10 @@
         <h4 class="text-sm font-semibold text-amber-800 mb-2">📋 Aturan Umum Sebelum Upload</h4>
         <ul class="text-xs text-amber-800 space-y-1 list-disc list-inside">
             <li>Wajib menggunakan variabel data contract dari sistem (contoh: <code class="font-mono">$bride_name</code>, <code class="font-mono">$groom_name</code>, <code class="font-mono">$akad_datetime_formatted</code>, <code class="font-mono">$gallery</code>, <code class="font-mono">$wishes</code>, <code class="font-mono">$love_stories</code>).</li>
-            <li>Gunakan syntax Blade ({{ }} / @if / @foreach) — bukan PHP murni.</li>
+            <li>Gunakan syntax Blade (<code class="font-mono">&#123;&#123; &#125;&#125;</code> / @@if / @@foreach) — bukan PHP murni.</li>
             <li>Dilarang memuat resource dari server lain yang tidak aman; semua gambar dapat memakai URL eksternal.</li>
-            <li>Form RSVP wajib menggunakan <code class="font-mono">name="attendance"</code> (nilai <code class="font-mono">yes</code>/<code class="font-mono">no</code>), <code class="font-mono">name="name"</code>, <code class="font-mono">name="pax_count"</code>, <code class="font-mono">name="message"</code>, dan POST ke <code class="font-mono">{{ $rsvp_action }}</code>.</li>
-            <li>Countdown memakai <code class="font-mono">data-date="{{ $akad_datetime }}"</code> (format ISO).</li>
+            <li>Form RSVP wajib menggunakan <code class="font-mono">name="attendance"</code> (nilai <code class="font-mono">yes</code>/<code class="font-mono">no</code>), <code class="font-mono">name="name"</code>, <code class="font-mono">name="pax_count"</code>, <code class="font-mono">name="message"</code>, dan POST ke <code class="font-mono">&#123;&#123; $rsvp_action &#125;&#125;</code>.</li>
+            <li>Countdown memakai <code class="font-mono">data-date="&#123;&#123; $akad_datetime &#125;&#125;"</code> (format ISO).</li>
             <li>Tombol salin memakai atribut <code class="font-mono">data-copy="#id-elemen"</code>.</li>
             <li>Ukuran maksimal file: 50MB (ZIP) / 2MB (HTML).</li>
             <li>Template akan langsung tampil di katalog setelah upload — pastikan sudah siap dipublikasikan.</li>

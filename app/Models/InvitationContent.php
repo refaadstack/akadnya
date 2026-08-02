@@ -20,6 +20,7 @@ class InvitationContent extends Model
         'groom_father',
         'groom_mother',
         'groom_photo_url',
+        'couple_photo_url',
         'akad_datetime',
         'akad_venue',
         'akad_maps_url',
@@ -28,6 +29,7 @@ class InvitationContent extends Model
         'reception_maps_url',
         'cover_photo_url',
         'music_url',
+        'music_title',
         'gallery_photos',
         'love_story',
         'special_message',
@@ -38,6 +40,7 @@ class InvitationContent extends Model
         'gopay_number',
         'ovo_number',
         'dana_number',
+        'gift_address',
     ];
 
     protected $casts = [

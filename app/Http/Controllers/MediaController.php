@@ -135,6 +135,9 @@ class MediaController extends Controller
     /**
      * Upload groom photo.
      */
+    /**
+     * Upload groom photo.
+     */
     public function uploadGroomPhoto(Request $request): JsonResponse
     {
         $request->validate([
@@ -143,6 +146,30 @@ class MediaController extends Controller
 
         try {
             $url = $this->mediaService->upload($request->file('file'), 'groom');
+
+            return response()->json([
+                'success' => true,
+                'url' => $url,
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
+
+    /**
+     * Upload couple photo.
+     */
+    public function uploadCouplePhoto(Request $request): JsonResponse
+    {
+        $request->validate([
+            'file' => 'required|file|max:5120', // 5MB max
+        ]);
+
+        try {
+            $url = $this->mediaService->upload($request->file('file'), 'couple');
 
             return response()->json([
                 'success' => true,

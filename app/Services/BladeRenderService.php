@@ -50,6 +50,7 @@ class BladeRenderService
 
         // Add asset tags
         $assetTags = $this->buildAssetTags($template);
+        $csrfToken = $data['csrf_token'] ?? '';
 
         return <<<HTML
 <!DOCTYPE html>
@@ -57,7 +58,7 @@ class BladeRenderService
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{$data['_csrf_token'] ?? ''}">
+    <meta name="csrf-token" content="{$csrfToken}">
     <title>{$data['bride_name']} & {$data['groom_name']}</title>
     {$assetTags}
 </head>

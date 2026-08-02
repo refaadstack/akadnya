@@ -43,6 +43,7 @@ class MediaService
             'cover' => 'invitations/covers',
             'gallery' => 'invitations/gallery',
             'music' => 'invitations/music',
+            'couple' => 'invitations/couple',
             default => 'invitations/media',
         };
 

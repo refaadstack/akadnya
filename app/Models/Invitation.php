@@ -71,6 +71,11 @@ class Invitation extends Model
         return $this->hasMany(InvitationGallery::class);
     }
 
+    public function loveStories(): HasMany
+    {
+        return $this->hasMany(LoveStory::class)->orderBy('sort_order');
+    }
+
     public function guests(): HasMany
     {
         return $this->hasMany(Guest::class);

@@ -29,6 +29,7 @@ class InvitationContentRequest extends FormRequest
             'groom_father' => 'nullable|string|max:255',
             'groom_mother' => 'nullable|string|max:255',
             'groom_photo_url' => 'nullable|url|max:500',
+            'couple_photo_url' => 'nullable|url|max:500',
 
             // Acara
             'akad_datetime' => 'required|date',
@@ -45,6 +46,7 @@ class InvitationContentRequest extends FormRequest
             // Media
             'cover_photo_url' => 'nullable|url|max:500',
             'music_url' => 'nullable|url|max:500',
+            'music_title' => 'nullable|string|max:255',
             'gallery_photos' => 'nullable|array',
             'gallery_photos.*.url' => 'required|url|max:500',
             'gallery_photos.*.caption' => 'nullable|string|max:255',
@@ -57,6 +59,7 @@ class InvitationContentRequest extends FormRequest
             'gopay_number' => 'nullable|string|max:20',
             'ovo_number' => 'nullable|string|max:20',
             'dana_number' => 'nullable|string|max:20',
+            'gift_address' => 'nullable|string',
         ];
     }
 
@@ -74,6 +77,7 @@ class InvitationContentRequest extends FormRequest
             'groom_father' => 'nama ayah mempelai pria',
             'groom_mother' => 'nama ibu mempelai pria',
             'groom_photo_url' => 'foto mempelai pria',
+            'couple_photo_url' => 'foto pasangan',
             'akad_datetime' => 'tanggal & waktu akad',
             'akad_venue' => 'tempat akad',
             'akad_maps_url' => 'link Google Maps akad',
@@ -84,6 +88,7 @@ class InvitationContentRequest extends FormRequest
             'special_message' => 'pesan khusus',
             'cover_photo_url' => 'foto cover',
             'music_url' => 'musik latar',
+            'music_title' => 'judul musik',
             'gallery_photos' => 'foto galeri',
             'bank_name' => 'nama bank',
             'account_number' => 'nomor rekening',
@@ -92,6 +97,7 @@ class InvitationContentRequest extends FormRequest
             'gopay_number' => 'nomor GoPay',
             'ovo_number' => 'nomor OVO',
             'dana_number' => 'nomor DANA',
+            'gift_address' => 'alamat kirim hadiah',
         ];
     }
 }

@@ -38,6 +38,14 @@ class DataContractBuilder
                 'caption' => $item['caption'] ?? null,
             ]);
 
+        $loveStories = $invitation->loveStories
+            ->map(fn ($story) => [
+                'date' => $story->date_label,
+                'title' => $story->title,
+                'description' => $story->description,
+            ])
+            ->values();
+
         // Base contract with all keys guaranteed to exist
         $contract = [
             // Bride
@@ -51,6 +59,7 @@ class DataContractBuilder
             'groom_father' => $content?->groom_father ?? null,
             'groom_mother' => $content?->groom_mother ?? null,
             'groom_photo_url' => $content?->groom_photo_url ?? null,
+            'couple_photo_url' => $content?->couple_photo_url ?? null,
 
             // Akad venue
             'akad_venue' => $content?->akad_venue ?? null,
@@ -63,6 +72,7 @@ class DataContractBuilder
             // Media
             'cover_photo_url' => $content?->cover_photo_url ?? null,
             'music_url' => $content?->music_url ?? null,
+            'music_title' => $content?->music_title ?? null,
 
             // Content
             'love_story' => $content?->love_story ?? null,
@@ -76,9 +86,13 @@ class DataContractBuilder
             'gopay_number' => $content?->gopay_number ?? null,
             'ovo_number' => $content?->ovo_number ?? null,
             'dana_number' => $content?->dana_number ?? null,
+            'gift_address' => $content?->gift_address ?? null,
 
             // Gallery
             'gallery' => $gallery->concat($contentGallery)->values()->toArray(),
+
+            // Love stories timeline
+            'love_stories' => $loveStories->toArray(),
 
             // RSVP
             'rsvp_action' => route('invitation.rsvp', ['subdomain' => $invitation->subdomain]),
@@ -166,6 +180,7 @@ class DataContractBuilder
             'groom_father' => null,
             'groom_mother' => null,
             'groom_photo_url' => null,
+            'couple_photo_url' => null,
             'akad_datetime' => null,
             'akad_venue' => null,
             'akad_maps_url' => null,
@@ -174,6 +189,7 @@ class DataContractBuilder
             'reception_maps_url' => null,
             'cover_photo_url' => null,
             'music_url' => null,
+            'music_title' => null,
             'love_story' => null,
             'special_message' => null,
             'bank_name' => null,
@@ -183,7 +199,9 @@ class DataContractBuilder
             'gopay_number' => null,
             'ovo_number' => null,
             'dana_number' => null,
+            'gift_address' => null,
             'gallery' => [],
+            'love_stories' => [],
             'rsvp_action' => '#',
             'csrf_token' => csrf_token() ?? '',
             'guest_name' => null,

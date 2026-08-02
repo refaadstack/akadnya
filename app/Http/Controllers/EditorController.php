@@ -47,6 +47,7 @@ class EditorController extends Controller
                 'groom_father' => $invitation->content->groom_father,
                 'groom_mother' => $invitation->content->groom_mother,
                 'groom_photo_url' => $invitation->content->groom_photo_url,
+                'couple_photo_url' => $invitation->content->couple_photo_url,
                 'akad_datetime' => $invitation->content->akad_datetime?->format('Y-m-d\TH:i'),
                 'akad_venue' => $invitation->content->akad_venue,
                 'akad_maps_url' => $invitation->content->akad_maps_url,
@@ -57,6 +58,7 @@ class EditorController extends Controller
                 'special_message' => $invitation->content->special_message,
                 'cover_photo_url' => $invitation->content->cover_photo_url,
                 'music_url' => $invitation->content->music_url,
+                'music_title' => $invitation->content->music_title,
                 'gallery_photos' => $invitation->content->gallery_photos ?? [],
                 'bank_name' => $invitation->content->bank_name,
                 'account_number' => $invitation->content->account_number,
@@ -65,6 +67,7 @@ class EditorController extends Controller
                 'gopay_number' => $invitation->content->gopay_number,
                 'ovo_number' => $invitation->content->ovo_number,
                 'dana_number' => $invitation->content->dana_number,
+                'gift_address' => $invitation->content->gift_address,
             ] : null,
         ]);
     }

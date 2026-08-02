@@ -46,6 +46,7 @@ test('build returns all data contract keys even with null content', function () 
         'groom_father',
         'groom_mother',
         'groom_photo_url',
+        'couple_photo_url',
         'akad_venue',
         'akad_maps_url',
         'akad_datetime_formatted',
@@ -64,9 +65,11 @@ test('build returns all data contract keys even with null content', function () 
         'reception_day',
         'cover_photo_url',
         'music_url',
+        'music_title',
         'love_story',
         'special_message',
         'gallery',
+        'love_stories',
         'rsvp_action',
         'csrf_token',
         'guest_name',
@@ -75,6 +78,7 @@ test('build returns all data contract keys even with null content', function () 
     // All values should be null except gallery (empty array), rsvp_action, and csrf_token
     expect($contract['bride_name'])->toBeNull();
     expect($contract['gallery'])->toBeArray()->toBeEmpty();
+    expect($contract['love_stories'])->toBeArray()->toBeEmpty();
     expect($contract['rsvp_action'])->toBeString();
     expect($contract['csrf_token'])->toBeString();
 });
@@ -159,6 +163,59 @@ test('build includes gallery array with correct structure', function () {
     expect($contract['gallery'][0])->toHaveKeys(['url', 'caption']);
     expect($contract['gallery'][0]['url'])->toBe('https://example.com/photo1.jpg');
     expect($contract['gallery'][0]['caption'])->toBe('Photo 1');
+});
+
+test('build includes love stories with correct structure', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $invitation->loveStories()->create([
+        'title' => 'Pertama Bertemu',
+        'date_label' => 'Januari 2020',
+        'description' => 'Kami bertemu di kampus.',
+        'sort_order' => 0,
+    ]);
+
+    $invitation->loveStories()->create([
+        'title' => 'Lamaran',
+        'date_label' => null,
+        'description' => null,
+        'sort_order' => 1,
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['love_stories'])->toHaveCount(2);
+    expect($contract['love_stories'][0])->toHaveKeys(['date', 'title', 'description']);
+    expect($contract['love_stories'][0]['date'])->toBe('Januari 2020');
+    expect($contract['love_stories'][0]['title'])->toBe('Pertama Bertemu');
+    expect($contract['love_stories'][1]['date'])->toBeNull();
+});
+
+test('build includes couple photo, music title and gift address', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'couple_photo_url' => 'https://example.com/couple.jpg',
+        'music_title' => 'Sepanjang Hidup - Maher Zain',
+        'gift_address' => 'Jl. Melati No. 12, Jambi',
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['couple_photo_url'])->toBe('https://example.com/couple.jpg');
+    expect($contract['music_title'])->toBe('Sepanjang Hidup - Maher Zain');
+    expect($contract['gift_address'])->toBe('Jl. Melati No. 12, Jambi');
 });
 
 test('buildTemplateDefaults returns template-owned preview data', function () {

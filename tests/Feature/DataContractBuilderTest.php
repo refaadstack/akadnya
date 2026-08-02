@@ -70,15 +70,19 @@ test('build returns all data contract keys even with null content', function () 
         'special_message',
         'gallery',
         'love_stories',
+        'wishes',
         'rsvp_action',
         'csrf_token',
         'guest_name',
+        'akad_datetime',
+        'event_date',
     ]);
 
     // All values should be null except gallery (empty array), rsvp_action, and csrf_token
     expect($contract['bride_name'])->toBeNull();
     expect($contract['gallery'])->toBeArray()->toBeEmpty();
     expect($contract['love_stories'])->toBeArray()->toBeEmpty();
+    expect($contract['wishes'])->toBeArray()->toBeEmpty();
     expect($contract['rsvp_action'])->toBeString();
     expect($contract['csrf_token'])->toBeString();
 });
@@ -216,6 +220,54 @@ test('build includes couple photo, music title and gift address', function () {
     expect($contract['couple_photo_url'])->toBe('https://example.com/couple.jpg');
     expect($contract['music_title'])->toBe('Sepanjang Hidup - Maher Zain');
     expect($contract['gift_address'])->toBe('Jl. Melati No. 12, Jambi');
+});
+
+test('build includes wishes with correct structure', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $invitation->rsvps()->create([
+        'name' => 'Budi',
+        'attendance' => 'yes',
+        'message' => 'Selamat ya',
+        'pax_count' => 2,
+    ]);
+    $invitation->rsvps()->create([
+        'name' => 'Siti',
+        'attendance' => 'pending',
+        'message' => null,
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['wishes'])->toHaveCount(1);
+    expect($contract['wishes'][0])->toHaveKeys(['id', 'name', 'message', 'attendance', 'created_at']);
+    expect($contract['wishes'][0]['name'])->toBe('Budi');
+    expect($contract['wishes'][0]['message'])->toBe('Selamat ya');
+});
+
+test('build includes akad datetime in ISO format', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $akad = Carbon::parse('2026-12-25 09:00:00');
+
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'akad_datetime' => $akad,
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['akad_datetime'])->toBe($akad->toIso8601String());
 });
 
 test('buildTemplateDefaults returns template-owned preview data', function () {

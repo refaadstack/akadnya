@@ -46,6 +46,20 @@ class DataContractBuilder
             ])
             ->values();
 
+        $wishes = $invitation->rsvps()
+            ->whereNotNull('message')
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(fn ($rsvp) => [
+                'id' => $rsvp->id,
+                'name' => $rsvp->name ?? $rsvp->guest?->name ?? 'Tamu',
+                'message' => $rsvp->message,
+                'attendance' => $rsvp->attendance,
+                'created_at' => $rsvp->created_at?->toISOString(),
+            ])
+            ->values();
+
         // Base contract with all keys guaranteed to exist
         $contract = [
             // Bride
@@ -94,6 +108,9 @@ class DataContractBuilder
             // Love stories timeline
             'love_stories' => $loveStories->toArray(),
 
+            // Wishes / doa & ucapan
+            'wishes' => $wishes->toArray(),
+
             // RSVP
             'rsvp_action' => route('invitation.rsvp', ['subdomain' => $invitation->subdomain]),
             'csrf_token' => csrf_token() ?? '',
@@ -101,7 +118,8 @@ class DataContractBuilder
             // Guest
             'guest_name' => $guestName ?? null,
 
-            // Event date for countdown (ISO 8601 format for JavaScript)
+            // Event dates (ISO 8601 format for JavaScript countdown)
+            'akad_datetime' => $content?->akad_datetime?->toIso8601String() ?? null,
             'event_date' => $content?->reception_datetime?->toIso8601String() ?? null,
         ];
 
@@ -202,9 +220,11 @@ class DataContractBuilder
             'gift_address' => null,
             'gallery' => [],
             'love_stories' => [],
+            'wishes' => [],
             'rsvp_action' => '#',
             'csrf_token' => csrf_token() ?? '',
             'guest_name' => null,
+            'akad_datetime' => null,
             'event_date' => null,
             ...$this->buildDatetimeVariables('akad', null),
             ...$this->buildDatetimeVariables('reception', null),
@@ -240,6 +260,7 @@ class DataContractBuilder
         $akadDate = $this->parsePreviewDatetime($contract['akad_datetime'] ?? null);
         if ($akadDate) {
             $contract = array_replace($contract, $this->buildDatetimeVariables('akad', $akadDate));
+            $contract['akad_datetime'] = $akadDate->toIso8601String();
         }
 
         $receptionDate = $this->parsePreviewDatetime($contract['reception_datetime'] ?? null);

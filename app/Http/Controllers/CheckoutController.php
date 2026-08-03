@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Models\Template;
+use App\Services\CartService;
 use App\Services\OrderService;
 use App\Services\PaymentService;
 use Illuminate\Http\JsonResponse;
@@ -16,89 +15,50 @@ use Inertia\Response;
 
 class CheckoutController extends Controller
 {
+    public function __construct(
+        protected CartService $cartService,
+        protected OrderService $orderService,
+    ) {}
+
     /**
-     * Show checkout page for a single item (template or product, à la carte).
+     * Show checkout page with the user's cart items.
      */
     public function index(Request $request): Response|RedirectResponse
     {
-        $templateSlug = $request->query('template');
-        $productSlug = $request->query('product');
+        $cart = $this->cartService->forPage($request->user());
 
-        if ($templateSlug) {
-            $template = Template::where('slug', $templateSlug)
-                ->where('is_active', true)
-                ->firstOrFail();
-
-            return Inertia::render('Checkout/Index', [
-                'item' => [
-                    'type' => 'template',
-                    'id' => $template->id,
-                    'slug' => $template->slug,
-                    'name' => $template->name,
-                    'description' => 'Template undangan digital',
-                    'price' => $template->price,
-                    'original_price' => $template->original_price,
-                    'discount_percent' => $template->discount_percent,
-                    'is_free' => $template->is_free,
-                ],
-            ]);
+        if ($cart['items']->isEmpty()) {
+            return redirect()->route('cart.index');
         }
 
-        if ($productSlug) {
-            $product = Product::where('slug', $productSlug)
-                ->where('type', 'addon')
-                ->where('is_active', true)
-                ->firstOrFail();
-
-            return Inertia::render('Checkout/Index', [
-                'item' => [
-                    'type' => 'product',
-                    'id' => $product->id,
-                    'slug' => $product->slug,
-                    'name' => $product->name,
-                    'description' => $product->description,
-                    'price' => $product->price,
-                    'original_price' => $product->original_price,
-                    'discount_percent' => $product->discount_percent,
-                    'is_recurring' => $product->is_recurring ?? false,
-                    'recurring_interval' => $product->recurring_interval,
-                ],
-            ]);
-        }
-
-        return redirect()->route('templates.index');
+        return Inertia::render('Checkout/Index', $cart);
     }
 
     /**
-     * Store order
+     * Create an order from the user's cart and redirect to payment.
      */
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'template_id' => 'nullable|required_without:product_id|exists:templates,id,is_active,1',
-            'product_id' => 'nullable|required_without:template_id|exists:products,id,type,addon,is_active,1',
-            'preview_data' => 'nullable|array',
-        ]);
-
-        $template = $validated['template_id'] ?? null ? Template::find($validated['template_id']) : null;
-        $product = $validated['product_id'] ?? null ? Product::find($validated['product_id']) : null;
-        $previewData = $validated['preview_data'] ?? null;
+        $user = $request->user();
+        $cartItems = $user->cartItems()->get();
         $order = null;
 
-        try {
-            $order = DB::transaction(function () use ($request, $template, $product, $previewData) {
-                $orderService = app(OrderService::class);
+        if ($cartItems->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Keranjang belanja kosong.',
+            ], 422);
+        }
 
-                return $orderService->createOrder(
-                    $request->user(),
-                    $template,
-                    $product,
-                    $previewData
-                );
+        try {
+            $order = DB::transaction(function () use ($user, $cartItems) {
+                return $this->orderService->createOrderFromCart($user, $cartItems);
             });
 
             $paymentService = app(PaymentService::class);
             $payment = $paymentService->createTransaction($order);
+
+            $this->cartService->clear($user);
 
             return response()->json([
                 'success' => true,
@@ -116,9 +76,8 @@ class CheckoutController extends Controller
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'user_id' => $request->user()->id,
-                'template_id' => $template?->id,
-                'product_id' => $product?->id,
+                'user_id' => $user->id,
+                'cart_item_count' => $cartItems->count(),
                 'order_id' => $order?->id,
                 'order_number' => $order?->order_number,
                 'payment_service_url' => config('services.payment_service.base_url'),

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Check, Eye, ShoppingBag } from 'lucide-vue-next';
+import { Check, Eye, ShoppingCart } from 'lucide-vue-next';
 import { ref } from 'vue';
 import PublicFooter from '@/components/PublicFooter.vue';
 import PublicNavbar from '@/components/PublicNavbar.vue';
@@ -24,25 +24,35 @@ defineOptions({
     layout: undefined,
 });
 
-const addingToCart = ref<number | null>(null);
+const addingId = ref<number | null>(null);
+const addedId = ref<number | null>(null);
 
 const addToCart = (template: Template) => {
-    addingToCart.value = template.id;
+    if (addingId.value !== null) {
+        return;
+    }
 
-    sessionStorage.setItem(
-        'selected_template',
-        JSON.stringify({
-            id: template.id,
-            slug: template.slug,
-            name: template.name,
-            price: template.price,
-            is_free: template.is_free,
-        }),
+    addingId.value = template.id;
+
+    router.post(
+        '/keranjang',
+        {
+            item_type: 'template',
+            item_id: template.id,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                addedId.value = template.id;
+                setTimeout(() => {
+                    addedId.value = null;
+                }, 2500);
+            },
+            onFinish: () => {
+                addingId.value = null;
+            },
+        },
     );
-
-    setTimeout(() => {
-        router.visit(`/checkout?template=${template.slug}`);
-    }, 300);
 };
 </script>
 
@@ -193,16 +203,29 @@ const addToCart = (template: Template) => {
                                 <button
                                     class="my-btn-primary w-full gap-2 disabled:cursor-not-allowed disabled:opacity-60"
                                     type="button"
-                                    :disabled="addingToCart === template.id"
+                                    :disabled="addingId === template.id"
                                     @click="addToCart(template)"
                                 >
-                                    <ShoppingBag class="size-4" />
+                                    <Check
+                                        v-if="addedId === template.id"
+                                        class="size-4"
+                                    />
+                                    <ShoppingCart v-else class="size-4" />
                                     {{
-                                        addingToCart === template.id
-                                            ? 'Memproses...'
-                                            : 'Beli Template Ini'
+                                        addingId === template.id
+                                            ? 'Menambahkan...'
+                                            : addedId === template.id
+                                              ? 'Ditambahkan!'
+                                              : 'Tambah ke Keranjang'
                                     }}
                                 </button>
+                                <Link
+                                    v-if="addedId === template.id"
+                                    href="/keranjang"
+                                    class="my-btn-secondary w-full gap-2"
+                                >
+                                    Lihat Keranjang
+                                </Link>
                             </div>
                         </div>
                     </article>

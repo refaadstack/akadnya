@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref, computed, onMounted } from 'vue';
+import { computed, ref } from 'vue';
 
 // Disable default layout
 defineOptions({
@@ -8,24 +8,31 @@ defineOptions({
 });
 
 interface CheckoutItem {
-    type: 'template' | 'product';
     id: number;
+    type: 'template' | 'product';
+    item_id: number;
     slug: string;
     name: string;
     description: string;
     price: number;
     original_price?: number | null;
     discount_percent?: number;
+    quantity: number;
     is_free?: boolean;
-    is_recurring?: boolean;
-    recurring_interval?: string;
+}
+
+interface Totals {
+    item_count: number;
+    subtotal: number;
+    original_subtotal?: number | null;
+    savings: number;
 }
 
 const props = defineProps<{
-    item: CheckoutItem;
+    items: CheckoutItem[];
+    totals: Totals;
 }>();
 
-const previewData = ref<Record<string, any> | null>(null);
 const isSubmitting = ref(false);
 const showUserMenu = ref(false);
 
@@ -33,29 +40,15 @@ const logout = () => {
     router.post('/logout');
 };
 
-// Load preview data from sessionStorage (only for templates)
-onMounted(() => {
-    if (props.item.type !== 'template') {
-        return;
-    }
+const hasDiscount = (
+    item: CheckoutItem,
+): item is CheckoutItem & { original_price: number } =>
+    item.original_price != null && item.original_price > item.price;
 
-    try {
-        const STORAGE_KEY = `preview_data_${props.item.slug}`;
-        const stored = sessionStorage.getItem(STORAGE_KEY);
+const total = computed(() => Number(props.totals.subtotal));
 
-        if (stored) {
-            const { data } = JSON.parse(stored);
-            previewData.value = data;
-        }
-    } catch (e) {
-        console.error('Failed to load preview data:', e);
-    }
-});
-
-const total = computed(() => Number(props.item.price));
-
-const isRecurring = computed(
-    () => props.item.type === 'product' && props.item.is_recurring,
+const hasTemplate = computed(() =>
+    props.items.some((item) => item.type === 'template'),
 );
 
 const templateFeatures = [
@@ -65,7 +58,7 @@ const templateFeatures = [
     'Publish undangan & bagikan link',
 ];
 
-// Submit order
+// Submit order — order is created from the server-side cart
 const submitOrder = async () => {
     if (isSubmitting.value) {
         return;
@@ -82,16 +75,6 @@ const submitOrder = async () => {
                 ?.split('=')[1] ?? '',
         );
 
-        const body: Record<string, any> = {
-            preview_data: previewData.value,
-        };
-
-        if (props.item.type === 'template') {
-            body.template_id = props.item.id;
-        } else {
-            body.product_id = props.item.id;
-        }
-
         const response = await fetch('/checkout', {
             method: 'POST',
             headers: {
@@ -100,7 +83,7 @@ const submitOrder = async () => {
                 'X-XSRF-TOKEN': xsrfToken,
                 'X-Requested-With': 'XMLHttpRequest',
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify({}),
         });
 
         const data = await response.json();
@@ -311,90 +294,76 @@ const submitOrder = async () => {
             <div class="min-h-screen py-8">
                 <div class="container mx-auto max-w-4xl px-4">
                     <h1 class="my-heading mb-8 text-4xl">Checkout</h1>
-
                     <div class="grid gap-8 lg:grid-cols-3">
                         <!-- Item Summary -->
                         <div class="space-y-6 lg:col-span-2">
                             <div class="my-card p-6">
-                                <p class="my-label mb-2">
-                                    {{
-                                        item.type === 'template'
-                                            ? 'Template Terpilih'
-                                            : 'Produk Terpilih'
-                                    }}
+                                <p class="my-label mb-4">
+                                    Item di Keranjang ({{ items.length }})
                                 </p>
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <h2 class="my-heading text-2xl">
+                                <div
+                                    v-for="(item, index) in items"
+                                    :key="item.id"
+                                    class="flex items-center justify-between gap-4 py-3"
+                                    :class="
+                                        index !== items.length - 1
+                                            ? 'border-b border-[var(--my-border)]'
+                                            : ''
+                                    "
+                                >
+                                    <div class="min-w-0">
+                                        <h2 class="my-heading text-xl">
                                             {{ item.name }}
                                         </h2>
                                         <p
                                             class="text-sm text-[var(--my-muted)]"
                                         >
                                             {{ item.description }}
+                                            <span
+                                                v-if="item.quantity > 1"
+                                                class="font-semibold text-[var(--my-neutral)]"
+                                            >
+                                                × {{ item.quantity }}
+                                            </span>
                                         </p>
                                     </div>
-                                    <div class="ml-4 text-right">
+                                    <div class="ml-4 shrink-0 text-right">
                                         <p
-                                            class="text-2xl font-bold text-[var(--my-primary)]"
+                                            class="text-lg font-bold text-[var(--my-primary)]"
                                         >
                                             {{
                                                 item.is_free
                                                     ? 'Gratis'
-                                                    : `Rp ${item.price.toLocaleString('id-ID')}`
+                                                    : `Rp ${(item.price * item.quantity).toLocaleString('id-ID')}`
                                             }}
                                         </p>
                                         <p
                                             v-if="
-                                                !item.is_free &&
-                                                item.original_price &&
-                                                item.original_price > item.price
+                                                hasDiscount(item) &&
+                                                !item.is_free
                                             "
-                                            class="mt-1 text-sm font-semibold text-[var(--my-muted)] line-through"
+                                            class="text-sm font-semibold text-[var(--my-muted)] line-through"
                                         >
                                             Rp
                                             {{
-                                                item.original_price.toLocaleString(
-                                                    'id-ID',
-                                                )
+                                                (
+                                                    item.original_price *
+                                                    item.quantity
+                                                ).toLocaleString('id-ID')
                                             }}
-                                            <span
-                                                v-if="
-                                                    item.discount_percent &&
-                                                    item.discount_percent > 0
-                                                "
-                                                class="ml-1 font-bold text-[var(--my-primary)] not-italic"
-                                                >(-{{
-                                                    item.discount_percent
-                                                }}%)</span
-                                            >
-                                        </p>
-                                        <p
-                                            v-if="isRecurring"
-                                            class="mt-1 text-xs text-[var(--my-muted)]"
-                                        >
-                                            /{{
-                                                item.recurring_interval ===
-                                                'monthly'
-                                                    ? 'bulan'
-                                                    : 'tahun'
-                                            }}
-                                        </p>
-                                        <p
-                                            v-else-if="item.type === 'product'"
-                                            class="mt-1 text-xs text-[var(--my-muted)]"
-                                        >
-                                            Sekali bayar
                                         </p>
                                     </div>
                                 </div>
+                                <Link
+                                    href="/keranjang"
+                                    class="mt-4 inline-block text-sm font-semibold text-[var(--my-primary)] hover:underline"
+                                >
+                                    Ubah Keranjang
+                                </Link>
                             </div>
 
                             <!-- Template features (price includes everything) -->
-                            <div
-                                v-if="item.type === 'template'"
-                                class="my-card p-6"
-                            >
+                            <div v-if="hasTemplate" class="my-card p-6">
                                 <h2 class="my-heading mb-4 text-2xl">
                                     Sudah Termasuk
                                 </h2>
@@ -425,71 +394,6 @@ const submitOrder = async () => {
                                     </li>
                                 </ul>
                             </div>
-
-                            <!-- Preview Data Info (templates only) -->
-                            <div
-                                v-if="item.type === 'template'"
-                                class="rounded-lg border border-blue-200 bg-blue-50 p-4"
-                            >
-                                <div class="flex items-start">
-                                    <svg
-                                        class="mt-0.5 mr-3 h-5 w-5 text-blue-600"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-                                    <div>
-                                        <p
-                                            class="text-sm font-semibold text-blue-900"
-                                        >
-                                            Data preview Anda tersimpan
-                                        </p>
-                                        <p class="mt-1 text-sm text-blue-700">
-                                            Data yang Anda input di halaman
-                                            preview akan otomatis digunakan
-                                            untuk undangan Anda setelah
-                                            pembayaran berhasil.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div
-                                v-else
-                                class="rounded-lg border border-yellow-200 bg-yellow-50 p-4"
-                            >
-                                <div class="flex items-start">
-                                    <svg
-                                        class="mt-0.5 mr-3 h-5 w-5 text-yellow-600"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-                                    <div>
-                                        <p
-                                            class="text-sm font-semibold text-yellow-900"
-                                        >
-                                            Belum ada data preview
-                                        </p>
-                                        <p class="mt-1 text-sm text-yellow-700">
-                                            Anda bisa mengisi data undangan
-                                            nanti setelah pembayaran, atau
-                                            kembali ke halaman preview untuk
-                                            mengisi data terlebih dahulu.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <!-- Order Total & Payment -->
@@ -499,16 +403,40 @@ const submitOrder = async () => {
                                     Ringkasan Order
                                 </h2>
 
-                                <div class="mb-4 space-y-3">
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-[var(--my-muted)]">{{
-                                            item.name
-                                        }}</span>
+                                <div class="mb-4 space-y-2">
+                                    <div
+                                        v-for="item in items"
+                                        :key="item.id"
+                                        class="flex justify-between gap-3 text-sm"
+                                    >
+                                        <span class="text-[var(--my-muted)]"
+                                            >{{ item.name }}
+                                            <span
+                                                v-if="item.quantity > 1"
+                                                class="font-semibold text-[var(--my-neutral)]"
+                                            >
+                                                × {{ item.quantity }}
+                                            </span>
+                                        </span>
                                         <span class="font-medium">{{
                                             item.is_free
                                                 ? 'Gratis'
-                                                : `Rp ${item.price.toLocaleString('id-ID')}`
+                                                : `Rp ${(item.price * item.quantity).toLocaleString('id-ID')}`
                                         }}</span>
+                                    </div>
+                                    <div
+                                        v-if="totals.savings > 0"
+                                        class="flex justify-between text-sm text-emerald-600"
+                                    >
+                                        <span>Kamu hemat</span>
+                                        <span class="font-semibold">
+                                            -Rp
+                                            {{
+                                                totals.savings.toLocaleString(
+                                                    'id-ID',
+                                                )
+                                            }}
+                                        </span>
                                     </div>
                                 </div>
 
@@ -523,11 +451,8 @@ const submitOrder = async () => {
                                         <span
                                             class="text-2xl font-bold text-[var(--my-primary)]"
                                         >
-                                            {{
-                                                item.is_free
-                                                    ? 'Gratis'
-                                                    : `Rp ${total.toLocaleString('id-ID')}`
-                                            }}
+                                            Rp
+                                            {{ total.toLocaleString('id-ID') }}
                                         </span>
                                     </div>
                                 </div>

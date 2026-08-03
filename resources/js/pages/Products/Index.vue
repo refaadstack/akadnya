@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Check, ShoppingBag } from 'lucide-vue-next';
+import { Check, ShoppingCart } from 'lucide-vue-next';
 import { ref } from 'vue';
 import PublicFooter from '@/components/PublicFooter.vue';
 import PublicNavbar from '@/components/PublicNavbar.vue';
@@ -26,14 +26,35 @@ defineOptions({
     layout: undefined,
 });
 
-const addingToCart = ref<number | null>(null);
+const addingId = ref<number | null>(null);
+const addedId = ref<number | null>(null);
 
 const addToCart = (product: Product) => {
-    addingToCart.value = product.id;
+    if (addingId.value !== null) {
+        return;
+    }
 
-    setTimeout(() => {
-        router.visit(`/checkout?product=${product.slug}`);
-    }, 300);
+    addingId.value = product.id;
+
+    router.post(
+        '/keranjang',
+        {
+            item_type: 'product',
+            item_id: product.id,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                addedId.value = product.id;
+                setTimeout(() => {
+                    addedId.value = null;
+                }, 2500);
+            },
+            onFinish: () => {
+                addingId.value = null;
+            },
+        },
+    );
 };
 </script>
 
@@ -125,16 +146,29 @@ const addToCart = (product: Product) => {
                             <button
                                 class="my-btn-primary mt-6 w-full gap-2 disabled:cursor-not-allowed disabled:opacity-60"
                                 type="button"
-                                :disabled="addingToCart === product.id"
+                                :disabled="addingId === product.id"
                                 @click="addToCart(product)"
                             >
-                                <ShoppingBag class="size-4" />
+                                <Check
+                                    v-if="addedId === product.id"
+                                    class="size-4"
+                                />
+                                <ShoppingCart v-else class="size-4" />
                                 {{
-                                    addingToCart === product.id
-                                        ? 'Memproses...'
-                                        : 'Beli Produk Ini'
+                                    addingId === product.id
+                                        ? 'Menambahkan...'
+                                        : addedId === product.id
+                                          ? 'Ditambahkan!'
+                                          : 'Tambah ke Keranjang'
                                 }}
                             </button>
+                            <Link
+                                v-if="addedId === product.id"
+                                href="/keranjang"
+                                class="my-btn-secondary mt-3 w-full gap-2"
+                            >
+                                Lihat Keranjang
+                            </Link>
                         </article>
                     </div>
                 </template>

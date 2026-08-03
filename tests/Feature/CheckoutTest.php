@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Product;
@@ -11,148 +12,110 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('checkout page requires authentication', function () {
-    $template = Template::factory()->create();
-
-    $response = $this->get("/checkout?template={$template->slug}");
-
-    $response->assertRedirect('/login');
+    $this->get('/checkout')->assertRedirect('/login');
 });
 
-test('checkout page redirects to templates when no item is given', function () {
+test('checkout page requires verified email', function () {
+    $user = User::factory()->unverified()->create();
+
+    $this->actingAs($user)->get('/checkout')->assertRedirect('/email/verify');
+});
+
+test('checkout page redirects to cart when cart is empty', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->get('/checkout');
-
-    $response->assertRedirect(route('templates.index'));
+    $this->actingAs($user)->get('/checkout')->assertRedirect(route('cart.index'));
 });
 
-test('checkout page renders a template item without requiring a product', function () {
+test('checkout page renders all cart items', function () {
     $user = User::factory()->create();
     $template = Template::factory()->create([
         'is_active' => true,
         'price' => 150000,
     ]);
-
-    $response = $this->actingAs($user)->get("/checkout?template={$template->slug}");
-
-    $response->assertSuccessful();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Checkout/Index')
-        ->where('item.type', 'template')
-        ->where('item.id', $template->id)
-        ->where('item.slug', $template->slug)
-        ->where('item.price', '150000.00')
-    );
-});
-
-test('checkout page renders a product item without requiring a template', function () {
-    $user = User::factory()->create();
     $product = Product::factory()->create([
         'is_active' => true,
-        'slug' => 'custom_domain',
         'price' => 49000,
     ]);
 
-    $response = $this->actingAs($user)->get("/checkout?product={$product->slug}");
+    CartItem::create(['user_id' => $user->id, 'item_type' => 'template', 'item_id' => $template->id]);
+    CartItem::create(['user_id' => $user->id, 'item_type' => 'product', 'item_id' => $product->id, 'quantity' => 2]);
+
+    $response = $this->actingAs($user)->get('/checkout');
 
     $response->assertSuccessful();
     $response->assertInertia(fn ($page) => $page
         ->component('Checkout/Index')
-        ->where('item.type', 'product')
-        ->where('item.id', $product->id)
-        ->where('item.slug', $product->slug)
+        ->has('items', 2)
+        ->where('items.0.type', 'template')
+        ->where('items.0.name', $template->name)
+        ->where('items.1.type', 'product')
+        ->where('items.1.quantity', 2)
+        ->where('totals.subtotal', 248000)
     );
 });
 
-test('store creates an order for a template only', function () {
+test('store creates one order with all cart items and clears the cart', function () {
     $user = User::factory()->create();
     $template = Template::factory()->create(['is_active' => true, 'price' => 150000]);
+    $product = Product::factory()->create(['is_active' => true, 'type' => 'addon', 'price' => 19000]);
 
-    $this->mock(PaymentService::class)
-        ->shouldReceive('createTransaction')
-        ->andReturn(Payment::make(['payment_url' => 'https://pay.example.com/checkout']));
-
-    $response = $this->actingAs($user)->postJson('/checkout', [
-        'template_id' => $template->id,
+    CartItem::create([
+        'user_id' => $user->id,
+        'item_type' => 'template',
+        'item_id' => $template->id,
+        'preview_data' => ['bride_name' => 'Sari'],
     ]);
-
-    $response->assertOk();
-    $response->assertJson(['success' => true]);
-
-    $order = Order::where('user_id', $user->id)->first();
-    expect($order)->not->toBeNull()
-        ->and($order->total_amount)->toBe('150000.00')
-        ->and($order->items)->toHaveCount(1)
-        ->and($order->items->first()->item_type)->toBe('template')
-        ->and($order->items->first()->item_id)->toBe($template->id)
-        ->and($order->metadata['template_slug'])->toBe($template->slug);
-});
-
-test('store creates an order for a product only', function () {
-    $user = User::factory()->create();
-    $product = Product::factory()->create([
-        'is_active' => true,
-        'type' => 'addon',
-        'slug' => 'custom_domain',
-        'price' => 49000,
+    CartItem::create([
+        'user_id' => $user->id,
+        'item_type' => 'product',
+        'item_id' => $product->id,
+        'quantity' => 2,
     ]);
 
     $this->mock(PaymentService::class)
         ->shouldReceive('createTransaction')
         ->andReturn(Payment::make(['payment_url' => 'https://pay.example.com/checkout']));
 
-    $response = $this->actingAs($user)->postJson('/checkout', [
-        'product_id' => $product->id,
-    ]);
+    $response = $this->actingAs($user)->postJson('/checkout', []);
 
     $response->assertOk();
     $response->assertJson(['success' => true]);
 
     $order = Order::where('user_id', $user->id)->first();
     expect($order)->not->toBeNull()
-        ->and($order->total_amount)->toBe('49000.00')
-        ->and($order->items)->toHaveCount(1)
-        ->and($order->items->first()->item_type)->toBe('product')
-        ->and($order->items->first()->product_id)->toBe($product->id)
-        ->and($order->metadata['product_slug'])->toBe($product->slug);
+        ->and($order->total_amount)->toBe('188000.00')
+        ->and($order->items)->toHaveCount(2)
+        ->and($order->items->firstWhere('item_type', 'template')->item_id)->toBe($template->id)
+        ->and($order->items->firstWhere('item_type', 'product')->quantity)->toBe(2)
+        ->and($order->metadata['preview_data'][$template->slug])->toBe(['bride_name' => 'Sari'])
+        ->and($order->metadata['template_slugs'])->toBe([$template->slug])
+        ->and($order->metadata['product_slugs'])->toBe([$product->slug]);
+
+    $this->assertDatabaseCount('cart_items', 0);
 });
 
-test('store rejects order without any item', function () {
+test('store rejects an empty cart', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->postJson('/checkout', []);
 
     $response->assertStatus(422);
-    $response->assertJsonValidationErrors(['template_id']);
+    $response->assertJson(['success' => false]);
 });
 
-test('store rejects inactive template', function () {
+test('store rejects cart items that are no longer purchasable', function () {
     $user = User::factory()->create();
     $template = Template::factory()->create(['is_active' => false]);
 
-    $response = $this->actingAs($user)->postJson('/checkout', [
-        'template_id' => $template->id,
+    CartItem::create([
+        'user_id' => $user->id,
+        'item_type' => 'template',
+        'item_id' => $template->id,
     ]);
 
-    $response->assertStatus(422);
-});
+    $response = $this->actingAs($user)->postJson('/checkout', []);
 
-test('store rejects base package product', function () {
-    $user = User::factory()->create();
-    $product = Product::factory()->base()->create(['is_active' => true]);
-
-    $response = $this->actingAs($user)->postJson('/checkout', [
-        'product_id' => $product->id,
-    ]);
-
-    $response->assertStatus(422);
-});
-
-test('checkout page requires verified email', function () {
-    $user = User::factory()->unverified()->create();
-    $template = Template::factory()->create(['is_active' => true]);
-
-    $response = $this->actingAs($user)->get("/checkout?template={$template->slug}");
-
-    $response->assertRedirect('/email/verify');
+    $response->assertStatus(500);
+    $this->assertDatabaseCount('orders', 0);
 });

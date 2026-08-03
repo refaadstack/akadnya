@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Dashboard\LoveStoryController;
 use App\Http\Controllers\Dashboard\RsvpController;
@@ -52,6 +53,13 @@ Route::post('/api/templates/{slug}/preview', [TemplatePreviewController::class, 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+    // Shopping cart (server-side, requires login)
+    Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/keranjang', [CartController::class, 'store'])->name('cart.store');
+    Route::patch('/keranjang/{item}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/keranjang/{item}', [CartController::class, 'destroy'])->name('cart.destroy');
+    Route::delete('/keranjang', [CartController::class, 'clear'])->name('cart.clear');
 });
 
 // Payment finish page (public, shows order status)

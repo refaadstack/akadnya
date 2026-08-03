@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { Menu, X } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { Menu, ShoppingCart, X } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 defineProps<{
     canRegister?: boolean;
     currentPage?: string;
 }>();
+
+const cartCount = computed(() => (usePage().props.cartCount as number) || 0);
 
 const mobileMenuOpen = ref(false);
 </script>
@@ -67,6 +69,19 @@ const mobileMenuOpen = ref(false);
                 </div>
 
                 <div class="hidden items-center gap-3 md:flex">
+                    <Link
+                        href="/keranjang"
+                        class="relative inline-flex size-10 items-center justify-center rounded-lg border border-[var(--my-border)] text-[var(--my-neutral)] transition hover:text-[var(--my-primary)]"
+                        aria-label="Keranjang"
+                    >
+                        <ShoppingCart class="size-5" />
+                        <span
+                            v-if="cartCount > 0"
+                            class="absolute -top-1.5 -right-1.5 grid min-w-5 place-items-center rounded-full bg-[var(--my-primary)] px-1 text-[0.65rem] font-bold text-white"
+                        >
+                            {{ cartCount > 99 ? '99+' : cartCount }}
+                        </span>
+                    </Link>
                     <Link
                         href="/login"
                         class="px-3 py-2 text-sm font-semibold text-[var(--my-neutral)] transition hover:text-[var(--my-primary)]"
@@ -131,6 +146,20 @@ const mobileMenuOpen = ref(false);
                     @click="mobileMenuOpen = false"
                 >
                     FAQ
+                </Link>
+                <Link
+                    href="/keranjang"
+                    class="flex items-center gap-2 py-2 font-semibold text-[var(--my-neutral)]"
+                    @click="mobileMenuOpen = false"
+                >
+                    <ShoppingCart class="size-5" />
+                    Keranjang
+                    <span
+                        v-if="cartCount > 0"
+                        class="grid min-w-5 place-items-center rounded-full bg-[var(--my-primary)] px-1 text-xs font-bold text-white"
+                    >
+                        {{ cartCount > 99 ? '99+' : cartCount }}
+                    </span>
                 </Link>
                 <Link
                     href="/login"

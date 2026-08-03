@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 interface Template {
@@ -16,6 +16,21 @@ interface Props {
 const props = defineProps<Props>();
 
 const renderUrl = computed(() => `/templates/${props.template.slug}/render`);
+
+const addToCart = () => {
+    router.post(
+        '/keranjang',
+        {
+            item_type: 'template',
+            item_id: props.template.id,
+        },
+        {
+            onSuccess: () => {
+                router.visit('/keranjang');
+            },
+        },
+    );
+};
 </script>
 
 <template>
@@ -53,12 +68,13 @@ const renderUrl = computed(() => `/templates/${props.template.slug}/render`);
                     </div>
 
                     <div class="flex items-center space-x-3">
-                        <Link
-                            :href="`/checkout?template=${template.slug}`"
+                        <button
+                            type="button"
+                            @click="addToCart"
                             class="rounded-lg bg-gradient-to-r from-pink-600 to-purple-600 px-6 py-2 font-semibold text-white transition hover:shadow-lg"
                         >
-                            Pilih Template
-                        </Link>
+                            Tambah ke Keranjang
+                        </button>
                     </div>
                 </div>
             </div>
@@ -131,12 +147,13 @@ const renderUrl = computed(() => `/templates/${props.template.slug}/render`);
                         Setelah Anda memilih template, Anda dapat mengedit
                         konten sesuai keinginan Anda.
                     </p>
-                    <Link
-                        :href="`/checkout?template=${template.slug}`"
+                    <button
+                        type="button"
+                        @click="addToCart"
                         class="inline-block rounded-lg bg-gradient-to-r from-pink-600 to-purple-600 px-8 py-3 font-semibold text-white transition hover:shadow-lg"
                     >
-                        Pilih Template Ini
-                    </Link>
+                        Tambah ke Keranjang
+                    </button>
                 </div>
             </div>
         </main>

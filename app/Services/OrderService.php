@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\CartItem;
 use App\Models\Invitation;
 use App\Models\InvitationContent;
 use App\Models\InvitationOrnament;
@@ -15,6 +16,7 @@ use App\Models\UserFeature;
 use App\Notifications\PaymentSuccessfulNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
@@ -78,6 +80,77 @@ class OrderService
             }
 
             // Update total amount
+            $order->update(['total_amount' => $totalAmount]);
+
+            return $order->fresh(['items']);
+        });
+    }
+
+    /**
+     * Create an order from the user's cart items (à la carte, multi-item).
+     *
+     * @param  \Illuminate\Support\Collection<int, \App\Models\CartItem>  $cartItems
+     */
+    public function createOrderFromCart(User $user, Collection $cartItems): Order
+    {
+        if ($cartItems->isEmpty()) {
+            throw new InvalidArgumentException('Keranjang kosong.');
+        }
+
+        return DB::transaction(function () use ($user, $cartItems) {
+            $order = Order::create([
+                'user_id' => $user->id,
+                'order_number' => $this->generateOrderNumber(),
+                'status' => 'pending',
+                'total_amount' => 0,
+                'metadata' => [
+                    'template_slugs' => $cartItems->where('item_type', 'template')
+                        ->pluck('item_id')
+                        ->map(fn (int $id) => Template::find($id)?->slug)
+                        ->filter()
+                        ->values()
+                        ->all(),
+                    'product_slugs' => $cartItems->where('item_type', 'product')
+                        ->pluck('item_id')
+                        ->map(fn (int $id) => Product::find($id)?->slug)
+                        ->filter()
+                        ->values()
+                        ->all(),
+                    'preview_data' => $cartItems->where('item_type', 'template')
+                        ->mapWithKeys(fn (CartItem $item) => [
+                            Template::find($item->item_id)?->slug => $item->preview_data,
+                        ])
+                        ->filter(fn ($value) => $value !== null)
+                        ->all(),
+                ],
+            ]);
+
+            $totalAmount = 0;
+
+            foreach ($cartItems as $cartItem) {
+                $model = $cartItem->model();
+
+                if (! $model || ! $model->is_active) {
+                    throw new InvalidArgumentException('Ada item di keranjang yang tidak tersedia lagi.');
+                }
+
+                if ($cartItem->item_type === 'product' && $model instanceof Product && $model->type !== 'addon') {
+                    throw new InvalidArgumentException('Ada item di keranjang yang tidak tersedia lagi.');
+                }
+
+                $totalAmount += $model->price * $cartItem->quantity;
+
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $cartItem->item_type === 'product' ? $model->id : null,
+                    'item_type' => $cartItem->item_type,
+                    'item_id' => $model->id,
+                    'name' => $model->name,
+                    'price' => $model->price,
+                    'quantity' => $cartItem->quantity,
+                ]);
+            }
+
             $order->update(['total_amount' => $totalAmount]);
 
             return $order->fresh(['items']);
@@ -183,7 +256,7 @@ class OrderService
             }
 
             $template = Template::find($templateItem->item_id);
-            $previewData = $order->metadata['preview_data'] ?? null;
+            $previewData = $this->previewDataFor($order, $template);
 
             if ($template) {
                 $invitation = $this->createInvitationFromOrder($user, $template, $previewData);
@@ -193,6 +266,21 @@ class OrderService
                 }
             }
         }
+    }
+
+    /**
+     * Resolve preview data for a template. Cart orders store preview data
+     * keyed by template slug; legacy orders store a single flat array.
+     */
+    protected function previewDataFor(Order $order, ?Template $template): ?array
+    {
+        $previewData = $order->metadata['preview_data'] ?? null;
+
+        if ($template && is_array($previewData) && array_key_exists($template->slug, $previewData)) {
+            return $previewData[$template->slug];
+        }
+
+        return $previewData;
     }
 
     /**

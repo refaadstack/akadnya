@@ -27,6 +27,8 @@ class ProductController extends Controller
                 'name' => $product->name,
                 'description' => $product->description,
                 'price' => $product->price,
+                'original_price' => $product->original_price,
+                'discount_percent' => $product->discount_percent,
                 'is_recurring' => $product->is_recurring ?? false,
                 'recurring_interval' => $product->recurring_interval,
             ]);

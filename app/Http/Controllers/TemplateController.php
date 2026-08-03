@@ -32,6 +32,8 @@ class TemplateController extends Controller
                 'name' => $template->name,
                 'thumbnail_url' => $template->thumbnail_url, // Uses accessor
                 'price' => $template->price,
+                'original_price' => $template->original_price,
+                'discount_percent' => $template->discount_percent,
                 'is_free' => $template->is_free,
             ]);
 

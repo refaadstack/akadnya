@@ -17,6 +17,7 @@ class Product extends Model
         'name',
         'description',
         'price',
+        'original_price',
         'is_active',
         'is_recurring',
         'recurring_interval',
@@ -25,6 +26,7 @@ class Product extends Model
 
     protected $casts = [
         'price' => 'decimal:2',
+        'original_price' => 'decimal:2',
         'is_active' => 'boolean',
         'is_recurring' => 'boolean',
         'metadata' => 'array',
@@ -50,5 +52,22 @@ class Product extends Model
     public function scopeAddons(Builder $query): void
     {
         $query->where('type', 'addon');
+    }
+
+    // Helper methods
+    public function hasDiscount(): bool
+    {
+        return $this->original_price !== null
+            && $this->original_price > 0
+            && $this->price < $this->original_price;
+    }
+
+    public function getDiscountPercentAttribute(): int
+    {
+        if (! $this->hasDiscount()) {
+            return 0;
+        }
+
+        return (int) round((1 - ($this->price / $this->original_price)) * 100);
     }
 }

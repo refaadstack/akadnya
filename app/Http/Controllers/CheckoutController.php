@@ -37,6 +37,8 @@ class CheckoutController extends Controller
                     'name' => $template->name,
                     'description' => 'Template undangan digital',
                     'price' => $template->price,
+                    'original_price' => $template->original_price,
+                    'discount_percent' => $template->discount_percent,
                     'is_free' => $template->is_free,
                 ],
             ]);
@@ -56,6 +58,8 @@ class CheckoutController extends Controller
                     'name' => $product->name,
                     'description' => $product->description,
                     'price' => $product->price,
+                    'original_price' => $product->original_price,
+                    'discount_percent' => $product->discount_percent,
                     'is_recurring' => $product->is_recurring ?? false,
                     'recurring_interval' => $product->recurring_interval,
                 ],

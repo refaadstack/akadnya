@@ -59,6 +59,7 @@ test('welcome page shows cheapest paid template as starting price', function () 
         'name' => 'Cheapest',
         'is_free' => false,
         'price' => 149000,
+        'original_price' => 199000,
         'is_active' => true,
     ]);
     Template::factory()->free()->create(['is_active' => true]);
@@ -68,5 +69,7 @@ test('welcome page shows cheapest paid template as starting price', function () 
     $response->assertInertia(fn ($page) => $page
         ->where('startingTemplate.name', 'Cheapest')
         ->where('startingTemplate.price', '149000.00')
+        ->where('startingTemplate.original_price', '199000.00')
+        ->where('startingTemplate.discount_percent', 25)
     );
 });

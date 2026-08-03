@@ -11,6 +11,8 @@ interface Template {
     name: string;
     thumbnail_url: string | null;
     price: number;
+    original_price?: number | null;
+    discount_percent?: number;
     is_free: boolean;
 }
 
@@ -102,6 +104,15 @@ const addToCart = (template: Template) => {
                             >
                                 Gratis
                             </div>
+                            <div
+                                v-else-if="
+                                    template.discount_percent &&
+                                    template.discount_percent > 0
+                                "
+                                class="absolute top-4 right-4 rounded-full bg-[var(--my-primary)] px-3 py-1 text-xs font-bold tracking-[0.12em] text-white uppercase"
+                            >
+                                -{{ template.discount_percent }}%
+                            </div>
                         </div>
 
                         <div class="p-4">
@@ -111,15 +122,33 @@ const addToCart = (template: Template) => {
                             <div
                                 class="mt-3 flex items-end justify-between gap-4"
                             >
-                                <p
-                                    class="text-2xl font-bold text-[var(--my-primary)]"
-                                >
-                                    {{
-                                        template.is_free
-                                            ? 'Gratis'
-                                            : `Rp ${template.price.toLocaleString('id-ID')}`
-                                    }}
-                                </p>
+                                <div class="flex items-end gap-2">
+                                    <p
+                                        class="text-2xl font-bold text-[var(--my-primary)]"
+                                    >
+                                        {{
+                                            template.is_free
+                                                ? 'Gratis'
+                                                : `Rp ${template.price.toLocaleString('id-ID')}`
+                                        }}
+                                    </p>
+                                    <p
+                                        v-if="
+                                            !template.is_free &&
+                                            template.original_price &&
+                                            template.original_price >
+                                                template.price
+                                        "
+                                        class="text-base font-semibold text-[var(--my-muted)] line-through"
+                                    >
+                                        Rp
+                                        {{
+                                            template.original_price.toLocaleString(
+                                                'id-ID',
+                                            )
+                                        }}
+                                    </p>
+                                </div>
                                 <p
                                     class="text-sm font-semibold tracking-[0.12em] text-[var(--my-muted)] uppercase"
                                 >

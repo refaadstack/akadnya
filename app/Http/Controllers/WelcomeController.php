@@ -25,6 +25,8 @@ class WelcomeController extends Controller
                 'name' => $template->name,
                 'thumbnail_url' => $template->thumbnail_url,
                 'price' => $template->price,
+                'original_price' => $template->original_price,
+                'discount_percent' => $template->discount_percent,
                 'is_free' => $template->is_free,
             ]);
 
@@ -40,6 +42,8 @@ class WelcomeController extends Controller
             'startingTemplate' => $startingTemplate ? [
                 'name' => $startingTemplate->name,
                 'price' => $startingTemplate->price,
+                'original_price' => $startingTemplate->original_price,
+                'discount_percent' => $startingTemplate->discount_percent,
             ] : null,
             'featuredTemplates' => $featuredTemplates,
         ]);

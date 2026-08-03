@@ -214,6 +214,7 @@ class TemplateService
                 'version' => $templateData['version'] ?? '1.0.0',
                 'is_free' => $templateData['is_free'] ?? false,
                 'price' => $templateData['price'] ?? 0,
+                'original_price' => $templateData['original_price'] ?? null,
                 'is_active' => true,
                 'synced_at' => now(),
             ]

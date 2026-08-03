@@ -23,6 +23,7 @@ class ProductFactory extends Factory
             'name' => fake()->words(3, true),
             'description' => fake()->sentence(),
             'price' => fake()->numberBetween(29000, 199000),
+            'original_price' => fake()->optional(0.6)->numberBetween(200000, 350000),
             'is_active' => true,
             'metadata' => [
                 'is_recurring' => false,

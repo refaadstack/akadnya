@@ -12,6 +12,7 @@ test('products page lists active add-on products only', function () {
         'slug' => 'guest_book',
         'name' => 'Buku Tamu Digital',
         'price' => 19000,
+        'original_price' => 25000,
     ]);
     Product::factory()->create([
         'type' => 'addon',
@@ -32,6 +33,8 @@ test('products page lists active add-on products only', function () {
         ->component('Products/Index')
         ->has('products', 2)
         ->where('products.0.slug', 'guest_book')
+        ->where('products.0.original_price', '25000.00')
+        ->where('products.0.discount_percent', 24)
         ->where('products.1.slug', 'custom_domain')
     );
 });

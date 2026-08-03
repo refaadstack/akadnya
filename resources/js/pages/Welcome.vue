@@ -18,12 +18,19 @@ interface FeaturedTemplate {
     name: string;
     thumbnail_url: string | null;
     price: number;
+    original_price?: number | null;
+    discount_percent?: number;
     is_free: boolean;
 }
 
 const props = defineProps<{
     canRegister: boolean;
-    startingTemplate: { name: string; price: number } | null;
+    startingTemplate: {
+        name: string;
+        price: number;
+        original_price?: number | null;
+        discount_percent?: number;
+    } | null;
     featuredTemplates: FeaturedTemplate[];
 }>();
 
@@ -190,15 +197,33 @@ const steps = [
                                 <div
                                     class="mt-3 flex items-end justify-between gap-4"
                                 >
-                                    <p
-                                        class="text-2xl font-bold text-[var(--my-primary)]"
-                                    >
-                                        {{
-                                            template.is_free
-                                                ? 'Gratis'
-                                                : `Rp ${template.price.toLocaleString('id-ID')}`
-                                        }}
-                                    </p>
+                                    <div class="flex items-end gap-2">
+                                        <p
+                                            class="text-2xl font-bold text-[var(--my-primary)]"
+                                        >
+                                            {{
+                                                template.is_free
+                                                    ? 'Gratis'
+                                                    : `Rp ${template.price.toLocaleString('id-ID')}`
+                                            }}
+                                        </p>
+                                        <p
+                                            v-if="
+                                                !template.is_free &&
+                                                template.original_price &&
+                                                template.original_price >
+                                                    template.price
+                                            "
+                                            class="text-base font-semibold text-[var(--my-muted)] line-through"
+                                        >
+                                            Rp
+                                            {{
+                                                template.original_price.toLocaleString(
+                                                    'id-ID',
+                                                )
+                                            }}
+                                        </p>
+                                    </div>
                                     <p
                                         class="text-sm font-semibold tracking-[0.12em] text-[var(--my-muted)] uppercase"
                                     >
@@ -339,6 +364,31 @@ const steps = [
                                         ? `${formattedPrice} sekali bayar`
                                         : 'Tersedia di koleksi'
                                 }}
+                            </p>
+                            <p
+                                v-if="
+                                    startingTemplate?.original_price &&
+                                    startingTemplate.original_price >
+                                        startingTemplate.price
+                                "
+                                class="mt-1 text-xl font-semibold text-[var(--my-muted)] line-through"
+                            >
+                                Rp
+                                {{
+                                    startingTemplate.original_price.toLocaleString(
+                                        'id-ID',
+                                    )
+                                }}
+                                <span
+                                    v-if="
+                                        startingTemplate.discount_percent &&
+                                        startingTemplate.discount_percent > 0
+                                    "
+                                    class="my-badge ml-2 align-middle"
+                                    >-{{
+                                        startingTemplate.discount_percent
+                                    }}%</span
+                                >
                             </p>
                             <p class="mt-3 text-[var(--my-muted)]">
                                 {{

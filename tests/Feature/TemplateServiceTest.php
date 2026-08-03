@@ -47,6 +47,8 @@ test('processUpload with valid ZIP creates template in public/templates', functi
         'slug' => 'test-template-'.uniqid(),
         'name' => 'Test Template',
         'version' => '1.0.0',
+        'price' => 149000,
+        'original_price' => 199000,
         'sections' => [
             ['file' => 'cover.html', 'label' => 'Cover'],
         ],
@@ -69,6 +71,8 @@ test('processUpload with valid ZIP creates template in public/templates', functi
     $template = Template::where('slug', $slug)->first();
     expect($template)->not->toBeNull();
     expect($template->name)->toBe('Test Template');
+    expect($template->price)->toBe('149000.00');
+    expect($template->original_price)->toBe('199000.00');
 });
 
 test('processUpload with invalid ZIP does not create partial files', function () {

@@ -14,6 +14,8 @@ interface CheckoutItem {
     name: string;
     description: string;
     price: number;
+    original_price?: number | null;
+    discount_percent?: number;
     is_free?: boolean;
     is_recurring?: boolean;
     recurring_interval?: string;
@@ -341,6 +343,31 @@ const submitOrder = async () => {
                                                     ? 'Gratis'
                                                     : `Rp ${item.price.toLocaleString('id-ID')}`
                                             }}
+                                        </p>
+                                        <p
+                                            v-if="
+                                                !item.is_free &&
+                                                item.original_price &&
+                                                item.original_price > item.price
+                                            "
+                                            class="mt-1 text-sm font-semibold text-[var(--my-muted)] line-through"
+                                        >
+                                            Rp
+                                            {{
+                                                item.original_price.toLocaleString(
+                                                    'id-ID',
+                                                )
+                                            }}
+                                            <span
+                                                v-if="
+                                                    item.discount_percent &&
+                                                    item.discount_percent > 0
+                                                "
+                                                class="ml-1 font-bold text-[var(--my-primary)] not-italic"
+                                                >(-{{
+                                                    item.discount_percent
+                                                }}%)</span
+                                            >
                                         </p>
                                         <p
                                             v-if="isRecurring"

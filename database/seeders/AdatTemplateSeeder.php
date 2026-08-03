@@ -23,6 +23,7 @@ class AdatTemplateSeeder extends Seeder
                 'version' => '1.0.0',
                 'is_free' => false,
                 'price' => 149000,
+                'original_price' => 199000,
                 'is_active' => true,
             ]
         );
@@ -71,6 +72,7 @@ class AdatTemplateSeeder extends Seeder
                 'version' => '1.0.0',
                 'is_free' => false,
                 'price' => 149000,
+                'original_price' => 199000,
                 'is_active' => true,
             ]
         );
@@ -119,6 +121,7 @@ class AdatTemplateSeeder extends Seeder
                 'version' => '1.0.0',
                 'is_free' => false,
                 'price' => 149000,
+                'original_price' => 199000,
                 'is_active' => true,
             ]
         );

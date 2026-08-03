@@ -24,6 +24,7 @@ class TemplateFactory extends Factory
             'thumbnail_url' => fake()->imageUrl(),
             'is_free' => fake()->boolean(30),
             'price' => fake()->numberBetween(0, 200000),
+            'original_price' => fake()->optional(0.6)->numberBetween(200000, 300000),
             'is_active' => true,
         ];
     }

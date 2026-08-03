@@ -12,6 +12,8 @@ interface Product {
     name: string;
     description: string;
     price: number;
+    original_price?: number | null;
+    discount_percent?: number;
     is_recurring?: boolean;
     recurring_interval?: string;
 }
@@ -74,26 +76,52 @@ const addToCart = (product: Product) => {
                             <p class="mt-2 text-sm text-[var(--my-muted)]">
                                 {{ product.description }}
                             </p>
-                            <p
-                                class="mt-5 text-3xl font-bold text-[var(--my-primary)]"
-                            >
-                                Rp {{ product.price.toLocaleString('id-ID') }}
-                                <span
-                                    v-if="product.is_recurring"
-                                    class="text-sm font-semibold text-[var(--my-muted)]"
+                            <div class="mt-5 flex items-end gap-2">
+                                <p
+                                    class="text-3xl font-bold text-[var(--my-primary)]"
                                 >
-                                    /{{
-                                        product.recurring_interval === 'monthly'
-                                            ? 'bulan'
-                                            : 'tahun'
+                                    Rp
+                                    {{ product.price.toLocaleString('id-ID') }}
+                                    <span
+                                        v-if="product.is_recurring"
+                                        class="text-sm font-semibold text-[var(--my-muted)]"
+                                    >
+                                        /{{
+                                            product.recurring_interval ===
+                                            'monthly'
+                                                ? 'bulan'
+                                                : 'tahun'
+                                        }}
+                                    </span>
+                                    <span
+                                        v-else
+                                        class="text-sm font-semibold text-[var(--my-muted)]"
+                                        >sekali bayar</span
+                                    >
+                                </p>
+                                <p
+                                    v-if="
+                                        product.original_price &&
+                                        product.original_price > product.price
+                                    "
+                                    class="text-lg font-semibold text-[var(--my-muted)] line-through"
+                                >
+                                    Rp
+                                    {{
+                                        product.original_price.toLocaleString(
+                                            'id-ID',
+                                        )
                                     }}
-                                </span>
+                                </p>
                                 <span
-                                    v-else
-                                    class="text-sm font-semibold text-[var(--my-muted)]"
-                                    >sekali bayar</span
+                                    v-if="
+                                        product.discount_percent &&
+                                        product.discount_percent > 0
+                                    "
+                                    class="my-badge mb-1"
+                                    >-{{ product.discount_percent }}%</span
                                 >
-                            </p>
+                            </div>
                             <button
                                 class="my-btn-primary mt-6 w-full gap-2 disabled:cursor-not-allowed disabled:opacity-60"
                                 type="button"

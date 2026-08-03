@@ -99,6 +99,17 @@ class TemplateForm
                             ->prefix('Rp')
                             ->minValue(0)
                             ->step(1000)
+                            ->label('Harga Diskon (Rp)')
+                            ->helperText('Harga yang dibayar pelanggan')
+                            ->columnSpan(1),
+
+                        TextInput::make('original_price')
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->minValue(0)
+                            ->step(1000)
+                            ->label('Harga Normal (Rp)')
+                            ->helperText('Harga sebelum diskon, ditampilkan dicoret')
                             ->columnSpan(1),
 
                         Toggle::make('is_free')

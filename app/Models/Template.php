@@ -18,6 +18,7 @@ class Template extends Model
         'version',
         'is_free',
         'price',
+        'original_price',
         'is_active',
         'synced_at',
     ];
@@ -26,6 +27,7 @@ class Template extends Model
         'is_free' => 'boolean',
         'is_active' => 'boolean',
         'price' => 'decimal:2',
+        'original_price' => 'decimal:2',
         'synced_at' => 'datetime',
     ];
 
@@ -65,6 +67,24 @@ class Template extends Model
     public function getUsageCount(): int
     {
         return $this->invitations()->count();
+    }
+
+    // Helper methods
+    public function hasDiscount(): bool
+    {
+        return ! $this->is_free
+            && $this->original_price !== null
+            && $this->original_price > 0
+            && $this->price < $this->original_price;
+    }
+
+    public function getDiscountPercentAttribute(): int
+    {
+        if (! $this->hasDiscount()) {
+            return 0;
+        }
+
+        return (int) round((1 - ($this->price / $this->original_price)) * 100);
     }
 
     /**

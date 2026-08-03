@@ -47,3 +47,26 @@ test('welcome page shows active featured templates from database thumbnails', fu
         ->missing('featuredTemplates.3')
     );
 });
+
+test('welcome page shows cheapest paid template as starting price', function () {
+    Template::factory()->create([
+        'name' => 'Expensive',
+        'is_free' => false,
+        'price' => 250000,
+        'is_active' => true,
+    ]);
+    Template::factory()->create([
+        'name' => 'Cheapest',
+        'is_free' => false,
+        'price' => 149000,
+        'is_active' => true,
+    ]);
+    Template::factory()->free()->create(['is_active' => true]);
+
+    $response = $this->get('/');
+
+    $response->assertInertia(fn ($page) => $page
+        ->where('startingTemplate.name', 'Cheapest')
+        ->where('startingTemplate.price', '149000.00')
+    );
+});

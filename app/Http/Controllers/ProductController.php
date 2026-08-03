@@ -9,12 +9,15 @@ use Inertia\Response;
 class ProductController extends Controller
 {
     /**
-     * Display all active products available à la carte.
+     * Display all active add-on products available à la carte.
+     *
+     * Templates include full access, so only add-ons (e.g. guest book,
+     * custom domain, managed setup) are sold as standalone products.
      */
     public function index(): Response
     {
-        $products = Product::active()
-            ->orderByRaw("FIELD(type, 'base_package', 'addon')")
+        $products = Product::addons()
+            ->active()
             ->orderBy('price')
             ->get()
             ->map(fn ($product) => [

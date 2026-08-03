@@ -137,6 +137,17 @@ test('store rejects inactive template', function () {
     $response->assertStatus(422);
 });
 
+test('store rejects base package product', function () {
+    $user = User::factory()->create();
+    $product = Product::factory()->base()->create(['is_active' => true]);
+
+    $response = $this->actingAs($user)->postJson('/checkout', [
+        'product_id' => $product->id,
+    ]);
+
+    $response->assertStatus(422);
+});
+
 test('checkout page requires verified email', function () {
     $user = User::factory()->unverified()->create();
     $template = Template::factory()->create(['is_active' => true]);

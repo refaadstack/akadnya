@@ -44,6 +44,7 @@ class CheckoutController extends Controller
 
         if ($productSlug) {
             $product = Product::where('slug', $productSlug)
+                ->where('type', 'addon')
                 ->where('is_active', true)
                 ->firstOrFail();
 
@@ -71,7 +72,7 @@ class CheckoutController extends Controller
     {
         $validated = $request->validate([
             'template_id' => 'nullable|required_without:product_id|exists:templates,id,is_active,1',
-            'product_id' => 'nullable|required_without:template_id|exists:products,id,is_active,1',
+            'product_id' => 'nullable|required_without:template_id|exists:products,id,type,addon,is_active,1',
             'preview_data' => 'nullable|array',
         ]);
 

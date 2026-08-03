@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Models\Template;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -15,11 +14,6 @@ class WelcomeController extends Controller
      */
     public function index(): Response
     {
-        // Get base package product
-        $basePackage = Product::where('type', 'base_package')
-            ->where('is_active', true)
-            ->first();
-
         $featuredTemplates = Template::active()
             ->orderBy('is_free', 'desc')
             ->orderBy('name')
@@ -34,12 +28,18 @@ class WelcomeController extends Controller
                 'is_free' => $template->is_free,
             ]);
 
+        // Cheapest paid template as the "starting from" price.
+        // Buying a template includes full access (editor, subdomain, publish).
+        $startingTemplate = Template::active()
+            ->where('is_free', false)
+            ->orderBy('price')
+            ->first();
+
         return Inertia::render('Welcome', [
             'canRegister' => Features::enabled(Features::registration()),
-            'basePackage' => $basePackage ? [
-                'name' => $basePackage->name,
-                'price' => $basePackage->price,
-                'description' => $basePackage->description,
+            'startingTemplate' => $startingTemplate ? [
+                'name' => $startingTemplate->name,
+                'price' => $startingTemplate->price,
             ] : null,
             'featuredTemplates' => $featuredTemplates,
         ]);

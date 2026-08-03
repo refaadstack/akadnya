@@ -5,8 +5,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('products page lists active products', function () {
+test('products page lists active add-on products only', function () {
     Product::factory()->base()->create();
+    Product::factory()->create([
+        'type' => 'addon',
+        'slug' => 'guest_book',
+        'name' => 'Buku Tamu Digital',
+        'price' => 19000,
+    ]);
     Product::factory()->create([
         'type' => 'addon',
         'slug' => 'custom_domain',
@@ -25,8 +31,20 @@ test('products page lists active products', function () {
     $response->assertInertia(fn ($page) => $page
         ->component('Products/Index')
         ->has('products', 2)
-        ->where('products.0.slug', 'base')
+        ->where('products.0.slug', 'guest_book')
         ->where('products.1.slug', 'custom_domain')
+    );
+});
+
+test('products page never lists base packages', function () {
+    Product::factory()->base()->create(['is_active' => true]);
+
+    $response = $this->get(route('products.index'));
+
+    $response->assertSuccessful();
+    $response->assertInertia(fn ($page) => $page
+        ->component('Products/Index')
+        ->has('products', 0)
     );
 });
 

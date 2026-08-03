@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 // Disable default layout
@@ -51,12 +51,14 @@ const hasTemplate = computed(() =>
     props.items.some((item) => item.type === 'template'),
 );
 
-const templateFeatures = [
+const appDomain = usePage().props.appDomain as string;
+
+const templateFeatures = computed(() => [
     'Akses editor undangan lengkap',
-    'Subdomain gratis (namaanda.myakad.id)',
+    `Subdomain gratis (namaanda.${appDomain})`,
     'RSVP, ucapan, galeri foto, dan amplop digital',
     'Publish undangan & bagikan link',
-];
+]);
 
 // Submit order — order is created from the server-side cart
 const submitOrder = async () => {

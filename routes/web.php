@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Dashboard\LoveStoryController;
+use App\Http\Controllers\Dashboard\RsvpController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EditorController;
 use App\Http\Controllers\FaqController;
@@ -10,6 +12,7 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\InvitationSettingsController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PaymentFinishController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PublicInvitationController;
 use App\Http\Controllers\TemplateAssetController;
 use App\Http\Controllers\TemplateController;
@@ -32,6 +35,9 @@ Route::get('/api/invitations/{invitationId}/wishes', [PublicInvitationController
 Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');
 Route::get('/templates/{slug}/preview', [TemplateController::class, 'preview'])->name('templates.preview');
 Route::get('/templates/{slug}/render', [TemplateController::class, 'render'])->name('templates.render');
+
+// Public products routes (à la carte)
+Route::get('/produk', [ProductController::class, 'index'])->name('products.index');
 
 // Serve template assets (CSS, JS, images) from storage via Laravel
 Route::get('/template-assets/{slug}/{file}', TemplateAssetController::class)
@@ -58,8 +64,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin panel is now handled by Filament at /admin
 
-    // These routes require base package
-    Route::middleware('has.base.package')->group(function () {
+    // These routes require an active invitation (template purchased) or active package
+    Route::middleware('has.invitation.access')->group(function () {
         // Editor
         Route::get('dashboard/editor', [EditorController::class, 'index'])->name('dashboard.editor');
         Route::post('dashboard/editor', [EditorController::class, 'save'])->name('dashboard.editor.save');
@@ -100,11 +106,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('dashboard/guests/{guest}/whatsapp', [GuestController::class, 'sendWhatsApp'])->name('dashboard.guests.whatsapp');
 
         // RSVP management
-        Route::get('dashboard/rsvp', [\App\Http\Controllers\Dashboard\RsvpController::class, 'index'])->name('dashboard.rsvp');
+        Route::get('dashboard/rsvp', [RsvpController::class, 'index'])->name('dashboard.rsvp');
 
         // Love Story
-        Route::get('dashboard/love-story', [\App\Http\Controllers\Dashboard\LoveStoryController::class, 'index'])->name('dashboard.love-story');
-        Route::post('dashboard/love-story', [\App\Http\Controllers\Dashboard\LoveStoryController::class, 'update'])->name('dashboard.love-story.update');
+        Route::get('dashboard/love-story', [LoveStoryController::class, 'index'])->name('dashboard.love-story');
+        Route::post('dashboard/love-story', [LoveStoryController::class, 'update'])->name('dashboard.love-story.update');
 
         // Media uploads
         Route::post('media/upload/cover', [MediaController::class, 'uploadCover'])->name('media.upload.cover');

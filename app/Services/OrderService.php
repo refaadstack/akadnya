@@ -16,20 +16,24 @@ use App\Notifications\PaymentSuccessfulNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class OrderService
 {
     /**
-     * Create a new order
+     * Create a new order for a single item (template and/or product, à la carte).
      */
     public function createOrder(
         User $user,
-        Template $template,
-        Product $basePackage,
-        array $addonIds = [],
+        ?Template $template = null,
+        ?Product $product = null,
         ?array $previewData = null
     ): Order {
-        return DB::transaction(function () use ($user, $template, $basePackage, $addonIds, $previewData) {
+        if (! $template && ! $product) {
+            throw new InvalidArgumentException('An order must contain a template or a product.');
+        }
+
+        return DB::transaction(function () use ($user, $template, $product, $previewData) {
             // Create order
             $order = Order::create([
                 'user_id' => $user->id,
@@ -37,55 +41,40 @@ class OrderService
                 'status' => 'pending',
                 'total_amount' => 0, // Will be calculated below
                 'metadata' => [
-                    'template_slug' => $template->slug,
-                    'preview_data' => $previewData,
+                    'template_slug' => $template?->slug,
+                    'product_slug' => $product?->slug,
+                    'preview_data' => $template ? $previewData : null,
                 ],
             ]);
 
             $totalAmount = 0;
 
-            // Add template as order item
-            $totalAmount += $template->price;
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => null, // Template is not a product
-                'item_type' => 'template',
-                'item_id' => $template->id,
-                'name' => $template->name,
-                'price' => $template->price,
-                'quantity' => 1,
-            ]);
+            // Add template as order item (optional, à la carte)
+            if ($template) {
+                $totalAmount += $template->price;
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => null, // Template is not a product
+                    'item_type' => 'template',
+                    'item_id' => $template->id,
+                    'name' => $template->name,
+                    'price' => $template->price,
+                    'quantity' => 1,
+                ]);
+            }
 
-            // Add base package
-            $totalAmount += $basePackage->price;
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $basePackage->id,
-                'item_type' => 'product',
-                'item_id' => $basePackage->id,
-                'name' => $basePackage->name,
-                'price' => $basePackage->price,
-                'quantity' => 1,
-            ]);
-
-            // Add addons
-            if (! empty($addonIds)) {
-                $addons = Product::whereIn('id', $addonIds)
-                    ->where('is_active', true)
-                    ->get();
-
-                foreach ($addons as $addon) {
-                    $totalAmount += $addon->price;
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'product_id' => $addon->id,
-                        'item_type' => 'product',
-                        'item_id' => $addon->id,
-                        'name' => $addon->name,
-                        'price' => $addon->price,
-                        'quantity' => 1,
-                    ]);
-                }
+            // Add product (optional, à la carte)
+            if ($product) {
+                $totalAmount += $product->price;
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $product->id,
+                    'item_type' => 'product',
+                    'item_id' => $product->id,
+                    'name' => $product->name,
+                    'price' => $product->price,
+                    'quantity' => 1,
+                ]);
             }
 
             // Update total amount

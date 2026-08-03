@@ -3,7 +3,7 @@
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
-use App\Http\Middleware\HasBasePackage;
+use App\Http\Middleware\HasInvitationAccess;
 use App\Http\Middleware\ResolveInvitation;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -30,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
-            'has.base.package' => HasBasePackage::class,
+            'has.invitation.access' => HasInvitationAccess::class,
             'resolve.invitation' => ResolveInvitation::class,
         ]);
     })

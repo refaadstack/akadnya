@@ -7,6 +7,7 @@ use App\Models\Template;
 use App\Services\OrderService;
 use App\Services\PaymentService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -16,60 +17,51 @@ use Inertia\Response;
 class CheckoutController extends Controller
 {
     /**
-     * Show checkout page
+     * Show checkout page for a single item (template or product, à la carte).
      */
-    public function index(Request $request): Response
+    public function index(Request $request): Response|RedirectResponse
     {
         $templateSlug = $request->query('template');
+        $productSlug = $request->query('product');
 
-        if (! $templateSlug) {
-            abort(400, 'Template parameter is required');
+        if ($templateSlug) {
+            $template = Template::where('slug', $templateSlug)
+                ->where('is_active', true)
+                ->firstOrFail();
+
+            return Inertia::render('Checkout/Index', [
+                'item' => [
+                    'type' => 'template',
+                    'id' => $template->id,
+                    'slug' => $template->slug,
+                    'name' => $template->name,
+                    'description' => 'Template undangan digital',
+                    'price' => $template->price,
+                    'is_free' => $template->is_free,
+                ],
+            ]);
         }
 
-        $template = Template::where('slug', $templateSlug)
-            ->where('is_active', true)
-            ->firstOrFail();
+        if ($productSlug) {
+            $product = Product::where('slug', $productSlug)
+                ->where('is_active', true)
+                ->firstOrFail();
 
-        // Get all base package options
-        $basePackages = Product::where('type', 'base_package')
-            ->where('is_active', true)
-            ->orderBy('price')
-            ->get()
-            ->map(fn ($product) => [
-                'id' => $product->id,
-                'slug' => $product->slug,
-                'name' => $product->name,
-                'description' => $product->description,
-                'price' => $product->price,
-                'is_recurring' => $product->is_recurring ?? false,
-                'recurring_interval' => $product->recurring_interval,
+            return Inertia::render('Checkout/Index', [
+                'item' => [
+                    'type' => 'product',
+                    'id' => $product->id,
+                    'slug' => $product->slug,
+                    'name' => $product->name,
+                    'description' => $product->description,
+                    'price' => $product->price,
+                    'is_recurring' => $product->is_recurring ?? false,
+                    'recurring_interval' => $product->recurring_interval,
+                ],
             ]);
+        }
 
-        // Get add-on products
-        $addons = Product::where('type', 'addon')
-            ->where('is_active', true)
-            ->orderBy('price')
-            ->get()
-            ->map(fn ($product) => [
-                'id' => $product->id,
-                'slug' => $product->slug,
-                'name' => $product->name,
-                'description' => $product->description,
-                'price' => $product->price,
-                'is_recurring' => $product->is_recurring ?? false,
-                'recurring_interval' => $product->recurring_interval,
-            ]);
-
-        return Inertia::render('Checkout/Index', [
-            'template' => [
-                'id' => $template->id,
-                'slug' => $template->slug,
-                'name' => $template->name,
-                'price' => $template->price,
-            ],
-            'basePackages' => $basePackages,
-            'addons' => $addons,
-        ]);
+        return redirect()->route('templates.index');
     }
 
     /**
@@ -78,28 +70,24 @@ class CheckoutController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'template_id' => 'required|exists:templates,id,is_active,1',
-            'base_package_id' => 'required|exists:products,id,type,base_package,is_active,1',
-            'addon_ids' => 'nullable|array',
-            'addon_ids.*' => 'exists:products,id,type,addon,is_active,1',
+            'template_id' => 'nullable|required_without:product_id|exists:templates,id,is_active,1',
+            'product_id' => 'nullable|required_without:template_id|exists:products,id,is_active,1',
             'preview_data' => 'nullable|array',
         ]);
 
-        $template = Template::findOrFail($validated['template_id']);
-        $basePackage = Product::findOrFail($validated['base_package_id']);
-        $addonIds = $validated['addon_ids'] ?? [];
+        $template = $validated['template_id'] ?? null ? Template::find($validated['template_id']) : null;
+        $product = $validated['product_id'] ?? null ? Product::find($validated['product_id']) : null;
         $previewData = $validated['preview_data'] ?? null;
         $order = null;
 
         try {
-            $order = DB::transaction(function () use ($request, $template, $basePackage, $addonIds, $previewData) {
+            $order = DB::transaction(function () use ($request, $template, $product, $previewData) {
                 $orderService = app(OrderService::class);
 
                 return $orderService->createOrder(
                     $request->user(),
                     $template,
-                    $basePackage,
-                    $addonIds,
+                    $product,
                     $previewData
                 );
             });
@@ -124,9 +112,8 @@ class CheckoutController extends Controller
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'user_id' => $request->user()->id,
-                'template_id' => $validated['template_id'],
-                'base_package_id' => $validated['base_package_id'],
-                'addon_ids' => $addonIds,
+                'template_id' => $template?->id,
+                'product_id' => $product?->id,
                 'order_id' => $order?->id,
                 'order_number' => $order?->order_number,
                 'payment_service_url' => config('services.payment_service.base_url'),

@@ -6,12 +6,14 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class HasBasePackage
+class HasInvitationAccess
 {
     /**
      * Handle an incoming request.
      *
-     * Ensure the authenticated user has an active base_package feature.
+     * Ensure the authenticated user either owns an invitation (template
+     * purchased à la carte, which includes full access) or has an active
+     * base_package feature (legacy bundled purchases).
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -21,8 +23,9 @@ class HasBasePackage
             return redirect()->route('login');
         }
 
-        // Check if user has active base_package feature
-        $hasBasePackage = $user->features()
+        $hasInvitation = $user->invitations()->exists();
+
+        $hasActivePackage = $user->features()
             ->whereHas('orderItem.product', function ($query) {
                 $query->where('type', 'base_package');
             })
@@ -32,9 +35,9 @@ class HasBasePackage
             })
             ->exists();
 
-        if (! $hasBasePackage) {
+        if (! $hasInvitation && ! $hasActivePackage) {
             return redirect()->route('welcome')
-                ->with('error', 'Anda belum memiliki paket aktif. Silakan pilih template dan lakukan pembayaran terlebih dahulu.');
+                ->with('error', 'Anda belum memiliki undangan aktif. Silakan pilih template dan lakukan pembayaran terlebih dahulu.');
         }
 
         return $next($request);

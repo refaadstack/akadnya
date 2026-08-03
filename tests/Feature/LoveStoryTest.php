@@ -6,9 +6,10 @@ use App\Models\Product;
 use App\Models\Template;
 use App\Models\User;
 use App\Services\OrderService;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 
 beforeEach(function () {
-    $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class);
+    $this->withoutMiddleware(PreventRequestForgery::class);
 
     $this->user = User::factory()->create();
     $template = Template::factory()->create();

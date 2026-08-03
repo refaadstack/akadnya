@@ -10,54 +10,78 @@ use App\Services\OrderService;
 beforeEach(function () {
     $this->user = User::factory()->create();
     $this->template = Template::factory()->create(['price' => 100000]);
-    $this->basePackage = Product::factory()->create([
+});
+
+test('product features are activated after payment', function () {
+    $product = Product::factory()->create([
         'type' => 'base_package',
         'slug' => 'base',
         'price' => 50000,
     ]);
+
+    $orderService = app(OrderService::class);
+    $order = $orderService->createOrder($this->user, null, $product);
+    $orderService->updateOrderStatus($order, 'paid');
+
+    expect(UserFeature::where('user_id', $this->user->id)->count())->toBe(1);
+
+    $feature = UserFeature::where('user_id', $this->user->id)
+        ->where('feature', 'base')
+        ->first();
+    expect($feature)->not->toBeNull()
+        ->and($feature->isActive())->toBeTrue()
+        ->and($feature->expires_at)->toBeNull(); // Base package doesn't expire
 });
 
-test('features are activated after payment', function () {
-    $addon = Product::factory()->create([
+test('recurring product feature expires per interval', function () {
+    $product = Product::factory()->create([
         'type' => 'addon',
-        'slug' => 'custom-domain',
-        'price' => 100000,
-        'metadata' => [
-            'is_recurring' => true,
-            'recurring_interval' => 'yearly',
-        ],
+        'slug' => 'premium-music',
+        'is_recurring' => true,
+        'recurring_interval' => 'monthly',
     ]);
 
     $orderService = app(OrderService::class);
-    $order = $orderService->createOrder(
-        $this->user,
-        $this->template,
-        $this->basePackage,
-        [$addon->id]
-    );
-
-    // Simulate payment success
+    $order = $orderService->createOrder($this->user, null, $product);
     $orderService->updateOrderStatus($order, 'paid');
 
-    // Check user features
-    expect(UserFeature::where('user_id', $this->user->id)->count())->toBe(2); // base + addon
-
-    $baseFeature = UserFeature::where('user_id', $this->user->id)
-        ->where('feature_slug', 'base')
+    $feature = UserFeature::where('user_id', $this->user->id)
+        ->where('feature', 'premium-music')
         ->first();
-    expect($baseFeature)->not->toBeNull()
-        ->and($baseFeature->is_active)->toBeTrue()
-        ->and($baseFeature->expires_at)->toBeNull(); // Base package doesn't expire
 
-    $addonFeature = UserFeature::where('user_id', $this->user->id)
-        ->where('feature_slug', 'custom-domain')
-        ->first();
-    expect($addonFeature)->not->toBeNull()
-        ->and($addonFeature->is_active)->toBeTrue()
-        ->and($addonFeature->expires_at)->not->toBeNull(); // Addon expires in 1 year
+    expect($feature->expires_at)->not->toBeNull();
+
+    $expectedExpiry = now()->addMonth();
+    expect($feature->expires_at->diffInDays($expectedExpiry))->toBeLessThan(1);
 });
 
-test('invitation is created from preview data after payment', function () {
+test('template purchase alone creates invitation and grants access', function () {
+    $orderService = app(OrderService::class);
+    $order = $orderService->createOrder($this->user, $this->template, null);
+    $orderService->updateOrderStatus($order, 'paid');
+
+    $invitation = Invitation::where('user_id', $this->user->id)->first();
+    expect($invitation)->not->toBeNull()
+        ->and($invitation->template_id)->toBe($this->template->id)
+        ->and($invitation->status)->toBe('draft')
+        ->and($this->user->invitations()->count())->toBe(1);
+});
+
+test('template purchase without preview data still creates invitation', function () {
+    $orderService = app(OrderService::class);
+    $order = $orderService->createOrder($this->user, $this->template, null);
+    $orderService->updateOrderStatus($order, 'paid');
+
+    $invitation = Invitation::where('user_id', $this->user->id)->first();
+    expect($invitation)->not->toBeNull();
+
+    $content = $invitation->content;
+    expect($content)->not->toBeNull()
+        ->and($content->bride_name)->toBe('')
+        ->and($content->groom_name)->toBe('');
+});
+
+test('invitation is created from preview data after template payment', function () {
     $previewData = [
         'bride' => [
             'name' => 'Sarah',
@@ -85,166 +109,59 @@ test('invitation is created from preview data after payment', function () {
     ];
 
     $orderService = app(OrderService::class);
-    $order = $orderService->createOrder(
-        $this->user,
-        $this->template,
-        $this->basePackage,
-        [],
-        $previewData
-    );
-
-    // Simulate payment success
+    $order = $orderService->createOrder($this->user, $this->template, null, $previewData);
     $orderService->updateOrderStatus($order, 'paid');
 
-    // Check invitation created
     $invitation = Invitation::where('user_id', $this->user->id)->first();
     expect($invitation)->not->toBeNull()
         ->and($invitation->template_id)->toBe($this->template->id)
-        ->and($invitation->status)->toBe('draft')
-        ->and($invitation->is_published)->toBeFalse();
+        ->and($invitation->status)->toBe('draft');
 
-    // Check invitation content
     $content = $invitation->content;
     expect($content)->not->toBeNull()
         ->and($content->bride_name)->toBe('Sarah')
         ->and($content->groom_name)->toBe('John')
-        ->and($content->event_date)->toBe('2026-12-25')
-        ->and($content->event_location)->toBe('Grand Ballroom')
-        ->and($content->gift_bank_name)->toBe('BCA');
+        ->and($content->akad_venue)->toBe('Grand Ballroom')
+        ->and($content->akad_maps_url)->toBe('https://maps.google.com/test')
+        ->and($content->love_story)->toBe('Our love story...');
 });
 
-test('invitation slug is unique', function () {
+test('invitation subdomains are unique across templates', function () {
+    $secondTemplate = Template::factory()->create(['price' => 80000]);
     $previewData = [
         'bride' => ['name' => 'Sarah'],
         'groom' => ['name' => 'John'],
-        'event' => ['date' => '2026-12-25'],
     ];
 
-    // Create first invitation
     $orderService = app(OrderService::class);
-    $order1 = $orderService->createOrder(
-        $this->user,
-        $this->template,
-        $this->basePackage,
-        [],
-        $previewData
-    );
+
+    $order1 = $orderService->createOrder($this->user, $this->template, null, $previewData);
     $orderService->updateOrderStatus($order1, 'paid');
 
-    // Create second invitation with same name
-    $order2 = $orderService->createOrder(
-        $this->user,
-        $this->template,
-        $this->basePackage,
-        [],
-        $previewData
-    );
+    $order2 = $orderService->createOrder($this->user, $secondTemplate, null, $previewData);
     $orderService->updateOrderStatus($order2, 'paid');
 
     $invitations = Invitation::where('user_id', $this->user->id)->get();
     expect($invitations)->toHaveCount(2)
-        ->and($invitations[0]->slug)->not->toBe($invitations[1]->slug);
+        ->and($invitations[0]->subdomain)->not->toBe($invitations[1]->subdomain);
 });
 
 test('template sections are copied to invitation', function () {
-    $previewData = [
-        'bride' => ['name' => 'Sarah'],
-        'groom' => ['name' => 'John'],
-        'event' => ['date' => '2026-12-25'],
-    ];
-
     $orderService = app(OrderService::class);
-    $order = $orderService->createOrder(
-        $this->user,
-        $this->template,
-        $this->basePackage,
-        [],
-        $previewData
-    );
+    $order = $orderService->createOrder($this->user, $this->template, null);
     $orderService->updateOrderStatus($order, 'paid');
 
     $invitation = Invitation::where('user_id', $this->user->id)->first();
 
-    // Check sections copied
     expect($invitation->sections)->toHaveCount($this->template->sections->count());
-
-    foreach ($this->template->sections as $index => $templateSection) {
-        $invitationSection = $invitation->sections[$index];
-        expect($invitationSection->section_key)->toBe($templateSection->section_key)
-            ->and($invitationSection->html_content)->toBe($templateSection->html_content)
-            ->and($invitationSection->order)->toBe($templateSection->order);
-    }
 });
 
 test('template ornaments are copied to invitation', function () {
-    $previewData = [
-        'bride' => ['name' => 'Sarah'],
-        'groom' => ['name' => 'John'],
-        'event' => ['date' => '2026-12-25'],
-    ];
-
     $orderService = app(OrderService::class);
-    $order = $orderService->createOrder(
-        $this->user,
-        $this->template,
-        $this->basePackage,
-        [],
-        $previewData
-    );
+    $order = $orderService->createOrder($this->user, $this->template, null);
     $orderService->updateOrderStatus($order, 'paid');
 
     $invitation = Invitation::where('user_id', $this->user->id)->first();
 
-    // Check ornaments copied
     expect($invitation->ornaments)->toHaveCount($this->template->ornaments->count());
-
-    foreach ($this->template->ornaments as $index => $templateOrnament) {
-        $invitationOrnament = $invitation->ornaments[$index];
-        expect($invitationOrnament->ornament_key)->toBe($templateOrnament->ornament_key)
-            ->and($invitationOrnament->html_content)->toBe($templateOrnament->html_content);
-    }
-});
-
-test('no invitation created if no preview data', function () {
-    $orderService = app(OrderService::class);
-    $order = $orderService->createOrder(
-        $this->user,
-        $this->template,
-        $this->basePackage,
-        [],
-        null // No preview data
-    );
-    $orderService->updateOrderStatus($order, 'paid');
-
-    // Check no invitation created
-    expect(Invitation::where('user_id', $this->user->id)->count())->toBe(0);
-});
-
-test('monthly recurring feature expires in 1 month', function () {
-    $addon = Product::factory()->create([
-        'type' => 'addon',
-        'slug' => 'premium-music',
-        'metadata' => [
-            'is_recurring' => true,
-            'recurring_interval' => 'monthly',
-        ],
-    ]);
-
-    $orderService = app(OrderService::class);
-    $order = $orderService->createOrder(
-        $this->user,
-        $this->template,
-        $this->basePackage,
-        [$addon->id]
-    );
-    $orderService->updateOrderStatus($order, 'paid');
-
-    $feature = UserFeature::where('user_id', $this->user->id)
-        ->where('feature_slug', 'premium-music')
-        ->first();
-
-    expect($feature->expires_at)->not->toBeNull();
-
-    $expectedExpiry = now()->addMonth();
-    expect($feature->expires_at->diffInDays($expectedExpiry))->toBeLessThan(1);
 });

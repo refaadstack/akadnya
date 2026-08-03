@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Middleware\HasBasePackage;
+use App\Http\Middleware\HasInvitationAccess;
 use App\Models\Invitation;
 use App\Models\InvitationContent;
 use App\Models\LoveStory;
-use App\Models\Rsvp;
 use App\Models\Template;
 use App\Models\User;
 use App\Services\BladeRenderService;
@@ -24,7 +23,7 @@ afterEach(function () {
 });
 
 test('authenticated client preview returns standalone rendered invitation html', function () {
-    $this->withoutMiddleware(HasBasePackage::class);
+    $this->withoutMiddleware(HasInvitationAccess::class);
 
     $user = User::factory()->create();
     $slug = 'test-'.uniqid();
@@ -67,7 +66,7 @@ test('authenticated client preview returns standalone rendered invitation html',
 });
 
 test('client preview renders love stories and wishes from database', function () {
-    $this->withoutMiddleware(HasBasePackage::class);
+    $this->withoutMiddleware(HasInvitationAccess::class);
 
     $user = User::factory()->create();
     $slug = 'test-'.uniqid();
@@ -134,7 +133,7 @@ test('client preview renders love stories and wishes from database', function ()
 });
 
 test('client preview cover renders initials from nicknames', function () {
-    $this->withoutMiddleware(HasBasePackage::class);
+    $this->withoutMiddleware(HasInvitationAccess::class);
 
     $user = User::factory()->create();
     $slug = 'test-'.uniqid();

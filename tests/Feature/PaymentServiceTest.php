@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Template;
@@ -102,7 +100,7 @@ test('handleWebhook throws when transaction_id missing', function () {
 
     $paymentService = app(PaymentService::class);
     $paymentService->handleWebhook($notification);
-})->throws(\InvalidArgumentException::class);
+})->throws(InvalidArgumentException::class);
 
 test('handleWebhook throws when payment not found', function () {
     $notification = [
@@ -112,4 +110,4 @@ test('handleWebhook throws when payment not found', function () {
 
     $paymentService = app(PaymentService::class);
     $paymentService->handleWebhook($notification);
-})->throws(\RuntimeException::class);
+})->throws(RuntimeException::class);

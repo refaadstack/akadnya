@@ -8,7 +8,9 @@ defineProps<{
     currentPage?: string;
 }>();
 
-const cartCount = computed(() => (usePage().props.cartCount as number) || 0);
+const page = usePage();
+const user = computed(() => page.props.auth?.user ?? null);
+const cartCount = computed(() => (page.props.cartCount as number) || 0);
 
 const mobileMenuOpen = ref(false);
 </script>
@@ -83,6 +85,14 @@ const mobileMenuOpen = ref(false);
                         </span>
                     </Link>
                     <Link
+                        v-if="user"
+                        href="/dashboard"
+                        class="px-3 py-2 text-sm font-semibold text-[var(--my-neutral)] transition hover:text-[var(--my-primary)]"
+                    >
+                        Dashboard
+                    </Link>
+                    <Link
+                        v-else
                         href="/login"
                         class="px-3 py-2 text-sm font-semibold text-[var(--my-neutral)] transition hover:text-[var(--my-primary)]"
                     >
@@ -162,6 +172,15 @@ const mobileMenuOpen = ref(false);
                     </span>
                 </Link>
                 <Link
+                    v-if="user"
+                    href="/dashboard"
+                    class="py-2 font-semibold text-[var(--my-neutral)]"
+                    @click="mobileMenuOpen = false"
+                >
+                    Dashboard
+                </Link>
+                <Link
+                    v-else
                     href="/login"
                     class="py-2 font-semibold text-[var(--my-neutral)]"
                     @click="mobileMenuOpen = false"

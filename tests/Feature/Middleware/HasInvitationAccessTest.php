@@ -9,10 +9,9 @@ use App\Services\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 uses(RefreshDatabase::class);
 
-test('user without invitation or active package is redirected', function () {
+test('user without an invitation is redirected', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/dashboard/editor');
@@ -30,7 +29,7 @@ test('user with an invitation can access gated routes', function () {
     $response->assertOk();
 });
 
-test('user with active base package feature can access gated routes', function () {
+test('user with only a legacy base package feature is redirected', function () {
     $user = User::factory()->create();
     $product = Product::factory()->base()->create();
 
@@ -38,13 +37,9 @@ test('user with active base package feature can access gated routes', function (
     $order = $orderService->createOrder($user, null, $product);
     $orderService->updateOrderStatus($order, 'paid');
 
-    $middleware = new HasInvitationAccess;
-    $request = Request::create('/dashboard/editor');
-    $request->setUserResolver(fn () => $user);
+    $response = $this->actingAs($user)->get('/dashboard/editor');
 
-    $response = $middleware->handle($request, fn () => new Response('next'));
-
-    expect($response->getContent())->toBe('next');
+    $response->assertRedirect(route('welcome'));
 });
 
 test('unauthenticated user is redirected to login', function () {

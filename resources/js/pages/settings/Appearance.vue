@@ -1,32 +1,35 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import AppearanceTabs from '@/components/AppearanceTabs.vue';
-import Heading from '@/components/Heading.vue';
-import { edit } from '@/routes/appearance';
+import DashboardLayout from '@/layouts/DashboardLayout.vue';
 
 defineOptions({
-    layout: {
-        breadcrumbs: [
-            {
-                title: 'Appearance settings',
-                href: edit(),
-            },
-        ],
-    },
+    layout: undefined,
 });
 </script>
 
 <template>
-    <Head title="Appearance settings" />
+    <DashboardLayout>
+        <Head title="Tampilan" />
 
-    <h1 class="sr-only">Appearance settings</h1>
+        <div class="container mx-auto max-w-3xl px-4 py-8">
+            <h1
+                class="font-display mb-6 text-2xl font-bold text-[var(--my-neutral)]"
+            >
+                Tampilan
+            </h1>
 
-    <div class="space-y-6">
-        <Heading
-            variant="small"
-            title="Appearance settings"
-            description="Update your account's appearance settings"
-        />
-        <AppearanceTabs />
-    </div>
+            <div class="my-card flex flex-col gap-6 p-6">
+                <div>
+                    <h2 class="text-lg font-bold text-[var(--my-neutral)]">
+                        Pengaturan Tampilan
+                    </h2>
+                    <p class="text-sm text-[var(--my-muted)]">
+                        Atur tampilan akun Anda
+                    </p>
+                </div>
+                <AppearanceTabs />
+            </div>
+        </div>
+    </DashboardLayout>
 </template>

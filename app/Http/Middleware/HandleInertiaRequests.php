@@ -42,6 +42,18 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'hasInvitation' => $request->user()?->invitations()->exists() ?? false,
+            'features' => $request->user()
+                ? $request->user()->features()
+                    ->where(function ($query) {
+                        $query->whereNull('expires_at')
+                            ->orWhere('expires_at', '>', now());
+                    })
+                    ->pluck('feature')
+                    ->unique()
+                    ->values()
+                    ->all()
+                : [],
             'cartCount' => $request->user()
                 ? (int) $request->user()->cartItems()->sum('quantity')
                 : 0,

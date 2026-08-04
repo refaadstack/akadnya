@@ -9,6 +9,7 @@ use App\Http\Controllers\EditorController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\GuestController;
+use App\Http\Controllers\GuestBookController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\InvitationSettingsController;
 use App\Http\Controllers\MediaController;
@@ -115,6 +116,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // RSVP management
         Route::get('dashboard/rsvp', [RsvpController::class, 'index'])->name('dashboard.rsvp');
+
+        // Guest book (venue)
+        Route::get('dashboard/guest-book', [GuestBookController::class, 'index'])->name('dashboard.guest-book');
+        Route::get('dashboard/guest-book/scan', [GuestBookController::class, 'scan'])->name('dashboard.guest-book.scan');
+        Route::post('dashboard/guest-book/check-in', [GuestBookController::class, 'checkIn'])->name('dashboard.guest-book.check-in');
+        Route::post('dashboard/guest-book/souvenir', [GuestBookController::class, 'souvenir'])->name('dashboard.guest-book.souvenir');
+        Route::post('dashboard/guest-book/raffle', [GuestBookController::class, 'raffle'])->name('dashboard.guest-book.raffle');
 
         // Love Story
         Route::get('dashboard/love-story', [LoveStoryController::class, 'index'])->name('dashboard.love-story');

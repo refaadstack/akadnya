@@ -57,13 +57,16 @@ class Guest extends Model
         // Encode guest name for URL
         $guestName = urlencode($this->name);
 
+        // Unique code identifies the guest for the venue barcode
+        $guestQuery = 'name='.$guestName.'&guest='.$this->unique_code;
+
         // Use custom domain if available, otherwise use subdomain
         if ($invitation->custom_domain) {
-            return 'https://'.$invitation->custom_domain.'?name='.$guestName;
+            return 'https://'.$invitation->custom_domain.'?'.$guestQuery;
         }
 
         // Use /i/{subdomain} route for public invitations
-        return url('/i/'.$invitation->subdomain.'?name='.$guestName);
+        return url('/i/'.$invitation->subdomain.'?'.$guestQuery);
     }
 
     public function hasRsvp(): bool

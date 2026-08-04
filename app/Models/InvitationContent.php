@@ -22,6 +22,7 @@ class InvitationContent extends Model
         'groom_father',
         'groom_mother',
         'groom_photo_url',
+        'cover_name_display',
         'couple_photo_url',
         'akad_datetime',
         'akad_venue',
@@ -29,6 +30,7 @@ class InvitationContent extends Model
         'reception_datetime',
         'reception_venue',
         'reception_maps_url',
+        'show_reception',
         'cover_photo_url',
         'music_url',
         'music_title',
@@ -48,6 +50,7 @@ class InvitationContent extends Model
     protected $casts = [
         'akad_datetime' => 'datetime',
         'reception_datetime' => 'datetime',
+        'show_reception' => 'boolean',
         'gallery_photos' => 'array',
     ];
 

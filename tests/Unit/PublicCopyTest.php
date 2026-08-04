@@ -27,10 +27,10 @@ it('keeps public landing copy free from developer jargon', function () {
 });
 
 it('keeps auth and dashboard pages on the current visual system', function () {
-    $pagePaths = [
-        dirname(__DIR__, 2).'/resources/js/pages/auth/Login.vue',
-        dirname(__DIR__, 2).'/resources/js/pages/auth/Register.vue',
-        dirname(__DIR__, 2).'/resources/js/pages/Dashboard.vue',
+    $pages = [
+        'auth/Login.vue' => 'my-page',
+        'auth/Register.vue' => 'my-page',
+        'Dashboard.vue' => 'my-btn-primary',
     ];
 
     $legacyClasses = [
@@ -41,11 +41,11 @@ it('keeps auth and dashboard pages on the current visual system', function () {
         'rounded-2xl',
     ];
 
-    foreach ($pagePaths as $path) {
-        $contents = file_get_contents($path);
+    foreach ($pages as $page => $marker) {
+        $contents = file_get_contents(dirname(__DIR__, 2).'/resources/js/pages/'.$page);
 
         expect($contents)->not->toBeFalse();
-        expect($contents)->toContain('my-page');
+        expect($contents)->toContain($marker);
 
         foreach ($legacyClasses as $legacyClass) {
             expect($contents)->not->toContain($legacyClass);

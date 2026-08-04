@@ -23,6 +23,7 @@ interface InvitationContent {
     groom_father: string | null;
     groom_mother: string | null;
     groom_photo_url: string | null;
+    cover_name_display: string | null;
     couple_photo_url: string | null;
     akad_datetime: string | null;
     akad_venue: string | null;
@@ -30,6 +31,7 @@ interface InvitationContent {
     reception_datetime: string | null;
     reception_venue: string | null;
     reception_maps_url: string | null;
+    show_reception: boolean;
     love_story: string | null;
     special_message: string | null;
     cover_photo_url: string | null;
@@ -67,6 +69,7 @@ const form = useForm({
     groom_father: props.content?.groom_father || '',
     groom_mother: props.content?.groom_mother || '',
     groom_photo_url: props.content?.groom_photo_url || '',
+    cover_name_display: props.content?.cover_name_display || 'full',
     couple_photo_url: props.content?.couple_photo_url || '',
     akad_datetime: props.content?.akad_datetime || '',
     akad_venue: props.content?.akad_venue || '',
@@ -74,6 +77,7 @@ const form = useForm({
     reception_datetime: props.content?.reception_datetime || '',
     reception_venue: props.content?.reception_venue || '',
     reception_maps_url: props.content?.reception_maps_url || '',
+    show_reception: props.content?.show_reception ?? true,
     love_story: props.content?.love_story || '',
     special_message: props.content?.special_message || '',
     cover_photo_url: props.content?.cover_photo_url || '',
@@ -907,11 +911,35 @@ const submit = () => {
 
                     <!-- Resepsi -->
                     <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
-                        <h2 class="mb-4 text-xl font-bold text-gray-900">
-                            Resepsi (Opsional)
-                        </h2>
+                        <div
+                            class="mb-4 flex items-center justify-between gap-4"
+                        >
+                            <h2 class="text-xl font-bold text-gray-900">
+                                Resepsi (Opsional)
+                            </h2>
+                            <label
+                                class="flex cursor-pointer items-center gap-2"
+                            >
+                                <input
+                                    v-model="form.show_reception"
+                                    type="checkbox"
+                                    class="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                />
+                                <span class="text-sm font-medium text-gray-700"
+                                    >Tampilkan Resepsi di undangan</span
+                                >
+                            </label>
+                        </div>
 
-                        <div class="space-y-4">
+                        <p
+                            v-if="!form.show_reception"
+                            class="mb-4 rounded-lg bg-gray-100 p-3 text-sm text-gray-600"
+                        >
+                            Resepsi disembunyikan. Undangan hanya menampilkan
+                            akad nikah.
+                        </p>
+
+                        <div v-if="form.show_reception" class="space-y-4">
                             <div>
                                 <label
                                     class="mb-2 block text-sm font-medium text-gray-700"
@@ -1037,6 +1065,34 @@ const submit = () => {
                                         </p>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Cover Name Display -->
+                            <div>
+                                <label
+                                    class="mb-2 block text-sm font-medium text-gray-700"
+                                    >Tampilan Nama di Cover</label
+                                >
+                                <select
+                                    v-model="form.cover_name_display"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                >
+                                    <option value="full">
+                                        Nama Lengkap (Contoh: Siti Nurhaliza
+                                        &amp; Raffi Ahmad)
+                                    </option>
+                                    <option value="nickname">
+                                        Nama Panggilan (Contoh: Yeli &amp;
+                                        Redho)
+                                    </option>
+                                    <option value="initials">
+                                        Inisial (Contoh: S &amp; R)
+                                    </option>
+                                </select>
+                                <p class="mt-2 text-xs text-gray-500">
+                                    Nama yang tampil di halaman pembuka
+                                    undangan.
+                                </p>
                             </div>
 
                             <!-- Music -->

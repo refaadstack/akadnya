@@ -20,7 +20,7 @@ class DataContractBuilder
      *
      * @return array<string, mixed>
      */
-    public function build(Invitation $invitation, ?string $guestName = null): array
+    public function build(Invitation $invitation, ?string $guestName = null, ?string $guestCode = null): array
     {
         $content = $invitation->content;
         $gallery = $invitation->gallery()
@@ -80,6 +80,16 @@ class DataContractBuilder
             'groom_mother' => $content?->groom_mother ?? null,
             'groom_photo_url' => $content?->groom_photo_url ?? null,
             'groom_initial' => $groomInitial,
+            'cover_name_display' => $content?->cover_name_display ?? 'full',
+            'cover_names' => $this->coverNames(
+                $content?->cover_name_display ?? 'full',
+                $content?->bride_name,
+                $content?->groom_name,
+                $content?->bride_nickname,
+                $content?->groom_nickname,
+                $brideInitial,
+                $groomInitial
+            ),
             'couple_photo_url' => $content?->couple_photo_url ?? null,
             'couple_initials' => $groomInitial && $brideInitial ? "{$groomInitial} & {$brideInitial}" : null,
 
@@ -90,6 +100,7 @@ class DataContractBuilder
             // Reception venue
             'reception_venue' => $content?->reception_venue ?? null,
             'reception_maps_url' => $content?->reception_maps_url ?? null,
+            'show_reception' => $content?->show_reception ?? true,
 
             // Media
             'cover_photo_url' => $content?->cover_photo_url ?? null,
@@ -125,11 +136,37 @@ class DataContractBuilder
 
             // Guest
             'guest_name' => $guestName ?? null,
+            'guest' => null,
+            'guest_book_enabled' => false,
+            'guest_qr_svg' => null,
 
             // Event dates (ISO 8601 format for JavaScript countdown)
             'akad_datetime' => $content?->akad_datetime?->toIso8601String() ?? null,
-            'event_date' => $content?->reception_datetime?->toIso8601String() ?? null,
+            'event_date' => ($content?->show_reception ?? true) && $content?->reception_datetime
+                ? $content->reception_datetime->toIso8601String()
+                : ($content?->akad_datetime?->toIso8601String() ?? null),
         ];
+
+        // Guest book (venue) data
+        $guestBookEnabled = $invitation->user?->hasFeature('guest_book') ?? false;
+        if ($guestBookEnabled) {
+            $contract['guest_book_enabled'] = true;
+
+            $guest = $guestCode
+                ? $invitation->guests()->where('unique_code', $guestCode)->first()
+                : null;
+
+            if ($guest) {
+                $contract['guest'] = [
+                    'id' => $guest->id,
+                    'name' => $guest->name,
+                    'unique_code' => $guest->unique_code,
+                    'category' => $guest->category,
+                    'max_pax' => $guest->max_pax,
+                ];
+                $contract['guest_qr_svg'] = $this->buildGuestQrSvg($guest->unique_code);
+            }
+        }
 
         // Merge datetime variables for akad
         $contract = array_merge(
@@ -157,7 +194,59 @@ class DataContractBuilder
 
         $contract = $this->hydrateDatetimeVariables($contract);
 
-        return $this->hydrateInitials($contract);
+        return $this->hydrateCoverNames($this->hydrateInitials($contract));
+    }
+
+    /**
+     * Compute the cover names from the configured display mode.
+     *
+     * @param  array<string, mixed>  $contract
+     * @return array<string, mixed>
+     */
+    protected function hydrateCoverNames(array $contract): array
+    {
+        $contract['cover_names'] = $this->coverNames(
+            $contract['cover_name_display'] ?? 'full',
+            $contract['bride_name'] ?? null,
+            $contract['groom_name'] ?? null,
+            $contract['bride_nickname'] ?? null,
+            $contract['groom_nickname'] ?? null,
+            $contract['bride_initial'] ?? null,
+            $contract['groom_initial'] ?? null
+        );
+
+        return $contract;
+    }
+
+    /**
+     * Build the cover name string based on the display mode.
+     */
+    protected function coverNames(
+        string $mode,
+        ?string $brideName,
+        ?string $groomName,
+        ?string $brideNickname,
+        ?string $groomNickname,
+        ?string $brideInitial,
+        ?string $groomInitial
+    ): ?string {
+        $bride = match ($mode) {
+            'initials' => $brideInitial,
+            'nickname' => $brideNickname ?: $brideName,
+            default => $brideName,
+        };
+
+        $groom = match ($mode) {
+            'initials' => $groomInitial,
+            'nickname' => $groomNickname ?: $groomName,
+            default => $groomName,
+        };
+
+        if (! $bride || ! $groom) {
+            return null;
+        }
+
+        return trim($bride.' & '.$groom);
     }
 
     /**
@@ -212,6 +301,8 @@ class DataContractBuilder
             'groom_mother' => null,
             'groom_photo_url' => null,
             'groom_initial' => null,
+            'cover_name_display' => 'full',
+            'cover_names' => null,
             'couple_photo_url' => null,
             'couple_initials' => null,
             'akad_datetime' => null,
@@ -239,6 +330,9 @@ class DataContractBuilder
             'rsvp_action' => '#',
             'csrf_token' => csrf_token() ?? '',
             'guest_name' => null,
+            'guest' => null,
+            'guest_book_enabled' => false,
+            'guest_qr_svg' => null,
             'akad_datetime' => null,
             'event_date' => null,
             ...$this->buildDatetimeVariables('akad', null),
@@ -329,5 +423,43 @@ class DataContractBuilder
         }
 
         return mb_strtoupper(mb_substr($name, 0, 1));
+    }
+
+    /**
+     * Generate an SVG QR code for the given payload.
+     */
+    protected function buildGuestQrSvg(string $payload): ?string
+    {
+        try {
+            $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+                new \BaconQrCode\Renderer\RendererStyle\RendererStyle(300, 1),
+                new \BaconQrCode\Renderer\Image\SvgImageBackEnd()
+            );
+
+            $svg = (new \BaconQrCode\Writer($renderer))->writeString(
+                $payload,
+                \BaconQrCode\Encoder\Encoder::DEFAULT_BYTE_MODE_ENCODING,
+                \BaconQrCode\Common\ErrorCorrectionLevel::Q()
+            );
+
+            // Embed the brand logo in the center of the QR code.
+            $logoUrl = url('/favicon.svg');
+            $logoBlock = '<g>'
+                .'<rect x="117" y="117" width="66" height="66" rx="12" fill="#ffffff"/>'
+                .sprintf('<image x="122" y="122" width="56" height="56" href="%s" xlink:href="%s" preserveAspectRatio="xMidYMid meet"/>', $logoUrl, $logoUrl)
+                .'</g>';
+
+            $svg = str_replace('</svg>', $logoBlock.'</svg>', $svg);
+
+            return str_replace(
+                'width="300" height="300"',
+                'width="180" height="180"',
+                $svg
+            );
+        } catch (\Throwable $e) {
+            report($e);
+
+            return null;
+        }
     }
 }

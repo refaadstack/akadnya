@@ -86,6 +86,11 @@ class Invitation extends Model
         return $this->hasMany(Rsvp::class);
     }
 
+    public function guestBookEntries(): HasMany
+    {
+        return $this->hasMany(GuestBookEntry::class);
+    }
+
     // Scopes
     public function scopePublished(Builder $query): void
     {

@@ -4,6 +4,7 @@ import {
     BookOpen,
     CalendarCheck,
     ChevronDown,
+    ClipboardCheck,
     Image,
     LayoutDashboard,
     LockKeyhole,
@@ -70,6 +71,13 @@ const navItems = computed<NavItem[]>(() => {
             href: '/dashboard/guests',
             icon: Users,
             requiresInvitation: true,
+        },
+        {
+            label: 'Buku Tamu',
+            href: '/dashboard/guest-book',
+            icon: ClipboardCheck,
+            requiresInvitation: true,
+            requiresFeature: 'guest_book',
         },
         {
             label: 'RSVP',

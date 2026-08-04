@@ -38,11 +38,14 @@ class PublicInvitationController extends Controller
         // Get guest name from URL parameter (optional)
         $guestName = $request->query('name');
 
+        // Get guest unique code from URL parameter (barcode / QR payload)
+        $guestCode = $request->query('guest');
+
         // Increment view count
         $invitation->increment('view_count');
 
         // Build data contract
-        $data = $this->dataBuilder->build($invitation, $guestName);
+        $data = $this->dataBuilder->build($invitation, $guestName, $guestCode);
 
         // Render invitation HTML
         $html = $this->bladeRenderer->renderInvitation($invitation, $data);

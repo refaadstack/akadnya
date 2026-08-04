@@ -31,6 +31,7 @@ class InvitationContentRequest extends FormRequest
             'groom_father' => 'nullable|string|max:255',
             'groom_mother' => 'nullable|string|max:255',
             'groom_photo_url' => 'nullable|url|max:500',
+            'cover_name_display' => 'nullable|string|in:full,nickname,initials',
             'couple_photo_url' => 'nullable|url|max:500',
 
             // Acara
@@ -40,6 +41,7 @@ class InvitationContentRequest extends FormRequest
             'reception_datetime' => 'nullable|date',
             'reception_venue' => 'nullable|string|max:500',
             'reception_maps_url' => 'nullable|url|max:500',
+            'show_reception' => 'boolean',
 
             // Konten
             'love_story' => 'nullable|string',
@@ -79,6 +81,7 @@ class InvitationContentRequest extends FormRequest
             'groom_father' => 'nama ayah mempelai pria',
             'groom_mother' => 'nama ibu mempelai pria',
             'groom_photo_url' => 'foto mempelai pria',
+            'cover_name_display' => 'tampilan nama di cover',
             'couple_photo_url' => 'foto pasangan',
             'akad_datetime' => 'tanggal & waktu akad',
             'akad_venue' => 'tempat akad',

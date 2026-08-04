@@ -32,6 +32,10 @@ interface Stats {
 }
 
 const props = defineProps<{
+  invitation: {
+    id: number
+    status: string
+  }
   guests: {
     data: Guest[]
     current_page: number
@@ -45,6 +49,8 @@ const props = defineProps<{
     category: string
   }
 }>()
+
+const isPublished = computed(() => props.invitation?.status === 'published')
 
 const showAddModal = ref(false)
 const showEditModal = ref(false)
@@ -139,11 +145,19 @@ const deleteGuest = (guest: Guest) => {
 }
 
 const copyLink = (link: string) => {
+  if (!isPublished.value) {
+    return
+  }
+
   navigator.clipboard.writeText(link)
   alert('Link berhasil disalin!')
 }
 
 const sendWhatsApp = (guestId: number) => {
+  if (!isPublished.value) {
+    return
+  }
+
   window.open(`/dashboard/guests/${guestId}/whatsapp`, '_blank')
 }
 
@@ -249,6 +263,15 @@ const downloadTemplate = () => {
         </div>
         <div v-if="$page.props.flash?.error" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
           {{ $page.props.flash.error }}
+        </div>
+
+        <!-- Unpublished warning -->
+        <div v-if="!isPublished" class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg mb-6">
+          <p class="font-semibold">Undangan belum dipublikasikan</p>
+          <p class="text-sm mt-1">
+            Link tamu belum bisa diakses (404). Publikasikan undangan di menu Pengaturan terlebih dahulu, lalu salin
+            link tamu setelahnya.
+          </p>
         </div>
 
         <!-- Stats Cards -->
@@ -367,16 +390,18 @@ const downloadTemplate = () => {
                   <div class="flex gap-2">
                     <button
                       @click="copyLink(guest.personal_link)"
-                      class="text-blue-600 hover:text-blue-800"
+                      class="text-blue-600 hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-30"
                       title="Copy Link"
+                      :disabled="!isPublished"
                     >
                       🔗
                     </button>
                     <button
                       v-if="guest.phone"
                       @click="sendWhatsApp(guest.id)"
-                      class="text-green-600 hover:text-green-800"
+                      class="text-green-600 hover:text-green-800 disabled:cursor-not-allowed disabled:opacity-30"
                       title="Kirim WhatsApp"
+                      :disabled="!isPublished"
                     >
                       📱
                     </button>

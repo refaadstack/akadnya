@@ -74,3 +74,36 @@ test('editor save rejects invalid couple photo url', function () {
         ])
         ->assertSessionHasErrors('couple_photo_url');
 });
+
+test('editor page exposes show_reception flag', function () {
+    $this->invitation->content()->updateOrCreate(
+        ['invitation_id' => $this->invitation->id],
+        [
+            'bride_name' => 'Siti',
+            'groom_name' => 'Budi',
+            'akad_datetime' => '2026-12-25T09:00',
+            'show_reception' => false,
+        ]
+    );
+
+    $this->actingAs($this->user)
+        ->get(route('dashboard.editor'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->where('content.show_reception', false));
+});
+
+test('editor save persists show_reception flag', function () {
+    $this->actingAs($this->user)
+        ->post(route('dashboard.editor.save'), [
+            'bride_name' => 'Siti',
+            'groom_name' => 'Budi',
+            'akad_datetime' => '2026-12-25T09:00',
+            'akad_venue' => 'Masjid Al-Ikhlas',
+            'show_reception' => false,
+        ])
+        ->assertRedirect()
+        ->assertSessionHas('success');
+
+    $content = $this->invitation->fresh()->content;
+    expect($content->show_reception)->toBeFalse();
+});

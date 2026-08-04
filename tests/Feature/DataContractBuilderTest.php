@@ -79,6 +79,7 @@ test('build returns all data contract keys even with null content', function () 
         'rsvp_action',
         'csrf_token',
         'guest_name',
+        'show_reception',
         'akad_datetime',
         'event_date',
     ]);
@@ -275,6 +276,86 @@ test('build includes akad datetime in ISO format', function () {
     expect($contract['akad_datetime'])->toBe($akad->toIso8601String());
 });
 
+test('build defaults show_reception to true when flag is unset', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['show_reception'])->toBeTrue();
+});
+
+test('build falls back event_date to akad when reception is hidden', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $akad = Carbon::parse('2026-12-25 09:00:00');
+    $reception = Carbon::parse('2026-12-26 11:00:00');
+
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'akad_datetime' => $akad,
+        'reception_datetime' => $reception,
+        'show_reception' => false,
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['show_reception'])->toBeFalse();
+    expect($contract['event_date'])->toBe($akad->toIso8601String());
+});
+
+test('build falls back event_date to akad when reception datetime is empty', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $akad = Carbon::parse('2026-12-25 09:00:00');
+
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'akad_datetime' => $akad,
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['event_date'])->toBe($akad->toIso8601String());
+});
+
+test('build uses reception for event_date when reception is shown', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $akad = Carbon::parse('2026-12-25 09:00:00');
+    $reception = Carbon::parse('2026-12-26 11:00:00');
+
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'akad_datetime' => $akad,
+        'reception_datetime' => $reception,
+        'show_reception' => true,
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['event_date'])->toBe($reception->toIso8601String());
+});
+
 test('build includes nicknames and initials derived from nicknames', function () {
     $user = User::factory()->create();
     $template = Template::factory()->create();
@@ -298,6 +379,36 @@ test('build includes nicknames and initials derived from nicknames', function ()
     expect($contract['groom_initial'])->toBe('R');
     expect($contract['bride_initial'])->toBe('Y');
     expect($contract['couple_initials'])->toBe('R & Y');
+    expect($contract['cover_name_display'])->toBe('full');
+    expect($contract['cover_names'])->toBe('Yeliani Putri Tandyana & Redho Fadillah Adha');
+});
+
+test('build computes cover names from nickname and initials display modes', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'groom_name' => 'Redho Fadillah Adha',
+        'groom_nickname' => 'Redho',
+        'bride_name' => 'Yeliani Putri Tandyana',
+        'bride_nickname' => 'Yeli',
+        'cover_name_display' => 'nickname',
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['cover_names'])->toBe('Yeli & Redho');
+
+    $invitation->content->update(['cover_name_display' => 'initials']);
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['cover_names'])->toBe('Y & R');
+    expect($contract['cover_name_display'])->toBe('initials');
 });
 
 test('build falls back to full name initials when nickname is empty', function () {
@@ -376,4 +487,82 @@ test('buildTemplateDefaults returns template-owned preview data', function () {
     expect($contract['gallery'])->toBeArray()->not->toBeEmpty();
     expect($contract['akad_datetime_formatted'])->toBeString();
     expect($contract['reception_datetime_formatted'])->toBeNull();
+});
+
+test('build includes guest book data when feature enabled and valid guest code', function () {
+    $user = User::factory()->create();
+    $product = App\Models\Product::factory()->create([
+        'type' => 'addon',
+        'slug' => 'guest_book',
+    ]);
+    $orderService = app(App\Services\OrderService::class);
+    $order = $orderService->createOrder($user, null, $product);
+    $orderService->updateOrderStatus($order, 'paid');
+
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $guest = App\Models\Guest::create([
+        'invitation_id' => $invitation->id,
+        'name' => 'Budi Santoso',
+        'category' => 'family',
+        'max_pax' => 2,
+    ]);
+
+    $contract = $this->builder->build($invitation, null, $guest->unique_code);
+
+    expect($contract['guest_book_enabled'])->toBeTrue();
+    expect($contract['guest'])->toHaveKeys(['id', 'name', 'unique_code', 'category', 'max_pax']);
+    expect($contract['guest']['name'])->toBe('Budi Santoso');
+    expect($contract['guest']['unique_code'])->toBe($guest->unique_code);
+    expect($contract['guest_qr_svg'])->toBeString()->toContain('<svg');
+    expect($contract['guest_qr_svg'])->toContain('<image');
+    expect($contract['guest_qr_svg'])->toContain('/favicon.svg');
+    expect($contract['guest_qr_svg'])->toContain('width="180" height="180"');
+});
+
+test('build omits guest book data when feature is not enabled', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $guest = App\Models\Guest::create([
+        'invitation_id' => $invitation->id,
+        'name' => 'Budi Santoso',
+    ]);
+
+    $contract = $this->builder->build($invitation, null, $guest->unique_code);
+
+    expect($contract['guest_book_enabled'])->toBeFalse();
+    expect($contract['guest'])->toBeNull();
+    expect($contract['guest_qr_svg'])->toBeNull();
+});
+
+test('build omits guest data when guest code is invalid', function () {
+    $user = User::factory()->create();
+    $product = App\Models\Product::factory()->create([
+        'type' => 'addon',
+        'slug' => 'guest_book',
+    ]);
+    $orderService = app(App\Services\OrderService::class);
+    $order = $orderService->createOrder($user, null, $product);
+    $orderService->updateOrderStatus($order, 'paid');
+
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $contract = $this->builder->build($invitation, null, 'nonexistent-code');
+
+    expect($contract['guest_book_enabled'])->toBeTrue();
+    expect($contract['guest'])->toBeNull();
+    expect($contract['guest_qr_svg'])->toBeNull();
 });

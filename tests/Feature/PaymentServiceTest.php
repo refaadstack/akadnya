@@ -25,7 +25,7 @@ beforeEach(function () {
 
     $this->payment = Payment::create([
         'order_id' => $this->order->id,
-        'provider' => 'midtrans',
+        'provider' => 'payment_service',
         'provider_transaction_id' => 'txn-12345',
         'payment_url' => 'https://payment.example.com/pay',
         'amount' => $this->order->total_amount,
@@ -34,37 +34,33 @@ beforeEach(function () {
     ]);
 });
 
-test('handleWebhook processes settlement notification', function () {
-    $notification = [
-        'transaction_status' => 'settlement',
-        'order_id' => 'txn-12345',
-        'transaction_id' => 'txn-12345',
-        'gross_amount' => (string) $this->order->total_amount,
-        'payment_type' => 'credit_card',
-        'status_code' => '200',
+test('handlePaymentServiceCallback marks order and payment as paid', function () {
+    $payload = [
+        'transaction_number' => 'txn-12345',
+        'product_order_id' => $this->order->order_number,
+        'status' => 'paid',
+        'payment_method' => 'credit_card',
     ];
 
-    $paymentService = app(PaymentService::class);
-    $paymentService->handleWebhook($notification);
+    app(PaymentService::class)->handlePaymentServiceCallback($payload);
 
     $this->payment->refresh();
     $this->order->refresh();
 
     expect($this->payment->status)->toBe('paid')
         ->and($this->payment->paid_at)->not->toBeNull()
+        ->and($this->payment->payment_method)->toBe('credit_card')
         ->and($this->order->status)->toBe('paid');
 });
 
-test('handleWebhook processes deny notification', function () {
-    $notification = [
-        'transaction_status' => 'deny',
-        'order_id' => 'txn-12345',
-        'transaction_id' => 'txn-12345',
-        'status_code' => '202',
+test('handlePaymentServiceCallback marks order and payment as failed', function () {
+    $payload = [
+        'transaction_number' => 'txn-12345',
+        'product_order_id' => $this->order->order_number,
+        'status' => 'failed',
     ];
 
-    $paymentService = app(PaymentService::class);
-    $paymentService->handleWebhook($notification);
+    app(PaymentService::class)->handlePaymentServiceCallback($payload);
 
     $this->payment->refresh();
     $this->order->refresh();
@@ -74,40 +70,41 @@ test('handleWebhook processes deny notification', function () {
         ->and($this->order->status)->toBe('failed');
 });
 
-test('handleWebhook processes expire notification', function () {
-    $notification = [
-        'transaction_status' => 'expire',
-        'order_id' => 'txn-12345',
-        'transaction_id' => 'txn-12345',
-        'status_code' => '407',
+test('handlePaymentServiceCallback is idempotent when status is unchanged', function () {
+    $this->payment->update([
+        'status' => 'paid',
+        'paid_at' => now(),
+    ]);
+
+    $payload = [
+        'transaction_number' => 'txn-12345',
+        'product_order_id' => $this->order->order_number,
+        'status' => 'paid',
     ];
 
-    $paymentService = app(PaymentService::class);
-    $paymentService->handleWebhook($notification);
+    app(PaymentService::class)->handlePaymentServiceCallback($payload);
 
     $this->payment->refresh();
-    $this->order->refresh();
 
-    expect($this->payment->status)->toBe('failed')
-        ->and($this->payment->paid_at)->toBeNull()
-        ->and($this->order->status)->toBe('failed');
+    expect($this->payment->status)->toBe('paid')
+        ->and($this->payment->paid_at)->not->toBeNull();
 });
 
-test('handleWebhook throws when transaction_id missing', function () {
-    $notification = [
-        'transaction_status' => 'settlement',
+test('handlePaymentServiceCallback throws when transaction number missing', function () {
+    $payload = [
+        'product_order_id' => $this->order->order_number,
+        'status' => 'paid',
     ];
 
-    $paymentService = app(PaymentService::class);
-    $paymentService->handleWebhook($notification);
-})->throws(InvalidArgumentException::class);
+    app(PaymentService::class)->handlePaymentServiceCallback($payload);
+})->throws(\ErrorException::class);
 
-test('handleWebhook throws when payment not found', function () {
-    $notification = [
-        'transaction_status' => 'settlement',
-        'transaction_id' => 'nonexistent-txn',
+test('handlePaymentServiceCallback throws when payment not found', function () {
+    $payload = [
+        'transaction_number' => 'nonexistent-txn',
+        'product_order_id' => $this->order->order_number,
+        'status' => 'paid',
     ];
 
-    $paymentService = app(PaymentService::class);
-    $paymentService->handleWebhook($notification);
+    app(PaymentService::class)->handlePaymentServiceCallback($payload);
 })->throws(RuntimeException::class);

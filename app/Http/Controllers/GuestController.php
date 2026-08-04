@@ -55,6 +55,10 @@ class GuestController extends Controller
         ];
 
         return inertia('Dashboard/Guests/Index', [
+            'invitation' => [
+                'id' => $invitation->id,
+                'status' => $invitation->status,
+            ],
             'guests' => $guests->through(fn ($guest) => [
                 'id' => $guest->id,
                 'name' => $guest->name,

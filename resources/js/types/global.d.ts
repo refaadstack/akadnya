@@ -21,6 +21,10 @@ declare module '@inertiajs/core' {
             sidebarOpen: boolean;
             hasInvitation: boolean;
             features: string[];
+            flash: {
+                success?: string;
+                error?: string;
+            };
             [key: string]: unknown;
         };
     }

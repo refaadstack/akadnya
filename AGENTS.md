@@ -35,16 +35,6 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 This project has domain-specific skills available in `**/skills/**`. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
 
-## Git & Commit Rules
-
-- Commit and push after EVERY change you make to the project. Do not leave work uncommitted at the end of a task.
-- Only push when there are no errors: verify tests pass (and lint/typecheck where applicable) before pushing. Never push failing or half-finished work.
-- Never perform actions that can break the project without explicit user permission, including:
-  - Dropping or truncating databases (`DROP DATABASE`, `TRUNCATE`, destructive migrations).
-  - Deleting core files (Laravel core, `app/`, `config/`, `database/`, `resources/`, `routes/`, tests, docker config) without asking first.
-  - Force-pushing or rewriting shared git history.
-- If a change is still incomplete or in a broken state, say so instead of pushing.
-
 ## Conventions
 
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
@@ -216,5 +206,34 @@ Use Wayfinder to generate TypeScript functions for Laravel routes. Import from `
 
 Vue components must have a single root element.
 - IMPORTANT: Activate `inertia-vue-development` when working with Inertia Vue client-side patterns.
+
+=== project rules ===
+
+# Project Workflow (MyAkad)
+
+## No Errors Before Finishing
+
+- Before considering work done, verify the code has no errors:
+  1. Run the affected Pest tests in Docker (host has no PHP):
+     `docker run --rm --network container:myakad-app -v /data/projects/myakad:/app -w /app php:8.3-cli sh -c 'docker-php-ext-install pdo_mysql >/dev/null 2>&1 && php vendor/bin/pest <file> --compact'`
+  2. Run Pint on changed PHP files:
+     `docker run --rm -v /data/projects/myakad:/app -w /app php:8.3-cli php vendor/bin/pint --dirty`
+  3. Run Prettier on changed frontend files: `npx prettier --write resources/`
+  4. If ESLint crashes with a fast-glob/@nodelib error, node_modules is corrupted; run `npm ci` to fix it before linting.
+
+## Commit & Push
+
+- After the work is verified, commit and push the changes.
+
+## Update Docker So Results Go Live
+
+- The `myakad-app` Docker container runs its own copy of the code (only `storage/app/public/templates` is bind-mounted). After commit/push (or after any code change), sync the container so it is live with the new work:
+  1. Copy every changed PHP/frontend/migration file into the container:
+     `docker cp <file> myakad-app:/app/<same-path>`
+  2. Run pending migrations: `docker exec myakad-app php artisan migrate --force`
+  3. Clear compiled views/blade cache after template changes: `docker exec myakad-app php artisan view:clear`
+  4. For frontend changes: copy `resources/js` files into the container (the in-container Vite dev server hot-reloads them), or rebuild assets with `npm run build` and copy `public/build` if the container has no Vite dev server.
+  5. Verify the live result: `curl -s http://localhost:8081/i/redho-dan-yeli`
+- Production (`myakad.refaadstack.com`) only updates after a redeploy — the Docker sync above applies to the dev environment.
 
 </laravel-boost-guidelines>

@@ -104,6 +104,7 @@ class DataContractBuilder
 
             // Media
             'cover_photo_url' => $content?->cover_photo_url ?? null,
+            'background_url' => $content?->background_url ?? null,
             'music_url' => $content?->music_url ?? null,
             'music_title' => $content?->music_title ?? null,
 
@@ -312,6 +313,7 @@ class DataContractBuilder
             'reception_venue' => null,
             'reception_maps_url' => null,
             'cover_photo_url' => null,
+            'background_url' => null,
             'music_url' => null,
             'music_title' => null,
             'love_story' => null,

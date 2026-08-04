@@ -107,3 +107,41 @@ test('editor save persists show_reception flag', function () {
     $content = $this->invitation->fresh()->content;
     expect($content->show_reception)->toBeFalse();
 });
+
+test('editor page exposes background url', function () {
+    $this->invitation->content()->updateOrCreate(
+        ['invitation_id' => $this->invitation->id],
+        ['background_url' => 'https://example.com/bg.jpg']
+    );
+
+    $this->actingAs($this->user)
+        ->get(route('dashboard.editor'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('content.background_url', 'https://example.com/bg.jpg')
+        );
+});
+
+test('editor save persists background url', function () {
+    $this->actingAs($this->user)
+        ->post(route('dashboard.editor.save'), [
+            'bride_name' => 'Siti',
+            'groom_name' => 'Budi',
+            'akad_datetime' => '2026-12-25T09:00',
+            'akad_venue' => 'Masjid Al-Ikhlas',
+            'background_url' => 'https://example.com/bg.jpg',
+        ])
+        ->assertRedirect()
+        ->assertSessionHas('success');
+
+    $content = $this->invitation->fresh()->content;
+    expect($content->background_url)->toBe('https://example.com/bg.jpg');
+});
+
+test('editor save rejects invalid background url', function () {
+    $this->actingAs($this->user)
+        ->post(route('dashboard.editor.save'), [
+            'background_url' => 'not-a-url',
+        ])
+        ->assertSessionHasErrors('background_url');
+});

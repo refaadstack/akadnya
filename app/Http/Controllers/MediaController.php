@@ -182,4 +182,28 @@ class MediaController extends Controller
             ], 422);
         }
     }
+
+    /**
+     * Upload page background image.
+     */
+    public function uploadBackground(Request $request): JsonResponse
+    {
+        $request->validate([
+            'file' => 'required|file|max:5120', // 5MB max
+        ]);
+
+        try {
+            $url = $this->mediaService->upload($request->file('file'), 'background');
+
+            return response()->json([
+                'success' => true,
+                'url' => $url,
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
 }

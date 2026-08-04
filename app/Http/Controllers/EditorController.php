@@ -61,6 +61,7 @@ class EditorController extends Controller
                 'love_story' => $invitation->content->love_story,
                 'special_message' => $invitation->content->special_message,
                 'cover_photo_url' => $invitation->content->cover_photo_url,
+                'background_url' => $invitation->content->background_url,
                 'music_url' => $invitation->content->music_url,
                 'music_title' => $invitation->content->music_title,
                 'gallery_photos' => $invitation->content->gallery_photos ?? [],

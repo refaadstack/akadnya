@@ -53,3 +53,26 @@ test('music upload rejects non-audio files', function () {
     expect(fn () => $this->service->upload(makeAudioUpload('foto.png', "\x89PNG\r\n\x1a\n".str_repeat("\x00", 100)), 'music'))
         ->toThrow(InvalidArgumentException::class);
 });
+
+function makeImageUpload(string $name, string $content, ?string $mime = null): UploadedFile
+{
+    $path = tempnam(sys_get_temp_dir(), 'image_test');
+    file_put_contents($path, $content);
+
+    return new UploadedFile($path, $name, $mime, null, true);
+}
+
+test('background upload stores under invitations/backgrounds', function () {
+    $file = makeImageUpload('background.jpg', "\xFF\xD8\xFF\xE0".str_repeat("\x00", 100), 'image/jpeg');
+
+    $url = $this->service->upload($file, 'background');
+
+    expect($url)->toContain('/storage/invitations/backgrounds/');
+});
+
+test('background upload rejects non-image files', function () {
+    $file = makeImageUpload('dokumen.txt', 'hello world', 'text/plain');
+
+    expect(fn () => $this->service->upload($file, 'background'))
+        ->toThrow(InvalidArgumentException::class);
+});

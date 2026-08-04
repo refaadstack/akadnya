@@ -81,6 +81,7 @@ const form = useForm({
     love_story: props.content?.love_story || '',
     special_message: props.content?.special_message || '',
     cover_photo_url: props.content?.cover_photo_url || '',
+    background_url: props.content?.background_url || '',
     music_url: props.content?.music_url || '',
     music_title: props.content?.music_title || '',
     gallery_photos: props.content?.gallery_photos || [],
@@ -95,6 +96,7 @@ const form = useForm({
 });
 
 const uploadingCover = ref(false);
+const uploadingBackground = ref(false);
 const uploadingMusic = ref(false);
 const uploadingQris = ref(false);
 const uploadingBride = ref(false);
@@ -154,6 +156,31 @@ const uploadCover = async (event: Event) => {
         alert('Terjadi kesalahan saat upload foto cover');
     } finally {
         uploadingCover.value = false;
+    }
+};
+
+const uploadBackground = async (event: Event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+
+    if (!file) {
+        return;
+    }
+
+    uploadingBackground.value = true;
+
+    try {
+        const data = await uploadFile('/media/upload/background', file);
+
+        if (data.success && data.url) {
+            form.background_url = data.url;
+        } else {
+            alert(data.message || 'Gagal upload background');
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        alert('Terjadi kesalahan saat upload background');
+    } finally {
+        uploadingBackground.value = false;
     }
 };
 
@@ -1062,6 +1089,89 @@ const submit = () => {
                                         </label>
                                         <p class="mt-2 text-xs text-gray-500">
                                             Format: JPG, PNG, WebP. Maksimal 5MB
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Page Background -->
+                            <div>
+                                <label
+                                    class="mb-2 block text-sm font-medium text-gray-700"
+                                    >Background Halaman</label
+                                >
+                                <div class="flex items-start space-x-4">
+                                    <div
+                                        v-if="form.background_url"
+                                        class="relative h-32 w-48 overflow-hidden rounded-lg border-2 border-gray-200"
+                                    >
+                                        <img
+                                            :src="form.background_url"
+                                            alt="Background"
+                                            class="h-full w-full object-cover"
+                                        />
+                                        <button
+                                            type="button"
+                                            @click="form.background_url = ''"
+                                            class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                                        >
+                                            <svg
+                                                class="h-4 w-4"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <div class="flex-1">
+                                        <input
+                                            type="file"
+                                            @change="uploadBackground"
+                                            accept="image/*"
+                                            class="hidden"
+                                            id="background-upload"
+                                            :disabled="uploadingBackground"
+                                        />
+                                        <label
+                                            for="background-upload"
+                                            class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
+                                            :class="{
+                                                'cursor-not-allowed opacity-50':
+                                                    uploadingBackground,
+                                            }"
+                                        >
+                                            <svg
+                                                class="mr-2 h-5 w-5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                                />
+                                            </svg>
+                                            {{
+                                                uploadingBackground
+                                                    ? 'Uploading...'
+                                                    : 'Pilih Gambar'
+                                            }}
+                                        </label>
+                                        <p class="mt-2 text-xs text-gray-500">
+                                            Gambar latar halaman undangan
+                                            (terlihat di area sekitar undangan
+                                            dan layar pembuka). Format: JPG,
+                                            PNG, WebP. Maksimal 5MB
                                         </p>
                                     </div>
                                 </div>

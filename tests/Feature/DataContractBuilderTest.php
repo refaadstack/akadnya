@@ -69,6 +69,7 @@ test('build returns all data contract keys even with null content', function () 
         'reception_year',
         'reception_day',
         'cover_photo_url',
+        'background_url',
         'music_url',
         'music_title',
         'love_story',
@@ -107,6 +108,7 @@ test('build populates data from invitation content', function () {
         'groom_name' => 'Budi',
         'akad_datetime' => Carbon::parse('2025-06-14 09:00:00'),
         'akad_venue' => 'Masjid Al-Ikhlas',
+        'background_url' => 'https://example.com/bg.jpg',
     ]);
 
     $contract = $this->builder->build($invitation);
@@ -116,6 +118,7 @@ test('build populates data from invitation content', function () {
     expect($contract['akad_venue'])->toBe('Masjid Al-Ikhlas');
     expect($contract['akad_datetime_formatted'])->toBeString();
     expect($contract['akad_time'])->toContain('WIB');
+    expect($contract['background_url'])->toBe('https://example.com/bg.jpg');
 });
 
 test('buildDatetimeVariables generates consistent datetime variables', function () {

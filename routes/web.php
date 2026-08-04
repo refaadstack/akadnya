@@ -136,6 +136,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('media/upload/bride', [MediaController::class, 'uploadBridePhoto'])->name('media.upload.bride');
         Route::post('media/upload/groom', [MediaController::class, 'uploadGroomPhoto'])->name('media.upload.groom');
         Route::post('media/upload/couple', [MediaController::class, 'uploadCouplePhoto'])->name('media.upload.couple');
+        Route::post('media/upload/background', [MediaController::class, 'uploadBackground'])->name('media.upload.background');
     });
 });
 

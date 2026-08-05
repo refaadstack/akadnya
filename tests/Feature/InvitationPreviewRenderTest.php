@@ -218,3 +218,76 @@ test('single-file template renders as standalone html without wrapper', function
     expect($html)->not->toContain("template-{$slug}");
     expect($html)->not->toContain('<meta name="csrf-token"');
 });
+
+test('rendered template embeds background url from invitation content', function () {
+    $user = User::factory()->create();
+    $slug = 'test-'.uniqid();
+    $template = Template::factory()->create(['slug' => $slug]);
+    $templateSection = $template->sections()->create([
+        'file' => 'hero.html',
+        'label' => 'Hero',
+        'sort_order' => 1,
+        'is_required' => true,
+    ]);
+
+    $templatePath = storage_path("app/public/templates/{$slug}");
+    File::makeDirectory($templatePath.'/sections', 0755, true);
+    File::makeDirectory($templatePath.'/assets', 0755, true);
+    File::put($templatePath.'/sections/hero.html', '@if($background_url ?? null)<style>body { background: url("{{ $background_url }}") center/cover no-repeat fixed; }</style>@endif<section class="bg-hero">{{ $bride_name ?? "" }}</section>');
+    File::put($templatePath.'/assets/style.css', '.bg-hero { color: red; }');
+    File::put($templatePath.'/assets/script.js', '');
+
+    $invitation = Invitation::factory()->for($user)->for($template)->create();
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'bride_name' => 'Nadia',
+        'groom_name' => 'Raka',
+        'background_url' => 'https://example.com/storage/invitations/backgrounds/bg.jpg',
+    ]);
+    $invitation->sections()->create([
+        'template_section_id' => $templateSection->id,
+        'sort_order' => 1,
+        'is_visible' => true,
+    ]);
+
+    $data = (new DataContractBuilder)->build($invitation);
+    $html = (new BladeRenderService)->renderInvitation($invitation, $data);
+
+    expect($html)->toContain('url("https://example.com/storage/invitations/backgrounds/bg.jpg")');
+});
+
+test('rendered template omits background block when background url is empty', function () {
+    $user = User::factory()->create();
+    $slug = 'test-'.uniqid();
+    $template = Template::factory()->create(['slug' => $slug]);
+    $templateSection = $template->sections()->create([
+        'file' => 'hero.html',
+        'label' => 'Hero',
+        'sort_order' => 1,
+        'is_required' => true,
+    ]);
+
+    $templatePath = storage_path("app/public/templates/{$slug}");
+    File::makeDirectory($templatePath.'/sections', 0755, true);
+    File::makeDirectory($templatePath.'/assets', 0755, true);
+    File::put($templatePath.'/sections/hero.html', '@if($background_url ?? null)<style>body { background: url("{{ $background_url }}"); }</style>@endif<section class="bg-hero">{{ $bride_name ?? "" }}</section>');
+    File::put($templatePath.'/assets/style.css', '');
+    File::put($templatePath.'/assets/script.js', '');
+
+    $invitation = Invitation::factory()->for($user)->for($template)->create();
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'bride_name' => 'Nadia',
+        'groom_name' => 'Raka',
+    ]);
+    $invitation->sections()->create([
+        'template_section_id' => $templateSection->id,
+        'sort_order' => 1,
+        'is_visible' => true,
+    ]);
+
+    $data = (new DataContractBuilder)->build($invitation);
+    $html = (new BladeRenderService)->renderInvitation($invitation, $data);
+
+    expect($html)->not->toContain('background: url("');
+});

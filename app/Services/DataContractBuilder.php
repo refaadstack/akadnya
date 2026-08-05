@@ -3,7 +3,14 @@
 namespace App\Services;
 
 use App\Models\Invitation;
+use App\Models\SiteSetting;
 use App\Models\Template;
+use BaconQrCode\Common\ErrorCorrectionLevel;
+use BaconQrCode\Encoder\Encoder;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 
@@ -433,19 +440,19 @@ class DataContractBuilder
     protected function buildGuestQrSvg(string $payload): ?string
     {
         try {
-            $renderer = new \BaconQrCode\Renderer\ImageRenderer(
-                new \BaconQrCode\Renderer\RendererStyle\RendererStyle(300, 1),
-                new \BaconQrCode\Renderer\Image\SvgImageBackEnd()
+            $renderer = new ImageRenderer(
+                new RendererStyle(300, 1),
+                new SvgImageBackEnd
             );
 
-            $svg = (new \BaconQrCode\Writer($renderer))->writeString(
+            $svg = (new Writer($renderer))->writeString(
                 $payload,
-                \BaconQrCode\Encoder\Encoder::DEFAULT_BYTE_MODE_ENCODING,
-                \BaconQrCode\Common\ErrorCorrectionLevel::Q()
+                Encoder::DEFAULT_BYTE_MODE_ENCODING,
+                ErrorCorrectionLevel::Q()
             );
 
             // Embed the brand logo in the center of the QR code.
-            $logoUrl = url('/favicon.svg');
+            $logoUrl = SiteSetting::get('qr_logo_url') ?? url('/favicon.svg');
             $logoBlock = '<g>'
                 .'<rect x="117" y="117" width="66" height="66" rx="12" fill="#ffffff"/>'
                 .sprintf('<image x="122" y="122" width="56" height="56" href="%s" xlink:href="%s" preserveAspectRatio="xMidYMid meet"/>', $logoUrl, $logoUrl)

@@ -1,16 +1,21 @@
 <?php
 
+use App\Models\Guest;
 use App\Models\Invitation;
 use App\Models\InvitationContent;
 use App\Models\InvitationGallery;
+use App\Models\Product;
+use App\Models\SiteSetting;
 use App\Models\Template;
 use App\Models\User;
 use App\Services\DataContractBuilder;
+use App\Services\OrderService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
     $this->builder = new DataContractBuilder;
+    SiteSetting::flush();
 });
 
 afterEach(function () {
@@ -494,11 +499,11 @@ test('buildTemplateDefaults returns template-owned preview data', function () {
 
 test('build includes guest book data when feature enabled and valid guest code', function () {
     $user = User::factory()->create();
-    $product = App\Models\Product::factory()->create([
+    $product = Product::factory()->create([
         'type' => 'addon',
         'slug' => 'guest_book',
     ]);
-    $orderService = app(App\Services\OrderService::class);
+    $orderService = app(OrderService::class);
     $order = $orderService->createOrder($user, null, $product);
     $orderService->updateOrderStatus($order, 'paid');
 
@@ -508,7 +513,7 @@ test('build includes guest book data when feature enabled and valid guest code',
         'template_id' => $template->id,
     ]);
 
-    $guest = App\Models\Guest::create([
+    $guest = Guest::create([
         'invitation_id' => $invitation->id,
         'name' => 'Budi Santoso',
         'category' => 'family',
@@ -527,6 +532,37 @@ test('build includes guest book data when feature enabled and valid guest code',
     expect($contract['guest_qr_svg'])->toContain('width="180" height="180"');
 });
 
+test('build embeds the configured QR logo from site settings', function () {
+    $user = User::factory()->create();
+    $product = Product::factory()->create([
+        'type' => 'addon',
+        'slug' => 'guest_book',
+    ]);
+    $orderService = app(OrderService::class);
+    $order = $orderService->createOrder($user, null, $product);
+    $orderService->updateOrderStatus($order, 'paid');
+
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $guest = Guest::create([
+        'invitation_id' => $invitation->id,
+        'name' => 'Budi Santoso',
+        'category' => 'family',
+        'max_pax' => 2,
+    ]);
+
+    SiteSetting::set('qr_logo_url', 'https://example.com/storage/branding/custom-logo.svg');
+
+    $contract = $this->builder->build($invitation, null, $guest->unique_code);
+
+    expect($contract['guest_qr_svg'])->toContain('https://example.com/storage/branding/custom-logo.svg');
+    expect($contract['guest_qr_svg'])->not->toContain('/favicon.svg');
+});
+
 test('build omits guest book data when feature is not enabled', function () {
     $user = User::factory()->create();
     $template = Template::factory()->create();
@@ -535,7 +571,7 @@ test('build omits guest book data when feature is not enabled', function () {
         'template_id' => $template->id,
     ]);
 
-    $guest = App\Models\Guest::create([
+    $guest = Guest::create([
         'invitation_id' => $invitation->id,
         'name' => 'Budi Santoso',
     ]);
@@ -549,11 +585,11 @@ test('build omits guest book data when feature is not enabled', function () {
 
 test('build omits guest data when guest code is invalid', function () {
     $user = User::factory()->create();
-    $product = App\Models\Product::factory()->create([
+    $product = Product::factory()->create([
         'type' => 'addon',
         'slug' => 'guest_book',
     ]);
-    $orderService = app(App\Services\OrderService::class);
+    $orderService = app(OrderService::class);
     $order = $orderService->createOrder($user, null, $product);
     $orderService->updateOrderStatus($order, 'paid');
 

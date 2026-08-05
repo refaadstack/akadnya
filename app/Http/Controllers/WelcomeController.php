@@ -24,8 +24,8 @@ class WelcomeController extends Controller
                 'slug' => $template->slug,
                 'name' => $template->name,
                 'thumbnail_url' => $template->thumbnail_url,
-                'price' => $template->price,
-                'original_price' => $template->original_price,
+                'price' => (float) $template->price,
+                'original_price' => $template->original_price !== null ? (float) $template->original_price : null,
                 'discount_percent' => $template->discount_percent,
                 'is_free' => $template->is_free,
             ]);
@@ -41,8 +41,8 @@ class WelcomeController extends Controller
             'canRegister' => Features::enabled(Features::registration()),
             'startingTemplate' => $startingTemplate ? [
                 'name' => $startingTemplate->name,
-                'price' => $startingTemplate->price,
-                'original_price' => $startingTemplate->original_price,
+                'price' => (float) $startingTemplate->price,
+                'original_price' => $startingTemplate->original_price !== null ? (float) $startingTemplate->original_price : null,
                 'discount_percent' => $startingTemplate->discount_percent,
             ] : null,
             'featuredTemplates' => $featuredTemplates,

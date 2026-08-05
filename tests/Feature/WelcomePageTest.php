@@ -68,8 +68,8 @@ test('welcome page shows cheapest paid template as starting price', function () 
 
     $response->assertInertia(fn ($page) => $page
         ->where('startingTemplate.name', 'Cheapest')
-        ->where('startingTemplate.price', '149000.00')
-        ->where('startingTemplate.original_price', '199000.00')
+        ->where('startingTemplate.price', 149000)
+        ->where('startingTemplate.original_price', 199000)
         ->where('startingTemplate.discount_percent', 25)
     );
 });

@@ -224,7 +224,7 @@ test('cart page shows items with discounted prices and totals', function () {
         ->component('Cart/Index')
         ->has('items', 2)
         ->where('items.0.name', $template->name)
-        ->where('items.0.original_price', '199000.00')
+        ->where('items.0.original_price', 199000)
         ->where('items.1.name', $product->name)
         ->where('items.1.quantity', 2)
         ->where('totals.subtotal', 188000)

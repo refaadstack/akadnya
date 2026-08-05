@@ -22,20 +22,20 @@ class CartService
         $this->assertPurchasable($itemType, $itemId);
 
         $item = CartItem::firstOrNew([
-            "user_id" => $user->id,
-            "item_type" => $itemType,
-            "item_id" => $itemId,
+            'user_id' => $user->id,
+            'item_type' => $itemType,
+            'item_id' => $itemId,
         ]);
 
         if ($item->exists) {
-            if ($itemType === "template") {
+            if ($itemType === 'template') {
                 $item->preview_data = $previewData;
             } else {
                 $item->quantity = min($item->quantity + 1, self::MAX_QUANTITY);
             }
         } else {
             $item->quantity = 1;
-            $item->preview_data = $itemType === "template" ? $previewData : null;
+            $item->preview_data = $itemType === 'template' ? $previewData : null;
         }
 
         $item->save();
@@ -47,8 +47,8 @@ class CartService
     {
         $item = $this->findOwned($user, $cartItemId);
 
-        if ($item->item_type === "template") {
-            throw new InvalidArgumentException("Template quantity cannot be changed.");
+        if ($item->item_type === 'template') {
+            throw new InvalidArgumentException('Template quantity cannot be changed.');
         }
 
         $item->quantity = max(1, min($quantity, self::MAX_QUANTITY));
@@ -69,7 +69,7 @@ class CartService
 
     public function count(User $user): int
     {
-        return (int) CartItem::forUser($user)->sum("quantity");
+        return (int) CartItem::forUser($user)->sum('quantity');
     }
 
     /**
@@ -83,19 +83,19 @@ class CartService
             ->orderBy('id')
             ->get();
 
-        $templateIds = $cartItems->where("item_type", "template")->pluck("item_id");
-        $productIds = $cartItems->where("item_type", "product")->pluck("item_id");
+        $templateIds = $cartItems->where('item_type', 'template')->pluck('item_id');
+        $productIds = $cartItems->where('item_type', 'product')->pluck('item_id');
 
         $templates = $templateIds->isEmpty()
             ? collect()
-            : Template::whereIn("id", $templateIds)->get()->keyBy("id");
+            : Template::whereIn('id', $templateIds)->get()->keyBy('id');
         $products = $productIds->isEmpty()
             ? collect()
-            : Product::whereIn("id", $productIds)->get()->keyBy("id");
+            : Product::whereIn('id', $productIds)->get()->keyBy('id');
 
         $items = $cartItems
             ->map(function (CartItem $cartItem) use ($templates, $products): ?array {
-                if ($cartItem->item_type === "template") {
+                if ($cartItem->item_type === 'template') {
                     $model = $templates->get($cartItem->item_id);
                 } else {
                     $model = $products->get($cartItem->item_id);
@@ -106,36 +106,36 @@ class CartService
                 }
 
                 return [
-                    "id" => $cartItem->id,
-                    "type" => $cartItem->item_type,
-                    "item_id" => $model->id,
-                    "slug" => $model->slug,
-                    "name" => $model->name,
-                    "description" => $cartItem->item_type === "template"
-                        ? "Template undangan digital"
+                    'id' => $cartItem->id,
+                    'type' => $cartItem->item_type,
+                    'item_id' => $model->id,
+                    'slug' => $model->slug,
+                    'name' => $model->name,
+                    'description' => $cartItem->item_type === 'template'
+                        ? 'Template undangan digital'
                         : $model->description,
-                    "price" => $model->price,
-                    "original_price" => $model->original_price,
-                    "discount_percent" => $model->discount_percent,
-                    "quantity" => $cartItem->quantity,
-                    "is_free" => $cartItem->item_type === "template" ? $model->is_free : false,
+                    'price' => (float) $model->price,
+                    'original_price' => $model->original_price !== null ? (float) $model->original_price : null,
+                    'discount_percent' => $model->discount_percent,
+                    'quantity' => $cartItem->quantity,
+                    'is_free' => $cartItem->item_type === 'template' ? $model->is_free : false,
                 ];
             })
             ->filter()
             ->values();
 
-        $subtotal = $items->sum(fn (array $item): float => (float) $item["price"] * $item["quantity"]);
-        $originalSubtotal = $items->sum(fn (array $item): float => $item["original_price"]
-            ? (float) $item["original_price"] * $item["quantity"]
+        $subtotal = $items->sum(fn (array $item): float => (float) $item['price'] * $item['quantity']);
+        $originalSubtotal = $items->sum(fn (array $item): float => $item['original_price']
+            ? (float) $item['original_price'] * $item['quantity']
             : 0.0);
 
         return [
-            "items" => $items,
-            "totals" => [
-                "item_count" => $items->count(),
-                "subtotal" => $subtotal,
-                "original_subtotal" => $originalSubtotal > $subtotal ? $originalSubtotal : null,
-                "savings" => $originalSubtotal > $subtotal ? $originalSubtotal - $subtotal : 0,
+            'items' => $items,
+            'totals' => [
+                'item_count' => $items->count(),
+                'subtotal' => $subtotal,
+                'original_subtotal' => $originalSubtotal > $subtotal ? $originalSubtotal : null,
+                'savings' => $originalSubtotal > $subtotal ? $originalSubtotal - $subtotal : 0,
             ],
         ];
     }
@@ -145,19 +145,19 @@ class CartService
      */
     protected function assertPurchasable(string $itemType, int $itemId): void
     {
-        if ($itemType === "template") {
-            $purchasable = Template::where("id", $itemId)->where("is_active", true)->exists();
-        } elseif ($itemType === "product") {
-            $purchasable = Product::where("id", $itemId)
-                ->where("type", "addon")
-                ->where("is_active", true)
+        if ($itemType === 'template') {
+            $purchasable = Template::where('id', $itemId)->where('is_active', true)->exists();
+        } elseif ($itemType === 'product') {
+            $purchasable = Product::where('id', $itemId)
+                ->where('type', 'addon')
+                ->where('is_active', true)
                 ->exists();
         } else {
             $purchasable = false;
         }
 
         if (! $purchasable) {
-            throw new InvalidArgumentException("Item tidak tersedia.");
+            throw new InvalidArgumentException('Item tidak tersedia.');
         }
     }
 

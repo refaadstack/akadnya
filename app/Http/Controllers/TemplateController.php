@@ -31,8 +31,8 @@ class TemplateController extends Controller
                 'slug' => $template->slug,
                 'name' => $template->name,
                 'thumbnail_url' => $template->thumbnail_url, // Uses accessor
-                'price' => $template->price,
-                'original_price' => $template->original_price,
+                'price' => (float) $template->price,
+                'original_price' => $template->original_price !== null ? (float) $template->original_price : null,
                 'discount_percent' => $template->discount_percent,
                 'is_free' => $template->is_free,
             ]);

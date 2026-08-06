@@ -37,7 +37,8 @@ afterEach(function () {
                 File::deleteDirectory($dir);
             }
         }
-    }});
+    }
+});
 
 test('processUpload with valid ZIP creates template in public/templates', function () {
     $zipPath = $this->tempDir.'/test.zip';
@@ -265,4 +266,30 @@ test('processUpload replaces existing template directory', function () {
     // New files should exist
     expect(File::exists($existingPath.'/sections/cover.html'))->toBeTrue();
     expect(File::get($existingPath.'/sections/cover.html'))->toContain('New Cover');
+});
+
+test('syncTemplateFromDirectory persists thumbnail path from manifest', function () {
+    $slug = 'test-thumb-'.uniqid();
+    $zipPath = $this->tempDir.'/test.zip';
+    $zip = new ZipArchive;
+    $zip->open($zipPath, ZipArchive::CREATE);
+    $zip->addFromString('template.json', json_encode([
+        'slug' => $slug,
+        'name' => 'Thumbnail Template',
+        'version' => '1.0.0',
+        'thumbnail' => 'templates/thumbnails/'.$slug.'.png',
+        'sections' => [
+            ['file' => 'cover.html', 'label' => 'Cover'],
+        ],
+    ]));
+    $zip->addFromString('sections/cover.html', '<h1>Cover</h1>');
+    $zip->close();
+
+    $result = $this->service->processUpload($zipPath);
+
+    expect($result['success'])->toBeTrue();
+    expect($result['template']->getRawOriginal('thumbnail_url'))->toBe('templates/thumbnails/'.$slug.'.png');
+
+    // Accessor resolves to a storage URL for the showcase page
+    expect($result['template']->thumbnail_url)->toContain('storage/templates/thumbnails/'.$slug.'.png');
 });

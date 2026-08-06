@@ -2,6 +2,7 @@
 
 use App\Models\Template;
 use App\Services\BladeRenderService;
+use App\Services\DataContractBuilder;
 use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
@@ -164,4 +165,45 @@ test('renderOrnament renders Blade template with data', function () {
 
     expect($result)->toContain('red');
     expect($result)->toContain('flower');
+});
+
+test('renderSection emits no undefined variable warnings when payment data is missing', function () {
+    $contractBuilder = new DataContractBuilder;
+    $paymentKeys = [
+        'qris_image_url', 'gopay_number', 'ovo_number', 'dana_number',
+        'bank_name', 'account_number', 'account_name', 'gift_address',
+    ];
+
+    $files = [
+        'red-cream' => ['full.html', 'class="rg-qris"'],
+        '01kz1heyw9mwm46c7xgqvegrqh' => ['full.html', 'class="rg-qris"'],
+        'melayu-jambi' => ['gift.html', 'jambi-gift-qris'],
+        'sunda-merbak' => ['gift.html', 'sunda-gift-qris'],
+        'chinese-imperial-luxe' => ['gift.html', 'ci-qris'],
+    ];
+
+    foreach ($files as $slug => [$file, $qrisClass]) {
+        $template = (new Template)->forceFill(['slug' => $slug]);
+        $data = $contractBuilder->buildTemplateDefaults($template);
+        $data = array_diff_key($data, array_flip($paymentKeys));
+
+        $warnings = [];
+        set_error_handler(function (int $severity, string $message) use (&$warnings) {
+            if (str_contains($message, 'Undefined variable')) {
+                $warnings[] = $message;
+            }
+
+            return true;
+        });
+
+        try {
+            $result = $this->service->renderSection($template, $file, $data);
+        } finally {
+            restore_error_handler();
+        }
+
+        expect($warnings)->toBeEmpty("{$slug}: rendered without undefined variable warnings");
+        expect($result)->not->toBeEmpty();
+        expect($result)->not->toContain($qrisClass);
+    }
 });

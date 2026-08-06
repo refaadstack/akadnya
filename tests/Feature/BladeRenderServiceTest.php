@@ -207,3 +207,57 @@ test('renderSection emits no undefined variable warnings when payment data is mi
         expect($result)->not->toContain($qrisClass);
     }
 });
+
+test('cover sections render guest name when provided', function () {
+    $contractBuilder = new DataContractBuilder;
+    $files = [
+        'red-cream' => 'full.html',
+        '01kz1heyw9mwm46c7xgqvegrqh' => 'full.html',
+        'chinese-imperial-luxe' => 'opening.html',
+        'klasik-elegan' => 'opening.html',
+    ];
+
+    foreach ($files as $slug => $file) {
+        $template = (new Template)->forceFill(['slug' => $slug]);
+        $data = $contractBuilder->buildTemplateDefaults($template);
+        $data['guest_name'] = 'Bapak Ahmad';
+
+        $warnings = [];
+        set_error_handler(function (int $severity, string $message) use (&$warnings) {
+            if (str_contains($message, 'Undefined variable')) {
+                $warnings[] = $message;
+            }
+
+            return true;
+        });
+
+        try {
+            $result = $this->service->renderSection($template, $file, $data);
+        } finally {
+            restore_error_handler();
+        }
+
+        expect($warnings)->toBeEmpty("{$slug}: rendered without undefined variable warnings");
+        expect($result)->toContain('Kepada Yth. Bapak Ahmad');
+    }
+});
+
+test('cover sections fall back to generic guest label without guest name', function () {
+    $contractBuilder = new DataContractBuilder;
+    $files = [
+        'red-cream' => 'full.html',
+        '01kz1heyw9mwm46c7xgqvegrqh' => 'full.html',
+        'chinese-imperial-luxe' => 'opening.html',
+        'klasik-elegan' => 'opening.html',
+    ];
+
+    foreach ($files as $slug => $file) {
+        $template = (new Template)->forceFill(['slug' => $slug]);
+        $data = $contractBuilder->buildTemplateDefaults($template);
+        unset($data['guest_name']);
+
+        $result = $this->service->renderSection($template, $file, $data);
+
+        expect($result)->toContain('Kepada Yth. Tamu Undangan');
+    }
+});

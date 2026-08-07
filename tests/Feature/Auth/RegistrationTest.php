@@ -21,6 +21,7 @@ test('new users can register', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'terms' => true,
     ]);
 
     $this->assertAuthenticated();
@@ -33,6 +34,7 @@ test('new users have default role', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'terms' => true,
     ]);
 
     $user = User::where('email', 'test@example.com')->first();
@@ -46,6 +48,7 @@ test('registration requires name', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'terms' => true,
     ]);
 
     $response->assertSessionHasErrors('name');
@@ -57,6 +60,7 @@ test('registration requires email', function () {
         'email' => '',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'terms' => true,
     ]);
 
     $response->assertSessionHasErrors('email');
@@ -68,6 +72,7 @@ test('registration requires valid email', function () {
         'email' => 'not-an-email',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'terms' => true,
     ]);
 
     $response->assertSessionHasErrors('email');
@@ -81,6 +86,7 @@ test('registration requires unique email', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'terms' => true,
     ]);
 
     $response->assertSessionHasErrors('email');
@@ -114,9 +120,37 @@ test('password is hashed on registration', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'terms' => true,
     ]);
 
     $user = User::where('email', 'test@example.com')->first();
 
     expect(Hash::check('password', $user->password))->toBeTrue();
+});
+
+test('registration requires terms acceptance', function () {
+    $response = $this->post('/register', [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+        'terms' => false,
+    ]);
+
+    $response->assertSessionHasErrors('terms');
+    $this->assertGuest();
+});
+
+test('terms acceptance timestamp is stored on registration', function () {
+    $this->post('/register', [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+        'terms' => true,
+    ]);
+
+    $user = User::where('email', 'test@example.com')->first();
+
+    expect($user->terms_accepted_at)->not->toBeNull();
 });

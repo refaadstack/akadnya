@@ -8,10 +8,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EditorController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
-use App\Http\Controllers\GuestController;
 use App\Http\Controllers\GuestBookController;
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\InvitationSettingsController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PaymentFinishController;
 use App\Http\Controllers\ProductController;
@@ -24,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
+Route::get('/terms', [LegalController::class, 'terms'])->name('terms');
+Route::get('/privacy', [LegalController::class, 'privacy'])->name('privacy');
 
 // Public invitation routes (must be before other routes to catch subdomains)
 Route::get('/i/{subdomain}', [PublicInvitationController::class, 'show'])->name('invitation.show');

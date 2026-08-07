@@ -236,18 +236,23 @@ const updatedDate = 'Agustus 2026';
                                 class="list-decimal gap-2 pl-5 text-sm leading-6 text-[var(--my-muted)]"
                             >
                                 <li>
-                                    Pengembalian dana hanya dapat dilakukan jika
-                                    undangan belum dipublikasikan dan diminta
-                                    dalam waktu 7 hari setelah pembelian.
+                                    Karena template dan produk tambahan
+                                    merupakan produk digital, pembelian dianggap
+                                    final setelah checkout, termasuk jika
+                                    terjadi salah pilih template maupun produk.
                                 </li>
                                 <li>
-                                    Layanan/produk yang sudah dipublikasikan
-                                    atau digunakan bersifat digital sehingga
-                                    tidak dapat direfund.
+                                    Pengembalian dana hanya dapat dilakukan
+                                    dalam kondisi yang wajar dan disetujui oleh
+                                    MyAkad, misalnya karena kesalahan dari pihak
+                                    MyAkad (produk tidak dapat digunakan) atau
+                                    kondisi khusus lainnya yang memang layak.
                                 </li>
                                 <li>
                                     Refund diproses melalui payment gateway dan
-                                    dapat memerlukan waktu beberapa hari kerja.
+                                    dapat memerlukan waktu beberapa hari kerja
+                                    serta akan diverifikasi terlebih dahulu oleh
+                                    tim kami.
                                 </li>
                             </ol>
                         </section>

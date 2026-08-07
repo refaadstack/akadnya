@@ -72,7 +72,7 @@ class FaqController extends Controller
                     ],
                     [
                         'question' => 'Apakah bisa refund jika tidak jadi pakai?',
-                        'answer' => 'Refund hanya bisa dilakukan jika undangan belum dipublikasikan dan dalam waktu 7 hari setelah pembelian. Silakan hubungi customer support kami untuk proses refund.',
+                        'answer' => 'Karena ini produk digital, pembelian dianggap final setelah checkout. Refund hanya bisa dilakukan dalam kondisi yang wajar, misalnya karena kesalahan dari pihak MyAkad atau kondisi khusus lain yang memang layak. Silakan hubungi customer support kami untuk proses refund.',
                     ],
                     [
                         'question' => 'Apakah ada biaya tambahan?',

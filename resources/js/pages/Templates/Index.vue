@@ -236,8 +236,8 @@ const addToCart = (template: Template) => {
                         Belum ada template tersedia
                     </p>
                     <p class="my-copy mx-auto mt-3 max-w-md">
-                        Template akan muncul di sini setelah diupload dari
-                        admin.
+                        Koleksi template baru akan segera hadir di sini. Cek
+                        kembali dalam beberapa saat ya.
                     </p>
                     <Link href="/" class="my-btn-primary mt-6"
                         >Kembali ke Beranda</Link

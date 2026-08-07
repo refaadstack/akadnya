@@ -179,7 +179,8 @@ const addToCart = (product: Product) => {
                 >
                     <p class="my-heading text-3xl">Belum ada produk tersedia</p>
                     <p class="my-copy mx-auto mt-3 max-w-md">
-                        Produk akan muncul di sini setelah dikelola dari admin.
+                        Produk tambahan akan segera tersedia di sini. Cek
+                        kembali dalam beberapa saat ya.
                     </p>
                     <Link href="/templates" class="my-btn-primary mt-6"
                         >Lihat Koleksi Template</Link

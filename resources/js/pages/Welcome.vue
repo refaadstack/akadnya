@@ -2,11 +2,16 @@
 import { Head, Link } from '@inertiajs/vue3';
 import {
     CalendarCheck,
+    Check,
     Eye,
     Gift,
+    Layers,
     MessageCircle,
     Music,
+    QrCode,
     Send,
+    Users,
+    Wallet,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import PublicFooter from '@/components/PublicFooter.vue';
@@ -51,27 +56,72 @@ const features = [
         text: 'Kamu bisa cek tampilan asli setiap template sebelum checkout. Yang kamu lihat adalah yang tamu akan buka.',
     },
     {
+        icon: QrCode,
+        title: 'Buku tamu digital',
+        text: 'Check-in tamu saat hari-H cukup dengan scan barcode QR. Pantau kehadiran, cek souvenir, dan undi pemenang dalam satu tempat.',
+    },
+    {
+        icon: Layers,
+        title: 'Bisa lebih dari satu undangan',
+        text: 'Kelola beberapa template sekaligus dalam satu akun. Setiap undangan punya konten, tamu, dan link-nya sendiri, tinggal pilih yang aktif.',
+    },
+    {
+        icon: Users,
+        title: 'Tamu punya link personal',
+        text: 'Import daftar tamu, bagikan link khusus per tamu, dan kirim undangan langsung lewat WhatsApp. Nama tamu ikut tampil di undangan.',
+    },
+    {
         icon: CalendarCheck,
-        title: 'Kustomisasi sebebasmu',
-        text: 'Isi nama, foto, detail acara, daftar tamu, RSVP, hingga amplop digital dengan santai setelah checkout.',
+        title: 'RSVP & konfirmasi hadir',
+        text: 'Tamu konfirmasi kehadiran dengan santai. Kamu bisa lihat siapa yang hadir, jumlah orang, dan pesan mereka sekaligus.',
     },
     {
         icon: Music,
         title: 'Detail yang terasa hidup',
-        text: 'Musik pembuka, galeri foto, hitung mundur hari-H, dan amplop digital sudah ada, tinggal kamu isi.',
+        text: 'Love story, galeri foto, hitung mundur hari-H, musik pembuka, dan kustomisasi section sudah ada lalu diisi dengan leluasa.',
+    },
+    {
+        icon: Wallet,
+        title: 'Amplop digital',
+        text: 'Buat tamu mengirim hadiah ke rekening bank, QRIS, maupun e-wallet — lengkap dengan alamat kado fisik bila perlu.',
     },
     {
         icon: Send,
         title: 'Satu link untuk semua tamu',
-        text: 'Setelah publish, link personal undanganmu siap dibagikan lewat WhatsApp, Instagram, atau media sosial.',
+        text: 'Setelah publish, link undanganmu siap dibagikan lewat WhatsApp, Instagram, atau media sosial. Lengkap dengan subdomain sendiri.',
+    },
+];
+
+const featuredNew = [
+    {
+        icon: QrCode,
+        badge: 'Fitur Baru',
+        title: 'Buku Tamu Digital',
+        text: 'Ganti buku tamu fisik dengan sistem check-in barcode QR. Tamu tinggal scan saat tiba, dan kamu langsung tahu siapa yang sudah hadir.',
+        points: [
+            'Check-in cepat pakai scan QR di venue',
+            'Catat souvenir yang sudah diambil',
+            'Undi pemenang otomatis dari tamu hadir',
+        ],
+    },
+    {
+        icon: Layers,
+        badge: 'Fitur Baru',
+        title: 'Multi Template',
+        text: 'Punya lebih dari satu acara atau butuh undangan ke-2, ke-3? Beli template lain kapan saja dan kelola semuanya dari satu dashboard.',
+        points: [
+            'Beli & aktifkan template tambahan lewat checkout',
+            'Kelola beberapa undangan dalam satu akun',
+            'Konten, tamu, dan link setiap undangan berdiri sendiri',
+        ],
     },
 ];
 
 const steps = [
     'Temukan template yang punya jiwa yang sama dengan acaramu.',
     'Preview tampilan aslinya dulu sebelum memutuskan.',
-    'Checkout, lalu isi nama, foto, detail acara, dan tamu dengan santai.',
-    'Publish, salin link, dan bagikan ke seluruh tamu lewat WhatsApp.',
+    'Checkout, lalu isi nama, foto, detail acara, tamu, dan RSVP dengan santai.',
+    'Untuk undangan kedua, cukup tambah template baru lalu kelola semuanya di satu dashboard.',
 ];
 </script>
 
@@ -254,9 +304,62 @@ const steps = [
                             Template segera tersedia
                         </p>
                         <p class="my-copy mx-auto mt-3 max-w-md">
-                            Koleksi template akan tampil otomatis setelah
-                            diaktifkan dari database.
+                            Koleksi template baru akan segera hadir. Cek kembali
+                            dalam beberapa saat ya.
                         </p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="new-features" class="py-20">
+                <div class="my-container">
+                    <div class="mb-12 text-center">
+                        <p class="my-label mb-3">Fitur Baru</p>
+                        <h2 class="my-heading text-4xl">
+                            Sesuatu yang baru datang di MyAkad
+                        </h2>
+                        <p class="my-copy mx-auto mt-5 max-w-2xl">
+                            Dua fitur yang paling ditunggu sudah hadir: buku
+                            tamu digital ber-URL QR dan dukungan banyak undangan
+                            dalam satu akun. Undangan digital makin terasa
+                            profesional, bukan cuma tampilan.
+                        </p>
+                    </div>
+
+                    <div class="grid gap-6 md:grid-cols-2">
+                        <article
+                            v-for="feature in featuredNew"
+                            :key="feature.title"
+                            class="my-card relative overflow-hidden p-8"
+                        >
+                            <span class="my-badge absolute top-6 right-6">
+                                {{ feature.badge }}
+                            </span>
+                            <component
+                                :is="feature.icon"
+                                class="mb-6 size-12 text-[var(--my-primary)]"
+                            />
+                            <h3 class="my-heading text-3xl">
+                                {{ feature.title }}
+                            </h3>
+                            <p class="mt-4 leading-7 text-[var(--my-muted)]">
+                                {{ feature.text }}
+                            </p>
+                            <ul
+                                class="mt-6 grid gap-3 text-[var(--my-neutral)]"
+                            >
+                                <li
+                                    v-for="point in feature.points"
+                                    :key="point"
+                                    class="flex gap-3"
+                                >
+                                    <Check
+                                        class="mt-0.5 size-5 shrink-0 text-[var(--my-primary)]"
+                                    />
+                                    {{ point }}
+                                </li>
+                            </ul>
+                        </article>
                     </div>
                 </div>
             </section>
@@ -272,9 +375,10 @@ const steps = [
                         </h2>
                         <p class="my-copy mt-5">
                             Di MyAkad, kamu bisa preview tampilan asli setiap
-                            template sebelum memutuskan beli. Setelah itu
-                            tinggal isi data, publish, dan bagikan link
-                            undanganmu.
+                            template sebelum memutuskan beli. Setelah checkout,
+                            langsung isi data, kelola tamu & RSVP, lalu
+                            publikasikan. Butuh undangan tambahan? Beli template
+                            lain dan kelola semuanya dari satu dashboard.
                         </p>
                     </div>
 
@@ -393,7 +497,7 @@ const steps = [
                             <p class="mt-3 text-[var(--my-muted)]">
                                 {{
                                     startingTemplate
-                                        ? 'Satu template, semua fitur — editor, subdomain, RSVP, galeri, dan publish.'
+                                        ? 'Satu template, semua fitur — editor, subdomain, RSVP, galeri, buku tamu digital, dan publish. Boleh ditambah lagi kapan pun.'
                                         : 'Pilih template yang paling dekat dengan cerita kalian.'
                                 }}
                             </p>
@@ -410,6 +514,18 @@ const steps = [
                                     class="mt-0.5 size-5 text-[var(--my-primary)]"
                                 />
                                 RSVP, galeri, dan data acara
+                            </li>
+                            <li class="flex gap-3">
+                                <QrCode
+                                    class="mt-0.5 size-5 text-[var(--my-primary)]"
+                                />
+                                Buku tamu digital & scan QR di venue
+                            </li>
+                            <li class="flex gap-3">
+                                <Layers
+                                    class="mt-0.5 size-5 text-[var(--my-primary)]"
+                                />
+                                Bisa kelola lebih dari satu undangan
                             </li>
                             <li class="flex gap-3">
                                 <MessageCircle

@@ -12,7 +12,6 @@ import {
     Palette,
     PenLine,
     Settings,
-    Sun,
     Users,
 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
@@ -251,13 +250,6 @@ const logout = () => {
                                 <LockKeyhole class="size-4" />
                                 Keamanan
                             </Link>
-                            <Link
-                                href="/settings/appearance"
-                                class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:bg-[var(--my-surface-soft)]"
-                            >
-                                <Sun class="size-4" />
-                                Tampilan
-                            </Link>
                             <button
                                 type="button"
                                 class="flex w-full items-center gap-2 border-t border-[var(--my-border)] px-4 py-2 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50"
@@ -328,13 +320,6 @@ const logout = () => {
                         >
                             <LockKeyhole class="size-4" />
                             Keamanan
-                        </Link>
-                        <Link
-                            href="/settings/appearance"
-                            class="flex items-center gap-3 px-4 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:text-[var(--my-primary)]"
-                        >
-                            <Sun class="size-4" />
-                            Tampilan
                         </Link>
                         <button
                             type="button"

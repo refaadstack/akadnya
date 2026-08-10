@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Invitation;
 use App\Services\BladeRenderService;
 use App\Services\DataContractBuilder;
+use App\Services\SeoMetaService;
 use Illuminate\Http\Request;
 
 class PublicInvitationController extends Controller
 {
     public function __construct(
         protected BladeRenderService $bladeRenderer,
-        protected DataContractBuilder $dataBuilder
+        protected DataContractBuilder $dataBuilder,
+        protected SeoMetaService $seoMeta
     ) {}
 
     /**
@@ -49,6 +51,9 @@ class PublicInvitationController extends Controller
 
         // Render invitation HTML
         $html = $this->bladeRenderer->renderInvitation($invitation, $data);
+
+        // Inject SEO meta tags (per-invitation, with MyAkad branding)
+        $html = $this->seoMeta->inject($html, $this->seoMeta->forInvitation($invitation, $data));
 
         return response($html)->header('Content-Type', 'text/html');
     }

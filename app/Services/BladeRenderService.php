@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Log;
 class BladeRenderService
 {
     /**
+     * Path to the shared template package (sections & assets) used by all templates.
+     */
+    public const SHARED_TEMPLATE_PATH = 'app/public/templates/_shared';
+
+    /**
      * Render a complete invitation page.
      */
     public function renderInvitation(Invitation $invitation, array $data): string
@@ -138,7 +143,14 @@ HTML;
      */
     public function renderSection(Template $template, string $sectionFile, array $data): string
     {
+        $config = $this->getTemplateConfig($template);
+        $data = array_replace($config['defaults'] ?? $config['data'] ?? [], $data);
+
         $path = $template->getFolderPath().'/sections/'.$sectionFile;
+
+        if (! File::exists($path)) {
+            $path = storage_path(self::SHARED_TEMPLATE_PATH.'/sections/'.$sectionFile);
+        }
 
         if (! File::exists($path)) {
             Log::warning("Section file not found: {$path}");
@@ -254,7 +266,19 @@ HTML;
     {
         return array_map(
             fn (string $path): string => '<link rel="stylesheet" href="'.e(route('templates.asset', ['slug' => $template->slug, 'file' => $path])).'">',
-            $this->discoverTemplateAssets($template, $config, 'css', ['style.css'], ['css'])
+            $this->templateCssPaths($template, $config)
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $config
+     * @return array<int, string>
+     */
+    protected function templateCssPaths(Template $template, array $config): array
+    {
+        return array_merge(
+            $this->discoverTemplateAssets($template, $config, 'css', [], ['css'], true),
+            $this->discoverTemplateAssets($template, $config, 'css', ['style.css'], ['css'], false)
         );
     }
 
@@ -266,7 +290,19 @@ HTML;
     {
         return array_map(
             fn (string $path): string => '<script src="'.e(route('templates.asset', ['slug' => $template->slug, 'file' => $path])).'"></script>',
-            $this->discoverTemplateAssets($template, $config, 'js', ['script.js'], ['js'])
+            $this->templateScriptPaths($template, $config)
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $config
+     * @return array<int, string>
+     */
+    protected function templateScriptPaths(Template $template, array $config): array
+    {
+        return array_merge(
+            $this->discoverTemplateAssets($template, $config, 'js', [], ['js'], true),
+            $this->discoverTemplateAssets($template, $config, 'js', ['script.js'], ['js'], false)
         );
     }
 
@@ -276,19 +312,30 @@ HTML;
      * @param  array<int, string>  $allowedExtensions
      * @return array<int, string>
      */
-    protected function discoverTemplateAssets(Template $template, array $config, string $type, array $defaults, array $allowedExtensions): array
-    {
-        $configuredAssets = $config['assets'][$type] ?? [];
+    protected function discoverTemplateAssets(
+        Template $template,
+        array $config,
+        string $type,
+        array $defaults,
+        array $allowedExtensions,
+        bool $shared = false
+    ): array {
+        $source = $shared
+            ? ($config['shared']['assets'][$type] ?? [])
+            : ($config['assets'][$type] ?? []);
 
-        if (is_string($configuredAssets)) {
-            $configuredAssets = [$configuredAssets];
+        if (is_string($source)) {
+            $source = [$source];
         }
 
-        if (! is_array($configuredAssets)) {
-            $configuredAssets = [];
+        if (! is_array($source)) {
+            $source = [];
         }
 
-        $assets = array_merge($defaults, $configuredAssets);
+        $assets = array_merge($defaults, $source);
+        $basePath = $shared
+            ? storage_path(self::SHARED_TEMPLATE_PATH.'/assets')
+            : $template->getFolderPath().'/assets';
         $paths = [];
 
         foreach ($assets as $asset) {
@@ -302,7 +349,7 @@ HTML;
                 continue;
             }
 
-            if (! File::exists($template->getFolderPath().'/assets/'.$path)) {
+            if (! File::exists($basePath.'/'.$path)) {
                 continue;
             }
 

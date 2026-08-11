@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\BladeRenderService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class TemplateAssetController extends Controller
@@ -24,6 +25,10 @@ class TemplateAssetController extends Controller
         $realAssetPath = realpath($assetPath);
 
         if (! $realAssetsPath || ! $realAssetPath || ! str_starts_with($realAssetPath, $realAssetsPath)) {
+            $realAssetPath = $this->resolveSharedAsset($relativePath);
+        }
+
+        if (! $realAssetPath) {
             abort(404, 'Asset not found');
         }
 
@@ -46,6 +51,27 @@ class TemplateAssetController extends Controller
             || str_contains($path, '..')
             || str_starts_with($path, '/')
             || preg_match('/^[a-zA-Z]:/', $path) === 1;
+    }
+
+    /**
+     * Resolve an asset from the shared template package, or null when absent.
+     */
+    protected function resolveSharedAsset(string $relativePath): ?string
+    {
+        $sharedPath = storage_path(BladeRenderService::SHARED_TEMPLATE_PATH.'/assets/'.$relativePath);
+        $realSharedPath = realpath($sharedPath);
+
+        if (! $realSharedPath) {
+            return null;
+        }
+
+        $realSharedBase = realpath(storage_path(BladeRenderService::SHARED_TEMPLATE_PATH.'/assets'));
+
+        if (! $realSharedBase || ! str_starts_with($realSharedPath, $realSharedBase)) {
+            return null;
+        }
+
+        return $realSharedPath;
     }
 
     protected function mimeTypeFor(string $extension): ?string

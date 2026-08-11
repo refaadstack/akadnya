@@ -138,6 +138,44 @@ test('editor save persists background url', function () {
     expect($content->background_url)->toBe('https://example.com/bg.jpg');
 });
 
+test('editor page exposes video url', function () {
+    $this->invitation->content()->updateOrCreate(
+        ['invitation_id' => $this->invitation->id],
+        ['video_url' => 'https://example.com/video-prewedding.mp4']
+    );
+
+    $this->actingAs($this->user)
+        ->get(route('dashboard.editor'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('content.video_url', 'https://example.com/video-prewedding.mp4')
+        );
+});
+
+test('editor save persists video url', function () {
+    $this->actingAs($this->user)
+        ->post(route('dashboard.editor.save'), [
+            'bride_name' => 'Siti',
+            'groom_name' => 'Budi',
+            'akad_datetime' => '2026-12-25T09:00',
+            'akad_venue' => 'Masjid Al-Ikhlas',
+            'video_url' => 'https://example.com/video-prewedding.mp4',
+        ])
+        ->assertRedirect()
+        ->assertSessionHas('success');
+
+    $content = $this->invitation->fresh()->content;
+    expect($content->video_url)->toBe('https://example.com/video-prewedding.mp4');
+});
+
+test('editor save rejects invalid video url', function () {
+    $this->actingAs($this->user)
+        ->post(route('dashboard.editor.save'), [
+            'video_url' => 'not-a-url',
+        ])
+        ->assertSessionHasErrors('video_url');
+});
+
 test('editor save rejects invalid background url', function () {
     $this->actingAs($this->user)
         ->post(route('dashboard.editor.save'), [

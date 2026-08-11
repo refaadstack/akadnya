@@ -32,6 +32,7 @@ class InvitationContent extends Model
         'reception_maps_url',
         'show_reception',
         'cover_photo_url',
+        'video_url',
         'background_url',
         'music_url',
         'music_title',

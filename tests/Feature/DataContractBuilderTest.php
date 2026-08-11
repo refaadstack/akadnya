@@ -74,6 +74,7 @@ test('build returns all data contract keys even with null content', function () 
         'reception_year',
         'reception_day',
         'cover_photo_url',
+        'video_url',
         'background_url',
         'music_url',
         'music_title',

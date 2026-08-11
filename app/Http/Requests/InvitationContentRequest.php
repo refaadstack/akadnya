@@ -49,6 +49,7 @@ class InvitationContentRequest extends FormRequest
 
             // Media
             'cover_photo_url' => 'nullable|url|max:500',
+            'video_url' => 'nullable|url|max:500',
             'background_url' => 'nullable|url|max:500',
             'music_url' => 'nullable|url|max:500',
             'music_title' => 'nullable|string|max:255',
@@ -93,6 +94,7 @@ class InvitationContentRequest extends FormRequest
             'love_story' => 'cerita cinta',
             'special_message' => 'pesan khusus',
             'cover_photo_url' => 'foto cover',
+            'video_url' => 'video prewedding',
             'background_url' => 'background halaman',
             'music_url' => 'musik latar',
             'music_title' => 'judul musik',

@@ -35,6 +35,7 @@ interface InvitationContent {
     love_story: string | null;
     special_message: string | null;
     cover_photo_url: string | null;
+    video_url: string | null;
     music_url: string | null;
     gallery_photos: GalleryPhoto[] | null;
     bank_name: string | null;
@@ -81,6 +82,7 @@ const form = useForm({
     love_story: props.content?.love_story || '',
     special_message: props.content?.special_message || '',
     cover_photo_url: props.content?.cover_photo_url || '',
+    video_url: props.content?.video_url || '',
     background_url: props.content?.background_url || '',
     music_url: props.content?.music_url || '',
     music_title: props.content?.music_title || '',
@@ -1175,6 +1177,26 @@ const submit = () => {
                                         </p>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Video Prewedding -->
+                            <div>
+                                <label
+                                    class="mb-2 block text-sm font-medium text-gray-700"
+                                    >Video Prewedding</label
+                                >
+                                <input
+                                    type="url"
+                                    v-model="form.video_url"
+                                    placeholder="https://example.com/video-prewedding.mp4"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                />
+                                <p class="mt-2 text-xs text-gray-500">
+                                    URL video MP4. Video akan tampil sebagai
+                                    background di halaman pembuka (hero).
+                                    Kosongkan jika hanya ingin memakai Foto
+                                    Cover.
+                                </p>
                             </div>
 
                             <!-- Cover Name Display -->

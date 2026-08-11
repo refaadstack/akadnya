@@ -14,6 +14,11 @@ declare module 'vite/client' {
 }
 
 declare module '@inertiajs/core' {
+    export interface SupportContact {
+        email: string;
+        whatsapp: string;
+    }
+
     export interface InertiaConfig {
         sharedPageProps: {
             name: string;
@@ -21,6 +26,7 @@ declare module '@inertiajs/core' {
             sidebarOpen: boolean;
             hasInvitation: boolean;
             features: string[];
+            support: SupportContact;
             flash: {
                 success?: string;
                 error?: string;

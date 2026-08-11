@@ -53,3 +53,31 @@ test('clearing the logo falls back to the default', function () {
 
     expect(SiteSetting::get('qr_logo_url'))->toBeNull();
 });
+
+test('saving support contact stores the site settings', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    Livewire::actingAs($admin)
+        ->test(ManageBranding::class)
+        ->set('data.support_email', 'halo@example.com')
+        ->set('data.support_whatsapp', '6281111111111')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(SiteSetting::get('support_email'))->toBe('halo@example.com');
+    expect(SiteSetting::get('support_whatsapp'))->toBe('6281111111111');
+});
+
+test('support contact fields are prefilled with site settings', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    SiteSetting::set('support_email', 'halo@example.com');
+    SiteSetting::set('support_whatsapp', '6281111111111');
+
+    Livewire::actingAs($admin)
+        ->test(ManageBranding::class)
+        ->assertFormSet([
+            'support_email' => 'halo@example.com',
+            'support_whatsapp' => '6281111111111',
+        ]);
+});

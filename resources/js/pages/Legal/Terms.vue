@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import PublicNavbar from '@/components/PublicNavbar.vue';
 import PublicFooter from '@/components/PublicFooter.vue';
+
+const supportEmail = usePage().props.support.email;
 
 interface Meta {
     title: string;
@@ -326,8 +328,8 @@ const updatedDate = 'Agustus 2026';
                                 disampaikan ke
                                 <a
                                     class="font-semibold text-[var(--my-primary)]"
-                                    href="mailto:support@myakad.com"
-                                    >support@myakad.com</a
+                                    :href="`mailto:${supportEmail}`"
+                                    >{{ supportEmail }}</a
                                 >.
                             </p>
                         </section>

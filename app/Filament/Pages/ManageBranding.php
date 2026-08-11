@@ -6,6 +6,7 @@ use App\Models\SiteSetting;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
@@ -36,6 +37,8 @@ class ManageBranding extends Page
     {
         $this->form->fill([
             'qr_logo' => SiteSetting::get('qr_logo_url'),
+            'support_email' => SiteSetting::get('support_email', 'support@refaadstack.com'),
+            'support_whatsapp' => SiteSetting::get('support_whatsapp', '6282374338273'),
         ]);
     }
 
@@ -44,6 +47,18 @@ class ManageBranding extends Page
         return $schema
             ->components([
                 Form::make([
+                    TextInput::make('support_email')
+                        ->label('Email Support')
+                        ->email()
+                        ->required()
+                        ->helperText('Ditampilkan di footer, halaman FAQ, dan halaman legal sebagai alamat email support.'),
+                    TextInput::make('support_whatsapp')
+                        ->label('Nomor WhatsApp Support')
+                        ->numeric()
+                        ->minLength(8)
+                        ->maxLength(15)
+                        ->required()
+                        ->helperText('Format internasional tanpa tanda + (contoh: 6281234567890). Dipakai untuk tautan wa.me di footer dan halaman FAQ.'),
                     FileUpload::make('qr_logo')
                         ->label('Logo QR Tamu')
                         ->disk('public')
@@ -75,6 +90,9 @@ class ManageBranding extends Page
     public function save(): void
     {
         $data = $this->form->getState();
+
+        SiteSetting::set('support_email', $data['support_email']);
+        SiteSetting::set('support_whatsapp', $data['support_whatsapp']);
 
         $logo = $data['qr_logo'] ?? null;
 

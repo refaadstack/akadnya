@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SiteSetting;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -232,10 +233,28 @@ class FaqController extends Controller
                     ],
                     [
                         'question' => 'Bagaimana cara menghubungi support?',
-                        'answer' => 'Anda bisa menghubungi kami via Email: support@myakad.com atau WhatsApp: +62 812-3456-7890 (Senin-Jumat, 09:00-17:00 WIB). Kami siap membantu Anda!',
+                        'answer' => sprintf(
+                            'Anda bisa menghubungi kami via Email: %s atau WhatsApp: %s (Senin-Jumat, 09:00-17:00 WIB). Kami siap membantu Anda!',
+                            SiteSetting::get('support_email', 'support@refaadstack.com'),
+                            $this->formatWhatsApp(SiteSetting::get('support_whatsapp', '6282374338273'))
+                        ),
                     ],
                 ],
             ],
         ];
+    }
+
+    /**
+     * Format a WhatsApp number (e.g. 6282374338273) into +62 823-7433-8273.
+     */
+    private function formatWhatsApp(string $number): string
+    {
+        $digits = preg_replace('/\D/', '', $number);
+
+        if (str_starts_with($digits, '62')) {
+            $digits = substr($digits, 2);
+        }
+
+        return '+62 '.implode('-', str_split($digits, 4));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -39,6 +40,10 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'appDomain' => config('app.domain'),
+            'support' => [
+                'email' => SiteSetting::get('support_email', 'support@refaadstack.com'),
+                'whatsapp' => SiteSetting::get('support_whatsapp', '6282374338273'),
+            ],
             'auth' => [
                 'user' => $request->user(),
             ],

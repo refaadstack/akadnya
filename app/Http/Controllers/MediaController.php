@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CustomerInvitationService;
 use App\Services\MediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -9,7 +10,8 @@ use Illuminate\Http\Request;
 class MediaController extends Controller
 {
     public function __construct(
-        private MediaService $mediaService
+        private MediaService $mediaService,
+        private CustomerInvitationService $customerInvitations
     ) {}
 
     /**
@@ -21,19 +23,7 @@ class MediaController extends Controller
             'file' => 'required|file|max:5120', // 5MB max
         ]);
 
-        try {
-            $url = $this->mediaService->upload($request->file('file'), 'cover');
-
-            return response()->json([
-                'success' => true,
-                'url' => $url,
-            ]);
-        } catch (\InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 422);
-        }
+        return $this->mediaUpload($request, 'cover');
     }
 
     /**
@@ -45,19 +35,7 @@ class MediaController extends Controller
             'file' => 'required|file|max:5120', // 5MB max
         ]);
 
-        try {
-            $url = $this->mediaService->upload($request->file('file'), 'gallery');
-
-            return response()->json([
-                'success' => true,
-                'url' => $url,
-            ]);
-        } catch (\InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 422);
-        }
+        return $this->mediaUpload($request, 'gallery');
     }
 
     /**
@@ -69,19 +47,7 @@ class MediaController extends Controller
             'file' => 'required|file|max:10240', // 10MB max
         ]);
 
-        try {
-            $url = $this->mediaService->upload($request->file('file'), 'music');
-
-            return response()->json([
-                'success' => true,
-                'url' => $url,
-            ]);
-        } catch (\InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 422);
-        }
+        return $this->mediaUpload($request, 'music');
     }
 
     /**
@@ -93,19 +59,7 @@ class MediaController extends Controller
             'file' => 'required|file|max:2048', // 2MB max
         ]);
 
-        try {
-            $url = $this->mediaService->upload($request->file('file'), 'qris');
-
-            return response()->json([
-                'success' => true,
-                'url' => $url,
-            ]);
-        } catch (\InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 422);
-        }
+        return $this->mediaUpload($request, 'qris');
     }
 
     /**
@@ -117,24 +71,9 @@ class MediaController extends Controller
             'file' => 'required|file|max:5120', // 5MB max
         ]);
 
-        try {
-            $url = $this->mediaService->upload($request->file('file'), 'bride');
-
-            return response()->json([
-                'success' => true,
-                'url' => $url,
-            ]);
-        } catch (\InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 422);
-        }
+        return $this->mediaUpload($request, 'bride');
     }
 
-    /**
-     * Upload groom photo.
-     */
     /**
      * Upload groom photo.
      */
@@ -144,19 +83,7 @@ class MediaController extends Controller
             'file' => 'required|file|max:5120', // 5MB max
         ]);
 
-        try {
-            $url = $this->mediaService->upload($request->file('file'), 'groom');
-
-            return response()->json([
-                'success' => true,
-                'url' => $url,
-            ]);
-        } catch (\InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 422);
-        }
+        return $this->mediaUpload($request, 'groom');
     }
 
     /**
@@ -168,19 +95,7 @@ class MediaController extends Controller
             'file' => 'required|file|max:5120', // 5MB max
         ]);
 
-        try {
-            $url = $this->mediaService->upload($request->file('file'), 'couple');
-
-            return response()->json([
-                'success' => true,
-                'url' => $url,
-            ]);
-        } catch (\InvalidArgumentException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 422);
-        }
+        return $this->mediaUpload($request, 'couple');
     }
 
     /**
@@ -192,8 +107,17 @@ class MediaController extends Controller
             'file' => 'required|file|max:5120', // 5MB max
         ]);
 
+        return $this->mediaUpload($request, 'background');
+    }
+
+    /**
+     * Upload the validated file for the user's active invitation.
+     */
+    private function mediaUpload(Request $request, string $type): JsonResponse
+    {
         try {
-            $url = $this->mediaService->upload($request->file('file'), 'background');
+            $invitation = $this->customerInvitations->activeInvitation($request->user());
+            $url = $this->mediaService->uploadFor($request->user(), $invitation, $request->file('file'), $type);
 
             return response()->json([
                 'success' => true,

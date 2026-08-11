@@ -49,7 +49,7 @@ class GalleryController extends Controller
         ]);
 
         try {
-            $url = $this->mediaService->upload($request->file('file'), 'gallery');
+            $url = $this->mediaService->uploadFor($user, $invitation, $request->file('file'), 'gallery');
 
             // Get next sort order
             $maxOrder = $invitation->gallery()->max('sort_order') ?? 0;
@@ -102,6 +102,9 @@ class GalleryController extends Controller
         // Delete file from storage
         $path = str_replace('/storage/', '', $photo->image_url);
         \Storage::disk('public')->delete($path);
+
+        // Remove the quota tracking record
+        $this->mediaService->deleteUploadRecordByUrl($photo->image_url);
 
         $photo->delete();
 

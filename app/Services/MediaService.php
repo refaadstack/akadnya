@@ -2,12 +2,24 @@
 
 namespace App\Services;
 
+use App\Models\Invitation;
+use App\Models\MediaUpload;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class MediaService
 {
+    /**
+     * Default storage quota in bytes (100 MB).
+     */
+    public const BASE_QUOTA_BYTES = 104857600;
+
+    /**
+     * Bytes granted per "extra_storage" add-on (1 GB).
+     */
+    public const ADDON_QUOTA_BYTES_PER_GB = 1073741824;
     /**
      * Allowed MIME types for uploads.
      */
@@ -54,6 +66,76 @@ class MediaService
         'aac',
         'flac',
     ];
+
+    /**
+     * Upload a file for a user, enforcing the storage quota, and record
+     * the upload so the used quota can be accounted for.
+     */
+    public function uploadFor(User $user, ?Invitation $invitation, UploadedFile $file, string $type = 'image'): string
+    {
+        $this->assertCanUpload($user, $file->getSize());
+
+        $url = $this->upload($file, $type);
+
+        MediaUpload::create([
+            'user_id' => $user->id,
+            'invitation_id' => $invitation?->id,
+            'url' => $url,
+            'size' => $file->getSize(),
+            'type' => $type,
+        ]);
+
+        return $url;
+    }
+
+    /**
+     * Total storage quota in bytes for a user (base + extra_storage add-ons).
+     */
+    public function quotaFor(User $user): int
+    {
+        $extraBytes = $user->features()
+            ->where('feature', 'extra_storage')
+            ->where(fn ($query) => $query->whereNull('expires_at')->orWhere('expires_at', '>', now()))
+            ->get()
+            ->sum(fn ($feature) => (int) ($feature->metadata['storage_gb'] ?? 1) * self::ADDON_QUOTA_BYTES_PER_GB);
+
+        return self::BASE_QUOTA_BYTES + $extraBytes;
+    }
+
+    /**
+     * Storage currently used by a user in bytes.
+     */
+    public function usedByUser(User $user): int
+    {
+        return (int) MediaUpload::where('user_id', $user->id)->sum('size');
+    }
+
+    /**
+     * Throw when an upload would exceed the user's storage quota.
+     */
+    public function assertCanUpload(User $user, int $bytes): void
+    {
+        $quota = $this->quotaFor($user);
+        $used = $this->usedByUser($user);
+
+        if ($used + $bytes > $quota) {
+            $usedMb = (int) round($used / 1048576);
+            $quotaMb = (int) round($quota / 1048576);
+
+            throw new \InvalidArgumentException(
+                "Kuota penyimpanan tidak cukup ({$usedMb} MB dari {$quotaMb} MB terpakai). "
+                .'Tambah kapasitas dengan add-on "Tambah Storage 1GB" di halaman Produk.'
+            );
+        }
+    }
+
+    /**
+     * Remove the tracking record for an uploaded file.
+     */
+    public function deleteUploadRecordByUrl(string $url): void
+    {
+        MediaUpload::where('url', $url)->delete();
+    }
 
     /**
      * Upload a file and return its URL.

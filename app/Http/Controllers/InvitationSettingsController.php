@@ -35,6 +35,7 @@ class InvitationSettingsController extends Controller
                 'public_url' => $invitation->getPublicUrl(),
                 'is_published' => $invitation->status === 'published',
             ],
+            'has_custom_domain' => $user->hasFeature('custom_domain'),
             'app_domain' => parse_url(config('app.url'), PHP_URL_HOST),
         ]);
     }
@@ -88,6 +89,15 @@ class InvitationSettingsController extends Controller
             'custom_domain.regex' => 'Format domain tidak valid (contoh: undangan.example.com)',
             'custom_domain.unique' => 'Domain sudah digunakan',
         ]);
+
+        // Setting a custom domain requires the paid add-on (clearing it stays free)
+        if (! blank($validated['custom_domain'])) {
+            abort_unless(
+                $user->hasFeature('custom_domain'),
+                403,
+                'Fitur Custom Domain belum aktif untuk akun Anda. Beli add-on Custom Domain untuk menggunakan domain pribadi.'
+            );
+        }
 
         $invitation->update(['custom_domain' => $validated['custom_domain']]);
 

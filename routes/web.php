@@ -21,12 +21,32 @@ use App\Http\Controllers\TemplateAssetController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\TemplatePreviewController;
 use App\Http\Controllers\WelcomeController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 Route::get('/terms', [LegalController::class, 'terms'])->name('terms');
 Route::get('/privacy', [LegalController::class, 'privacy'])->name('privacy');
+
+// Health check (public, for load balancer / uptime monitoring)
+Route::get('/health', function () {
+    try {
+        DB::connection()->getPdo();
+
+        return response()->json([
+            'status' => 'ok',
+            'database' => 'ok',
+            'time' => now()->toIso8601String(),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'degraded',
+            'database' => 'error',
+            'time' => now()->toIso8601String(),
+        ], 503);
+    }
+})->name('health');
 
 // Public invitation routes (must be before other routes to catch subdomains)
 Route::get('/i/{subdomain}', [PublicInvitationController::class, 'show'])->name('invitation.show');

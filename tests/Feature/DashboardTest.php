@@ -49,3 +49,31 @@ test('user can select active invitation from owned templates', function () {
 
     expect($user->fresh()->active_invitation_id)->toBe($secondInvitation->id);
 });
+
+test('dashboard analytics include attendance rate, check-ins and rsvp trend', function () {
+    $user = User::factory()->create();
+    $invitation = Invitation::factory()->for($user)->create();
+
+    $user->forceFill(['active_invitation_id' => $invitation->id])->save();
+    $invitation->rsvps()->create([
+        'name' => 'Budi',
+        'attendance' => 'yes',
+        'pax_count' => 2,
+    ]);
+    $invitation->rsvps()->create([
+        'name' => 'Sari',
+        'attendance' => 'no',
+        'pax_count' => 1,
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('analytics.rsvp_trend', 14)
+            ->where('analytics.attendance_rate', 50)
+            ->where('analytics.total_check_ins', 0)
+            ->where('analytics.rsvp_trend.13.total', 2)
+            ->where('analytics.rsvp_trend.13.attending', 1)
+        );
+});

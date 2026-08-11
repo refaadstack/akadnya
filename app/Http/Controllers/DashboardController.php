@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GuestBookEntry;
 use App\Models\Invitation;
 use App\Services\CustomerInvitationService;
 use Illuminate\Http\Request;
@@ -73,6 +74,11 @@ class DashboardController extends Controller
             'total_pax' => $invitation->rsvps()->where('attendance', 'yes')->sum('pax_count'),
             'total_wishes' => $invitation->rsvps()->whereNotNull('message')->count(),
             'total_gallery_photos' => $invitation->gallery()->count(),
+            'attendance_rate' => $invitation->rsvps()->count() > 0
+                ? (int) round($invitation->rsvps()->where('attendance', 'yes')->count() / $invitation->rsvps()->count() * 100)
+                : 0,
+            'total_check_ins' => GuestBookEntry::where('invitation_id', $invitation->id)->count(),
+            'rsvp_trend' => $this->buildRsvpTrend($invitation),
         ];
 
         // Get recent RSVPs (last 5)
@@ -136,5 +142,37 @@ class DashboardController extends Controller
         $this->customerInvitations->selectInvitation($request->user(), $invitation);
 
         return back()->with('success', 'Template aktif berhasil dipilih.');
+    }
+
+    /**
+     * Build a 14-day RSVP trend (total and attending per day).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function buildRsvpTrend(Invitation $invitation): array
+    {
+        $start = now()->subDays(13)->startOfDay();
+
+        $rows = $invitation->rsvps()
+            ->where('created_at', '>=', $start)
+            ->get(['created_at', 'attendance'])
+            ->groupBy(fn ($rsvp) => $rsvp->created_at->format('Y-m-d'));
+
+        $trend = [];
+
+        for ($i = 13; $i >= 0; $i--) {
+            $day = now()->subDays($i);
+            $key = $day->format('Y-m-d');
+            $items = $rows->get($key, collect());
+
+            $trend[] = [
+                'date' => $key,
+                'label' => $day->format('d M'),
+                'total' => $items->count(),
+                'attending' => $items->where('attendance', 'yes')->count(),
+            ];
+        }
+
+        return $trend;
     }
 }

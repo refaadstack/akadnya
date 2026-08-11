@@ -75,6 +75,7 @@ test('build returns all data contract keys even with null content', function () 
         'reception_day',
         'cover_photo_url',
         'video_url',
+        'video_youtube_id',
         'background_url',
         'music_url',
         'music_title',
@@ -215,9 +216,49 @@ test('build includes love stories with correct structure', function () {
     expect($contract['love_stories'][1]['date'])->toBeNull();
 });
 
+test('build extracts youtube id from video url', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['video_youtube_id'])->toBe('dQw4w9WgXcQ');
+});
+
+test('build resolves null youtube id for non-youtube video url', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'video_url' => 'https://example.com/video.mp4',
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['video_youtube_id'])->toBeNull();
+});
+
 test('build includes couple photo, music title and gift address', function () {
     $user = User::factory()->create();
     $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
     $invitation = Invitation::factory()->create([
         'user_id' => $user->id,
         'template_id' => $template->id,

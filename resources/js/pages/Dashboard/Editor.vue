@@ -1183,19 +1183,20 @@ const submit = () => {
                             <div>
                                 <label
                                     class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Video Prewedding</label
+                                    >Video Prewedding (YouTube)</label
                                 >
                                 <input
                                     type="url"
                                     v-model="form.video_url"
-                                    placeholder="https://example.com/video-prewedding.mp4"
+                                    placeholder="https://www.youtube.com/watch?v=..."
                                     class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                                 />
                                 <p class="mt-2 text-xs text-gray-500">
-                                    URL video MP4. Video akan tampil sebagai
-                                    background di halaman pembuka (hero).
-                                    Kosongkan jika hanya ingin memakai Foto
-                                    Cover.
+                                    Tempel link video YouTube (mis. video
+                                    prewedding). Video akan diputar otomatis
+                                    sebagai background di halaman pembuka
+                                    (hero). Kosongkan jika hanya ingin memakai
+                                    Foto Cover.
                                 </p>
                             </div>
 

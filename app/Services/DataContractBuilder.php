@@ -112,6 +112,7 @@ class DataContractBuilder
             // Media
             'cover_photo_url' => $content?->cover_photo_url ?? null,
             'video_url' => $content?->video_url ?? null,
+            'video_youtube_id' => $this->extractYoutubeId($content?->video_url),
             'background_url' => $content?->background_url ?? null,
             'music_url' => $content?->music_url ?? null,
             'music_title' => $content?->music_title ?? null,
@@ -202,6 +203,7 @@ class DataContractBuilder
         $contract = array_replace($this->buildEmptyPreviewContract(), $this->readTemplateDefaults($template));
 
         $contract = $this->hydrateDatetimeVariables($contract);
+        $contract['video_youtube_id'] = $this->extractYoutubeId($contract['video_url'] ?? null);
 
         return $this->hydrateCoverNames($this->hydrateInitials($contract));
     }
@@ -322,6 +324,7 @@ class DataContractBuilder
             'reception_maps_url' => null,
             'cover_photo_url' => null,
             'video_url' => null,
+            'video_youtube_id' => null,
             'background_url' => null,
             'music_url' => null,
             'music_title' => null,
@@ -472,5 +475,23 @@ class DataContractBuilder
 
             return null;
         }
+    }
+
+    /**
+     * Extract the 11-character YouTube video ID from common URL formats.
+     */
+    public function extractYoutubeId(?string $url): ?string
+    {
+        if (! $url) {
+            return null;
+        }
+
+        preg_match(
+            '/(?:youtube(?:-nocookie)?\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/',
+            $url,
+            $matches
+        );
+
+        return $matches[1] ?? null;
     }
 }

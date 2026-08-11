@@ -83,6 +83,8 @@ class TemplateController extends Controller
             }
         }
 
+        $data['video_youtube_id'] = $this->dataBuilder->extractYoutubeId($data['video_url'] ?? null);
+
         $html = $this->bladeRenderer->renderPreview($template, $data);
 
         return response($html)

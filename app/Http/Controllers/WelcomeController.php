@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Template;
+use App\Services\DataContractBuilder;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Fortify\Features;
 
 class WelcomeController extends Controller
 {
+    public function __construct(private DataContractBuilder $dataContractBuilder) {}
+
     /**
      * Show welcome page
      */
@@ -37,6 +41,13 @@ class WelcomeController extends Controller
             ->orderBy('price')
             ->first();
 
+        // Guest book add-on promo data.
+        $guestBook = Product::query()
+            ->addons()
+            ->where('slug', 'guest_book')
+            ->where('is_active', true)
+            ->first();
+
         return Inertia::render('Welcome', [
             'canRegister' => Features::enabled(Features::registration()),
             'startingTemplate' => $startingTemplate ? [
@@ -46,6 +57,14 @@ class WelcomeController extends Controller
                 'discount_percent' => $startingTemplate->discount_percent,
             ] : null,
             'featuredTemplates' => $featuredTemplates,
+            'guestBook' => $guestBook ? [
+                'name' => $guestBook->name,
+                'price' => (float) $guestBook->price,
+                'original_price' => $guestBook->original_price !== null ? (float) $guestBook->original_price : null,
+                'discount_percent' => $guestBook->discount_percent,
+                'url' => route('products.index'),
+                'demo_qr_svg' => $this->dataContractBuilder->buildDemoGuestQrSvg(),
+            ] : null,
         ]);
     }
 }

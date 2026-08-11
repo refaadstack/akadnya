@@ -149,6 +149,8 @@ class DataContractBuilder
             'guest' => null,
             'guest_book_enabled' => false,
             'guest_qr_svg' => null,
+            'guest_qr_demo' => null,
+            'guest_book_url' => route('products.index'),
 
             // Event dates (ISO 8601 format for JavaScript countdown)
             'akad_datetime' => $content?->akad_datetime?->toIso8601String() ?? null,
@@ -204,8 +206,18 @@ class DataContractBuilder
 
         $contract = $this->hydrateDatetimeVariables($contract);
         $contract['video_youtube_id'] = $this->extractYoutubeId($contract['video_url'] ?? null);
+        $contract['guest_qr_demo'] = $this->buildDemoGuestQrSvg();
 
         return $this->hydrateCoverNames($this->hydrateInitials($contract));
+    }
+
+    /**
+     * Build a deterministic demo QR code shown in template previews
+     * and the landing page guest book promo.
+     */
+    public function buildDemoGuestQrSvg(): ?string
+    {
+        return $this->buildGuestQrSvg('MyAkad-DEMO-0001');
     }
 
     /**
@@ -347,6 +359,8 @@ class DataContractBuilder
             'guest' => null,
             'guest_book_enabled' => false,
             'guest_qr_svg' => null,
+            'guest_qr_demo' => null,
+            'guest_book_url' => route('products.index'),
             'akad_datetime' => null,
             'event_date' => null,
             ...$this->buildDatetimeVariables('akad', null),
@@ -442,7 +456,7 @@ class DataContractBuilder
     /**
      * Generate an SVG QR code for the given payload.
      */
-    protected function buildGuestQrSvg(string $payload): ?string
+    public function buildGuestQrSvg(string $payload): ?string
     {
         try {
             $renderer = new ImageRenderer(

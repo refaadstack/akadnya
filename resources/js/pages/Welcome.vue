@@ -13,7 +13,7 @@ import {
     Users,
     Wallet,
 } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import PublicFooter from '@/components/PublicFooter.vue';
 import PublicNavbar from '@/components/PublicNavbar.vue';
 
@@ -37,6 +37,14 @@ const props = defineProps<{
         discount_percent?: number;
     } | null;
     featuredTemplates: FeaturedTemplate[];
+    guestBook: {
+        name: string;
+        price: number;
+        original_price?: number | null;
+        discount_percent?: number;
+        url: string;
+        demo_qr_svg: string | null;
+    } | null;
 }>();
 
 const isLocal = import.meta.env.DEV;
@@ -47,6 +55,14 @@ const formattedPrice = computed(() => {
     }
 
     return `Rp ${props.startingTemplate.price.toLocaleString('id-ID')}`;
+});
+
+const guestBookPrice = computed(() => {
+    if (!props.guestBook) {
+        return '';
+    }
+
+    return `Rp ${props.guestBook.price.toLocaleString('id-ID')}`;
 });
 
 const features = [
@@ -92,37 +108,44 @@ const features = [
     },
 ];
 
-const featuredNew = [
-    {
-        icon: QrCode,
-        badge: 'Fitur Baru',
-        title: 'Buku Tamu Digital',
-        text: 'Ganti buku tamu fisik dengan sistem check-in barcode QR. Tamu tinggal scan saat tiba, dan kamu langsung tahu siapa yang sudah hadir.',
-        points: [
-            'Check-in cepat pakai scan QR di venue',
-            'Catat souvenir yang sudah diambil',
-            'Undi pemenang otomatis dari tamu hadir',
-        ],
-    },
-    {
-        icon: Layers,
-        badge: 'Fitur Baru',
-        title: 'Multi Template',
-        text: 'Punya lebih dari satu acara atau butuh undangan ke-2, ke-3? Beli template lain kapan saja dan kelola semuanya dari satu dashboard.',
-        points: [
-            'Beli & aktifkan template tambahan lewat checkout',
-            'Kelola beberapa undangan dalam satu akun',
-            'Konten, tamu, dan link setiap undangan berdiri sendiri',
-        ],
-    },
-];
-
 const steps = [
-    'Temukan template yang punya jiwa yang sama dengan acaramu.',
+    'Temukan template yang terasa paling dekat dengan acaramu.',
     'Preview tampilan aslinya dulu sebelum memutuskan.',
     'Checkout, lalu isi nama, foto, detail acara, tamu, dan RSVP dengan santai.',
     'Untuk undangan kedua, cukup tambah template baru lalu kelola semuanya di satu dashboard.',
 ];
+
+const revealObserver = ref<IntersectionObserver | null>(null);
+
+onMounted(() => {
+    if (!('IntersectionObserver' in window)) {
+        document
+            .querySelectorAll('.my-reveal')
+            .forEach((el) => el.classList.add('my-revealed'));
+
+        return;
+    }
+
+    revealObserver.value = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('my-revealed');
+                    revealObserver.value?.unobserve(entry.target);
+                }
+            });
+        },
+        { rootMargin: '0px 0px -48px 0px', threshold: 0.08 },
+    );
+
+    document
+        .querySelectorAll('.my-reveal')
+        .forEach((el) => revealObserver.value?.observe(el));
+});
+
+onBeforeUnmount(() => {
+    revealObserver.value?.disconnect();
+});
 </script>
 
 <template>
@@ -132,26 +155,26 @@ const steps = [
         <PublicNavbar :can-register="canRegister" current-page="home" />
 
         <main>
-            <section class="min-h-[860px] px-0 pt-24 md:pt-20">
+            <section class="px-0 pt-24 md:pt-20">
                 <div
-                    class="my-container grid min-h-[760px] items-center gap-12 py-16 lg:grid-cols-2"
+                    class="my-container grid min-h-[720px] items-center gap-14 py-16 lg:grid-cols-[1.05fr_0.95fr]"
                 >
-                    <div>
+                    <div class="my-reveal">
                         <p class="my-label mb-5">Undangan Digital Premium</p>
                         <h1
-                            class="my-heading max-w-2xl text-5xl leading-[0.98] md:text-6xl"
+                            class="my-heading max-w-xl text-5xl leading-[1.02] md:text-[3.6rem]"
                         >
-                            Abadikan Momen
-                            <br />
-                            <span class="my-heading-accent">Terindah Kamu</span>
+                            Undangan digital dengan karakter,
+                            <span class="my-heading-accent"
+                                >bukan template pasaran.</span
+                            >
                         </h1>
-                        <p class="my-copy mt-6 max-w-xl">
-                            Pilih template dengan karakter budaya yang paling
-                            kamu suka, isi detail acara, lalu bagikan linknya ke
-                            semua tamu. Siap dalam hitungan menit, tanpa perlu
-                            skill desain.
+                        <p class="my-copy mt-7 max-w-lg">
+                            Pilih template dengan karakter budaya yang kamu
+                            suka, isi detail acara, bagikan linknya ke semua
+                            tamu.
                         </p>
-                        <div class="mt-9 flex flex-wrap gap-4">
+                        <div class="mt-10 flex flex-wrap gap-4">
                             <Link href="/templates" class="my-btn-primary px-9">
                                 Pilih Template Undanganku
                             </Link>
@@ -163,55 +186,73 @@ const steps = [
                             </a>
                         </div>
                         <p
-                            class="mt-5 text-sm font-semibold text-[var(--my-muted)]"
+                            class="mt-6 text-sm font-semibold text-[var(--my-muted)]"
                         >
-                            Dipercaya pasangan yang ingin undangan digital
-                            terasa personal, rapi, dan mudah dibagikan.
+                            Preview asli tiap template sebelum checkout — yang
+                            kamu lihat, yang dibuka tamu.
                         </p>
                     </div>
 
-                    <div class="flex justify-center lg:justify-end">
-                        <div class="relative w-full max-w-[470px]">
+                    <div
+                        class="my-reveal flex justify-center lg:justify-end"
+                        style="--reveal-delay: 120ms"
+                    >
+                        <div class="relative w-full max-w-[440px]">
                             <img
-                                class="aspect-square w-full rounded-[96px_40px_96px_40px] object-cover shadow-[0_28px_70px_rgb(51_51_51_/_16%)]"
+                                class="aspect-[4/5] w-full rounded-[24px_96px_24px_96px] object-cover shadow-[0_28px_70px_rgb(51_51_51_/_16%)]"
                                 src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=1000&q=85"
                                 alt="Detail undangan pernikahan dengan bunga putih dan dedaunan sage"
                             />
                             <div
-                                class="absolute -bottom-5 left-8 rounded-xl border border-[var(--my-border)] bg-white/84 px-5 py-4 shadow-lg backdrop-blur-md"
+                                class="absolute top-6 -left-4 rounded-lg border border-[var(--my-border)] bg-white/88 px-4 py-3 shadow-lg backdrop-blur-md md:-left-8"
                             >
                                 <p class="my-label text-[0.66rem]">
-                                    Preview Asli
+                                    Mulai dari
                                 </p>
                                 <p
-                                    class="font-display mt-1 text-xl font-semibold text-[var(--my-neutral)]"
+                                    class="font-display mt-0.5 text-2xl font-bold text-[var(--my-neutral)]"
                                 >
-                                    Lihat dulu sebelum checkout
+                                    {{ formattedPrice }}
                                 </p>
+                                <p
+                                    class="text-xs font-semibold text-[var(--my-muted)]"
+                                >
+                                    sekali bayar
+                                </p>
+                            </div>
+                            <div
+                                class="absolute right-6 -bottom-5 flex items-center gap-3 rounded-lg border border-[var(--my-border)] bg-white/88 px-4 py-3 shadow-lg backdrop-blur-md"
+                            >
+                                <QrCode
+                                    class="size-6 shrink-0 text-[var(--my-primary)]"
+                                />
+                                <div>
+                                    <p class="my-label text-[0.66rem]">
+                                        Check-in Tamu
+                                    </p>
+                                    <p
+                                        class="mt-0.5 text-sm font-bold text-[var(--my-neutral)]"
+                                    >
+                                        Scan QR saat hari-H
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section id="templates" class="bg-white/40 py-20">
+            <section id="templates" class="bg-white/45 py-24">
                 <div class="my-container">
-                    <div
-                        class="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"
-                    >
-                        <div>
-                            <p class="my-label mb-3">
-                                Koleksi Nusantara & Global
-                            </p>
-                            <h2 class="my-heading text-4xl">
-                                Template yang punya karakter sendiri
-                            </h2>
-                        </div>
-                        <Link
-                            href="/templates"
-                            class="my-btn-secondary w-fit px-7"
-                            >Lihat semua</Link
-                        >
+                    <div class="my-reveal mb-14 max-w-2xl">
+                        <h2 class="my-heading text-4xl md:text-5xl">
+                            Template yang tidak terlihat seperti orang lain
+                        </h2>
+                        <p class="my-copy mt-5 max-w-xl">
+                            Dua belas karakter, dari Sunda sampai Bali, siap
+                            diisi dengan cerita kalian — lengkap dengan section
+                            yang bisa dipilih mana yang mau ditampilkan.
+                        </p>
                     </div>
 
                     <div
@@ -219,11 +260,16 @@ const steps = [
                         class="grid gap-6 md:grid-cols-3"
                     >
                         <article
-                            v-for="template in featuredTemplates"
+                            v-for="(template, index) in featuredTemplates"
                             :key="template.id"
-                            class="my-card group overflow-hidden p-3"
+                            class="my-card group overflow-hidden p-0 transition duration-300 hover:-translate-y-1.5"
+                            :class="
+                                index === 0
+                                    ? 'border-[var(--my-primary)]/55 bg-white/88'
+                                    : ''
+                            "
                         >
-                            <div class="overflow-hidden rounded-lg">
+                            <div class="overflow-hidden">
                                 <img
                                     v-if="template.thumbnail_url"
                                     :src="template.thumbnail_url"
@@ -240,16 +286,18 @@ const steps = [
                                     >
                                 </div>
                             </div>
-                            <div class="p-4">
-                                <h3 class="my-heading text-2xl">
-                                    {{ template.name }}
-                                </h3>
+                            <div class="p-5">
                                 <div
-                                    class="mt-3 flex items-end justify-between gap-4"
+                                    class="flex items-baseline justify-between gap-3"
                                 >
-                                    <div class="flex items-end gap-2">
+                                    <h3 class="my-heading text-xl">
+                                        {{ template.name }}
+                                    </h3>
+                                    <div
+                                        class="flex shrink-0 items-baseline gap-1.5"
+                                    >
                                         <p
-                                            class="text-2xl font-bold text-[var(--my-primary)]"
+                                            class="text-lg font-bold text-[var(--my-primary)]"
                                         >
                                             {{
                                                 template.is_free
@@ -264,7 +312,7 @@ const steps = [
                                                 template.original_price >
                                                     template.price
                                             "
-                                            class="text-base font-semibold text-[var(--my-muted)] line-through"
+                                            class="text-xs font-semibold text-[var(--my-muted)] line-through"
                                         >
                                             Rp
                                             {{
@@ -274,26 +322,15 @@ const steps = [
                                             }}
                                         </p>
                                     </div>
-                                    <p
-                                        class="text-sm font-semibold tracking-[0.12em] text-[var(--my-muted)] uppercase"
-                                    >
-                                        Premium
-                                    </p>
                                 </div>
-                                <p
-                                    class="mt-3 text-sm leading-6 text-[var(--my-neutral)]"
-                                >
-                                    Preview tampilan asli template sebelum
-                                    checkout, lalu lanjutkan ke editor untuk
-                                    mengisi detail undangan.
-                                </p>
                                 <a
                                     :href="`/templates/${template.slug}/render`"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="my-btn-secondary mt-5 w-full"
+                                    class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[var(--my-primary)] underline underline-offset-4 transition hover:text-[var(--my-neutral)]"
                                 >
-                                    Preview Template
+                                    Preview tampilan asli
+                                    <span aria-hidden="true">→</span>
                                 </a>
                             </div>
                         </article>
@@ -311,122 +348,183 @@ const steps = [
                 </div>
             </section>
 
-            <section id="new-features" class="py-20">
-                <div class="my-container">
-                    <div class="mb-12 text-center">
-                        <p class="my-label mb-3">Fitur Baru</p>
-                        <h2 class="my-heading text-4xl">
-                            Sesuatu yang baru datang di MyAkad
-                        </h2>
-                        <p class="my-copy mx-auto mt-5 max-w-2xl">
-                            Dua fitur yang paling ditunggu sudah hadir: buku
-                            tamu digital ber-URL QR dan dukungan banyak undangan
-                            dalam satu akun. Undangan digital makin terasa
-                            profesional, bukan cuma tampilan.
-                        </p>
-                    </div>
-
-                    <div class="grid gap-6 md:grid-cols-2">
-                        <article
-                            v-for="feature in featuredNew"
-                            :key="feature.title"
-                            class="my-card relative overflow-hidden p-8"
-                        >
-                            <span class="my-badge absolute top-6 right-6">
-                                {{ feature.badge }}
-                            </span>
-                            <component
-                                :is="feature.icon"
-                                class="mb-6 size-12 text-[var(--my-primary)]"
-                            />
-                            <h3 class="my-heading text-3xl">
-                                {{ feature.title }}
-                            </h3>
-                            <p class="mt-4 leading-7 text-[var(--my-muted)]">
-                                {{ feature.text }}
-                            </p>
-                            <ul
-                                class="mt-6 grid gap-3 text-[var(--my-neutral)]"
-                            >
-                                <li
-                                    v-for="point in feature.points"
-                                    :key="point"
-                                    class="flex gap-3"
-                                >
-                                    <Check
-                                        class="mt-0.5 size-5 shrink-0 text-[var(--my-primary)]"
-                                    />
-                                    {{ point }}
-                                </li>
-                            </ul>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
-            <section id="how-it-works" class="py-20">
+            <section
+                id="guest-book"
+                class="border-y border-[var(--my-border)]/50 bg-[var(--my-surface-soft)]/55 py-24"
+            >
                 <div
-                    class="my-container grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start"
+                    class="my-container grid items-center gap-14 lg:grid-cols-[0.9fr_1.1fr]"
                 >
-                    <div>
-                        <p class="my-label mb-3">Cara Pesan</p>
-                        <h2 class="my-heading text-4xl">
-                            Alurnya sederhana, hasilnya tetap premium.
-                        </h2>
-                        <p class="my-copy mt-5">
-                            Di MyAkad, kamu bisa preview tampilan asli setiap
-                            template sebelum memutuskan beli. Setelah checkout,
-                            langsung isi data, kelola tamu & RSVP, lalu
-                            publikasikan. Butuh undangan tambahan? Beli template
-                            lain dan kelola semuanya dari satu dashboard.
-                        </p>
+                    <div class="my-reveal order-2 lg:order-1">
+                        <div
+                            class="relative mx-auto max-w-[300px] rounded-2xl border border-dashed border-[var(--my-primary)]/45 bg-white p-7 text-center shadow-[var(--my-shadow)]"
+                        >
+                            <p class="my-label mb-4">Contoh Kode Tamu</p>
+                            <div
+                                v-if="guestBook?.demo_qr_svg"
+                                class="guest-qr-svg mx-auto max-w-[220px] rounded-lg bg-white"
+                                v-html="guestBook.demo_qr_svg"
+                            ></div>
+                            <p
+                                class="mt-4 font-mono text-xs tracking-widest text-[var(--my-muted)]"
+                            >
+                                MyAkad-DEMO-0001
+                            </p>
+                            <p
+                                class="mt-3 text-xs leading-5 text-[var(--my-muted)]"
+                            >
+                                QR asli dibuat per tamu — tiap tamu punya kode
+                                uniknya sendiri.
+                            </p>
+                        </div>
                     </div>
 
-                    <div class="grid gap-4">
+                    <div class="my-reveal order-1 lg:order-2">
+                        <p class="my-label mb-5">Fitur Buku Tamu</p>
+                        <h2 class="my-heading text-4xl md:text-5xl">
+                            Check-in tamu tanpa
+                            <span class="my-heading-accent"
+                                >buku tamu fisik.</span
+                            >
+                        </h2>
+                        <p class="my-copy mt-5 max-w-lg">
+                            Ganti meja buku tamu dengan barcode yang bisa
+                            dipindai. Kamu tahu siapa yang sudah hadir, tanpa
+                            menebak tulisan tangan.
+                        </p>
+                        <ul class="mt-8 grid gap-4 text-[var(--my-neutral)]">
+                            <li
+                                v-for="point in [
+                                    'Tamu scan QR saat tiba di venue, kehadiran tercatat otomatis',
+                                    'Catat souvenir yang sudah diambil per tamu',
+                                    'Undi pemenang langsung dari daftar tamu yang hadir',
+                                ]"
+                                :key="point"
+                                class="flex gap-3"
+                            >
+                                <Check
+                                    class="mt-0.5 size-5 shrink-0 text-[var(--my-primary)]"
+                                />
+                                {{ point }}
+                            </li>
+                        </ul>
                         <div
-                            v-for="(step, index) in steps"
-                            :key="step"
-                            class="my-card flex gap-5 p-5"
+                            class="mt-9 flex flex-wrap items-center gap-5 border-t border-[var(--my-border)]/60 pt-6"
                         >
-                            <span
-                                class="font-display flex size-11 shrink-0 items-center justify-center rounded-full bg-[var(--my-primary)] text-xl font-bold text-white"
-                            >
-                                {{ index + 1 }}
-                            </span>
                             <p
-                                class="text-lg leading-7 text-[var(--my-neutral)]"
+                                class="text-3xl font-bold text-[var(--my-primary)]"
                             >
-                                {{ step }}
+                                {{ guestBookPrice }}
+                                <span
+                                    v-if="
+                                        guestBook?.original_price &&
+                                        guestBook.original_price >
+                                            guestBook.price
+                                    "
+                                    class="text-lg font-semibold text-[var(--my-muted)] line-through"
+                                >
+                                    Rp
+                                    {{
+                                        guestBook.original_price.toLocaleString(
+                                            'id-ID',
+                                        )
+                                    }}
+                                </span>
+                                <span
+                                    class="align-middle text-sm font-semibold text-[var(--my-muted)]"
+                                    >sekali bayar</span
+                                >
                             </p>
+                            <a
+                                v-if="guestBook"
+                                :href="guestBook.url"
+                                class="my-btn-primary px-8"
+                            >
+                                Lihat Paket Buku Tamu
+                            </a>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section id="features" class="bg-[var(--my-surface-soft)]/70 py-20">
+            <section id="how-it-works" class="py-24">
+                <div class="my-container grid gap-12 lg:grid-cols-[1fr_1.2fr]">
+                    <div class="my-reveal lg:sticky lg:top-28 lg:self-start">
+                        <h2 class="my-heading text-4xl md:text-5xl">
+                            Empat langkah,
+                            <span class="my-heading-accent"
+                                >satu undangan.</span
+                            >
+                        </h2>
+                        <p class="my-copy mt-5 max-w-md">
+                            Tidak ada desain yang perlu kamu kuasai. Preview
+                            dulu, bayar sekali, sisanya tinggal diisi.
+                        </p>
+                        <Link
+                            href="/templates"
+                            class="my-btn-secondary mt-8 px-8"
+                        >
+                            Lihat Koleksi Template
+                        </Link>
+                    </div>
+
+                    <ol class="grid gap-0">
+                        <li
+                            v-for="(step, index) in steps"
+                            :key="step"
+                            class="my-reveal flex gap-6 border-t border-[var(--my-border)]/60 py-7 first:border-t-0"
+                            :style="{ '--reveal-delay': `${index * 80}ms` }"
+                        >
+                            <span
+                                class="font-display shrink-0 text-6xl leading-none font-bold text-[var(--my-tertiary)] italic"
+                            >
+                                {{ String(index + 1).padStart(2, '0') }}
+                            </span>
+                            <p
+                                class="self-center text-lg leading-7 text-[var(--my-neutral)]"
+                            >
+                                {{ step }}
+                            </p>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+
+            <section id="features" class="bg-[var(--my-surface-soft)]/55 py-24">
                 <div class="my-container">
-                    <div class="mb-12 text-center">
-                        <p class="my-label mb-3">Fitur Utama</p>
-                        <h2 class="my-heading text-4xl">
+                    <div class="my-reveal mb-14 max-w-2xl">
+                        <h2 class="my-heading text-4xl md:text-5xl">
                             Semua kebutuhan undangan digital
                         </h2>
+                        <p class="my-copy mt-5 max-w-xl">
+                            Delapan hal yang biasanya ditanyakan — sudah ada
+                            sejak awal, tinggal kamu pakai.
+                        </p>
                     </div>
-                    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+                    <div
+                        class="grid gap-x-14 border-t border-[var(--my-border)]/60 md:grid-cols-2"
+                    >
                         <article
-                            v-for="feature in features"
+                            v-for="(feature, index) in features"
                             :key="feature.title"
-                            class="my-card p-6"
+                            class="my-reveal border-b border-[var(--my-border)]/60 py-7"
+                            :class="index % 2 === 1 ? 'md:border-b-0' : ''"
+                            :style="{
+                                '--reveal-delay': `${(index % 2) * 90}ms`,
+                            }"
                         >
-                            <component
-                                :is="feature.icon"
-                                class="mb-5 size-9 text-[var(--my-primary)]"
-                            />
-                            <h3
-                                class="text-xl font-bold text-[var(--my-neutral)]"
+                            <div class="flex items-center gap-4">
+                                <component
+                                    :is="feature.icon"
+                                    class="size-6 shrink-0 text-[var(--my-primary)]"
+                                />
+                                <h3 class="my-heading text-2xl">
+                                    {{ feature.title }}
+                                </h3>
+                            </div>
+                            <p
+                                class="mt-3 pl-10 leading-6 text-[var(--my-muted)]"
                             >
-                                {{ feature.title }}
-                            </h3>
-                            <p class="mt-3 leading-6 text-[var(--my-muted)]">
                                 {{ feature.text }}
                             </p>
                         </article>
@@ -434,111 +532,122 @@ const steps = [
                 </div>
             </section>
 
-            <section id="pricing" class="py-20">
-                <div class="my-container">
-                    <div class="mx-auto max-w-2xl text-center">
-                        <p class="my-label mb-3">Harga</p>
-                        <h2 class="my-heading text-4xl">
-                            Mulai dari
-                            {{
-                                startingTemplate
-                                    ? formattedPrice
-                                    : 'paket aktif'
-                            }}
+            <section id="pricing" class="py-24">
+                <div
+                    class="my-container grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]"
+                >
+                    <div class="my-reveal">
+                        <h2 class="my-heading text-4xl md:text-5xl">
+                            Satu harga,
+                            <span class="my-heading-accent">semua fitur.</span>
                         </h2>
-                        <p class="my-copy mt-4">
-                            Setara harga beberapa lembar undangan cetak, tapi
-                            bisa dibagikan ke banyak tamu sekaligus dan
-                            diperbarui kapanpun ada perubahan info.
+                        <p class="my-copy mt-5 max-w-md">
+                            Setara beberapa lembar undangan cetak — tanpa biaya
+                            cetak, tanpa revisi ulang, tanpa hitungan undangan
+                            tercecer.
                         </p>
+                        <ul
+                            class="mt-9 grid gap-0 border-t border-[var(--my-border)]/60 text-[var(--my-muted)]"
+                        >
+                            <li
+                                v-for="(item, index) in [
+                                    ['Gift', 'Template premium siap pakai'],
+                                    [
+                                        'CalendarCheck',
+                                        'RSVP, galeri, dan data acara',
+                                    ],
+                                    [
+                                        'QrCode',
+                                        'Buku tamu digital & scan QR di venue',
+                                    ],
+                                    [
+                                        'Layers',
+                                        'Bisa kelola lebih dari satu undangan',
+                                    ],
+                                    [
+                                        'MessageCircle',
+                                        'Link undangan siap dibagikan',
+                                    ],
+                                ]"
+                                :key="index"
+                                class="flex items-center gap-4 border-b border-[var(--my-border)]/60 py-4"
+                            >
+                                <component
+                                    :is="
+                                        {
+                                            Gift,
+                                            CalendarCheck,
+                                            QrCode,
+                                            Layers,
+                                            MessageCircle,
+                                        }[item[0]]
+                                    "
+                                    class="size-5 shrink-0 text-[var(--my-primary)]"
+                                />
+                                <span class="text-[15px] font-semibold">
+                                    {{ item[1] }}
+                                </span>
+                            </li>
+                        </ul>
                     </div>
 
-                    <div class="my-card mx-auto mt-10 max-w-md p-7">
-                        <div class="text-center">
-                            <h3 class="my-heading text-3xl">
+                    <div
+                        class="my-reveal rounded-2xl border border-[var(--my-primary)]/35 bg-white/85 p-8 shadow-[var(--my-shadow)]"
+                        style="--reveal-delay: 120ms"
+                    >
+                        <div class="flex items-baseline justify-between gap-4">
+                            <h3 class="my-heading text-2xl">
                                 {{
                                     startingTemplate?.name ?? 'Template MyAkad'
                                 }}
                             </h3>
-                            <p
-                                class="mt-3 text-4xl font-bold text-[var(--my-primary)]"
-                            >
-                                {{
-                                    startingTemplate
-                                        ? `${formattedPrice} sekali bayar`
-                                        : 'Tersedia di koleksi'
-                                }}
-                            </p>
-                            <p
+                            <span
                                 v-if="
-                                    startingTemplate?.original_price &&
-                                    startingTemplate.original_price >
-                                        startingTemplate.price
+                                    startingTemplate?.discount_percent &&
+                                    startingTemplate.discount_percent > 0
                                 "
-                                class="mt-1 text-xl font-semibold text-[var(--my-muted)] line-through"
+                                class="rounded-[4px] bg-[var(--my-secondary)] px-2 py-0.5 text-xs font-bold text-[#5c3a34]"
+                                >-{{ startingTemplate.discount_percent }}%</span
                             >
-                                Rp
-                                {{
-                                    startingTemplate.original_price.toLocaleString(
-                                        'id-ID',
-                                    )
-                                }}
-                                <span
-                                    v-if="
-                                        startingTemplate.discount_percent &&
-                                        startingTemplate.discount_percent > 0
-                                    "
-                                    class="my-badge ml-2 align-middle"
-                                    >-{{
-                                        startingTemplate.discount_percent
-                                    }}%</span
-                                >
-                            </p>
-                            <p class="mt-3 text-[var(--my-muted)]">
-                                {{
-                                    startingTemplate
-                                        ? 'Satu template, semua fitur — editor, subdomain, RSVP, galeri, buku tamu digital, dan publish. Boleh ditambah lagi kapan pun.'
-                                        : 'Pilih template yang paling dekat dengan cerita kalian.'
-                                }}
-                            </p>
                         </div>
-                        <ul class="mt-7 grid gap-3 text-[var(--my-muted)]">
-                            <li class="flex gap-3">
-                                <Gift
-                                    class="mt-0.5 size-5 text-[var(--my-primary)]"
-                                />
-                                Template premium siap pakai
-                            </li>
-                            <li class="flex gap-3">
-                                <CalendarCheck
-                                    class="mt-0.5 size-5 text-[var(--my-primary)]"
-                                />
-                                RSVP, galeri, dan data acara
-                            </li>
-                            <li class="flex gap-3">
-                                <QrCode
-                                    class="mt-0.5 size-5 text-[var(--my-primary)]"
-                                />
-                                Buku tamu digital & scan QR di venue
-                            </li>
-                            <li class="flex gap-3">
-                                <Layers
-                                    class="mt-0.5 size-5 text-[var(--my-primary)]"
-                                />
-                                Bisa kelola lebih dari satu undangan
-                            </li>
-                            <li class="flex gap-3">
-                                <MessageCircle
-                                    class="mt-0.5 size-5 text-[var(--my-primary)]"
-                                />
-                                Link undangan siap dibagikan
-                            </li>
-                        </ul>
+                        <p
+                            class="mt-5 text-4xl font-bold text-[var(--my-primary)]"
+                        >
+                            {{
+                                startingTemplate
+                                    ? `${formattedPrice}`
+                                    : 'Lihat koleksi'
+                            }}
+                            <span
+                                class="text-lg font-semibold text-[var(--my-muted)]"
+                                >sekali bayar</span
+                            >
+                        </p>
+                        <p
+                            v-if="
+                                startingTemplate?.original_price &&
+                                startingTemplate.original_price >
+                                    startingTemplate.price
+                            "
+                            class="mt-1 text-lg font-semibold text-[var(--my-muted)] line-through"
+                        >
+                            Rp
+                            {{
+                                startingTemplate.original_price.toLocaleString(
+                                    'id-ID',
+                                )
+                            }}
+                        </p>
+                        <p class="mt-4 leading-6 text-[var(--my-muted)]">
+                            Satu template, semua fitur — editor, subdomain,
+                            RSVP, galeri, buku tamu digital, dan publish.
+                        </p>
                         <Link
                             href="/templates"
                             class="my-btn-primary mt-8 w-full"
-                            >Pilih Template Undanganku</Link
                         >
+                            Lihat Semua Template
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -556,3 +665,32 @@ const steps = [
         </Link>
     </div>
 </template>
+
+<style scoped>
+.my-reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+        opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+}
+
+.my-reveal.my-revealed {
+    opacity: 1;
+    transform: none;
+}
+
+.guest-qr-svg svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .my-reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+</style>

@@ -1,8 +1,18 @@
 import stylistic from '@stylistic/eslint-plugin';
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
+import {
+    configureVueProject,
+    defineConfigWithVueTs,
+    vueTsConfigs,
+} from '@vue/eslint-config-typescript';
 import prettier from 'eslint-config-prettier/flat';
 import importPlugin from 'eslint-plugin-import';
 import vue from 'eslint-plugin-vue';
+
+// The @vue/eslint-config-typescript package scans the project for .vue files
+// with fast-glob using absolute ignore patterns, which are not honored and
+// crash on unreadable directories (e.g. docker/mysql/data). Restrict the scan
+// to the frontend sources only.
+configureVueProject({ rootDir: 'resources/js' });
 
 const controlStatements = [
     'if',
@@ -76,11 +86,15 @@ export default defineConfigWithVueTs(
         },
     },
     {
+        name: 'global-ignores',
         ignores: [
-            'vendor',
-            'node_modules',
-            'public',
-            'bootstrap/ssr',
+            '**/vendor/**',
+            '**/node_modules/**',
+            '**/public/**',
+            '**/bootstrap/ssr/**',
+            '**/docker/**',
+            '**/storage/**',
+            '**/database/**',
             'tailwind.config.js',
             'vite.config.ts',
             'resources/js/actions/**',

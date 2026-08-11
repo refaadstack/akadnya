@@ -647,3 +647,42 @@ test('build omits guest data when guest code is invalid', function () {
     expect($contract['guest'])->toBeNull();
     expect($contract['guest_qr_svg'])->toBeNull();
 });
+
+test('buildTemplateDefaults includes demo guest QR and guest book url', function () {
+    $slug = 'test-'.uniqid();
+    $template = Template::factory()->create(['slug' => $slug]);
+    $templatePath = storage_path("app/public/templates/{$slug}");
+
+    File::makeDirectory($templatePath, 0755, true);
+    File::put($templatePath.'/template.json', json_encode(['defaults' => []]));
+
+    $contract = $this->builder->buildTemplateDefaults($template);
+
+    expect($contract['guest_qr_demo'])->toBeString()->toContain('<svg');
+    expect($contract['guest_book_url'])->toBeString();
+});
+
+test('buildTemplateDefaults passes photo credits from template defaults', function () {
+    $slug = 'test-'.uniqid();
+    $template = Template::factory()->create(['slug' => $slug]);
+    $templatePath = storage_path("app/public/templates/{$slug}");
+
+    File::makeDirectory($templatePath, 0755, true);
+    File::put($templatePath.'/template.json', json_encode([
+        'defaults' => [
+            'cover_photo_url' => 'https://example.com/cover.jpg',
+            'cover_photo_credit_url' => 'https://id.pinterest.com/pin/937030266222998259/',
+            'cover_photo_source_label' => 'Pinterest',
+            'gallery' => [
+                ['url' => 'https://example.com/one.jpg', 'caption' => null, 'credit_url' => 'https://id.pinterest.com/pin/1/', 'source_label' => 'Pinterest'],
+            ],
+        ],
+    ]));
+
+    $contract = $this->builder->buildTemplateDefaults($template);
+
+    expect($contract['cover_photo_credit_url'])->toBe('https://id.pinterest.com/pin/937030266222998259/');
+    expect($contract['cover_photo_source_label'])->toBe('Pinterest');
+    expect($contract['gallery'][0]['credit_url'])->toBe('https://id.pinterest.com/pin/1/');
+    expect($contract['gallery'][0]['source_label'])->toBe('Pinterest');
+});

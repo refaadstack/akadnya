@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Product;
 use App\Models\Template;
 
 test('welcome page shows active featured templates from database thumbnails', function () {
@@ -71,5 +72,27 @@ test('welcome page shows cheapest paid template as starting price', function () 
         ->where('startingTemplate.price', 149000)
         ->where('startingTemplate.original_price', 199000)
         ->where('startingTemplate.discount_percent', 25)
+    );
+});
+
+test('welcome page exposes guest book add-on with demo qr', function () {
+    Product::factory()->create([
+        'type' => 'addon',
+        'slug' => 'guest_book',
+        'name' => 'Buku Tamu Digital',
+        'price' => 19000,
+        'original_price' => 25000,
+        'is_active' => true,
+    ]);
+
+    $response = $this->get('/');
+
+    $response->assertInertia(fn ($page) => $page
+        ->where('guestBook.name', 'Buku Tamu Digital')
+        ->where('guestBook.price', 19000)
+        ->where('guestBook.original_price', 25000)
+        ->where('guestBook.discount_percent', 24)
+        ->where('guestBook.url', route('products.index'))
+        ->where('guestBook.demo_qr_svg', fn (string $svg) => str_contains($svg, '<svg'))
     );
 });

@@ -29,13 +29,14 @@ class OrderService
         User $user,
         ?Template $template = null,
         ?Product $product = null,
-        ?array $previewData = null
+        ?array $previewData = null,
+        bool $free = false
     ): Order {
         if (! $template && ! $product) {
             throw new InvalidArgumentException('An order must contain a template or a product.');
         }
 
-        return DB::transaction(function () use ($user, $template, $product, $previewData) {
+        return DB::transaction(function () use ($user, $template, $product, $previewData, $free) {
             // Create order
             $order = Order::create([
                 'user_id' => $user->id,
@@ -46,6 +47,7 @@ class OrderService
                     'template_slug' => $template?->slug,
                     'product_slug' => $product?->slug,
                     'preview_data' => $template ? $previewData : null,
+                    'granted' => $free,
                 ],
             ]);
 
@@ -53,28 +55,28 @@ class OrderService
 
             // Add template as order item (optional, à la carte)
             if ($template) {
-                $totalAmount += $template->price;
+                $totalAmount += $free ? 0 : $template->price;
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => null, // Template is not a product
                     'item_type' => 'template',
                     'item_id' => $template->id,
                     'name' => $template->name,
-                    'price' => $template->price,
+                    'price' => $free ? 0 : $template->price,
                     'quantity' => 1,
                 ]);
             }
 
             // Add product (optional, à la carte)
             if ($product) {
-                $totalAmount += $product->price;
+                $totalAmount += $free ? 0 : $product->price;
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $product->id,
                     'item_type' => 'product',
                     'item_id' => $product->id,
                     'name' => $product->name,
-                    'price' => $product->price,
+                    'price' => $free ? 0 : $product->price,
                     'quantity' => 1,
                 ]);
             }
@@ -172,7 +174,7 @@ class OrderService
     /**
      * Update order status
      */
-    public function updateOrderStatus(Order $order, string $status): void
+    public function updateOrderStatus(Order $order, string $status, bool $notify = true): void
     {
         $wasPaid = $order->isPaid();
 
@@ -182,7 +184,7 @@ class OrderService
         if ($status === 'paid') {
             $this->activateFeatures($order);
 
-            if (! $wasPaid) {
+            if ($notify && ! $wasPaid) {
                 $order->loadMissing('user', 'items');
 
                 try {

@@ -70,6 +70,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->hasMany(UserFeature::class);
     }
 
+    public function grants(): HasMany
+    {
+        return $this->hasMany(UserGrant::class);
+    }
+
     /**
      * @param  array<int, string>  $with
      */
@@ -107,12 +112,40 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
                 $query->whereNull('expires_at')
                     ->orWhere('expires_at', '>', now());
             })
+            ->exists()
+            || $this->hasGrant(UserGrant::TYPE_ADDON, $feature);
+    }
+
+    /**
+     * Check for an active grant covering the given item.
+     * A null $slug means the grant covers every item of that type.
+     */
+    public function hasGrant(string $grantType, ?string $slug = null): bool
+    {
+        return $this->grants()
+            ->where('grant_type', $grantType)
+            ->where(fn ($query) => $query
+                ->whereNull('expires_at')
+                ->orWhere('expires_at', '>', now()))
+            ->where(fn ($query) => $query
+                ->whereNull('item_slug')
+                ->orWhere('item_slug', $slug))
             ->exists();
+    }
+
+    public function hasTemplateAccess(Template $template): bool
+    {
+        return $this->hasGrant(UserGrant::TYPE_TEMPLATE, $template->slug);
     }
 
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function isPrivileged(): bool
+    {
+        return $this->grants()->active()->exists();
     }
 
     public function sendEmailVerificationNotification(): void

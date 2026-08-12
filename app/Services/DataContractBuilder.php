@@ -152,6 +152,9 @@ class DataContractBuilder
             'guest_qr_demo' => null,
             'guest_book_url' => route('products.index'),
 
+            // Sponsorship
+            'sponsored_by' => $invitation->user?->hasTemplateAccess($invitation->template) ?? false,
+
             // Event dates (ISO 8601 format for JavaScript countdown)
             'akad_datetime' => $content?->akad_datetime?->toIso8601String() ?? null,
             'event_date' => ($content?->show_reception ?? true) && $content?->reception_datetime
@@ -361,6 +364,7 @@ class DataContractBuilder
             'guest_qr_svg' => null,
             'guest_qr_demo' => null,
             'guest_book_url' => route('products.index'),
+            'sponsored_by' => false,
             'akad_datetime' => null,
             'event_date' => null,
             ...$this->buildDatetimeVariables('akad', null),

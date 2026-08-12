@@ -10,6 +10,7 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\GuestBookController;
 use App\Http\Controllers\GuestController;
+use App\Http\Controllers\GrantController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\InvitationSettingsController;
 use App\Http\Controllers\LegalController;
@@ -84,6 +85,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/keranjang/{item}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/keranjang/{item}', [CartController::class, 'destroy'])->name('cart.destroy');
     Route::delete('/keranjang', [CartController::class, 'clear'])->name('cart.clear');
+
+    // Activate a template covered by an admin grant (free access)
+    Route::post('/grants/activate/{template}', [GrantController::class, 'activate'])->name('grants.activate');
 });
 
 // Payment finish page (public, shows order status)

@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\SiteSetting;
 use App\Models\Template;
 use App\Models\User;
+use App\Models\UserGrant;
 use App\Services\DataContractBuilder;
 use App\Services\OrderService;
 use Carbon\Carbon;
@@ -685,4 +686,40 @@ test('buildTemplateDefaults passes photo credits from template defaults', functi
     expect($contract['cover_photo_source_label'])->toBe('Pinterest');
     expect($contract['gallery'][0]['credit_url'])->toBe('https://id.pinterest.com/pin/1/');
     expect($contract['gallery'][0]['source_label'])->toBe('Pinterest');
+});
+
+test('build marks contract as sponsored when user has a template grant', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create(['slug' => 'sponsored-sunda']);
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['sponsored_by'])->toBeFalse();
+
+    UserGrant::create([
+        'user_id' => $user->id,
+        'grant_type' => UserGrant::TYPE_TEMPLATE,
+        'item_slug' => $template->slug,
+    ]);
+
+    $contract = $this->builder->build($invitation->fresh());
+
+    expect($contract['sponsored_by'])->toBeTrue();
+});
+
+test('buildTemplateDefaults keeps sponsored_by false', function () {
+    $slug = 'test-'.uniqid();
+    $template = Template::factory()->create(['slug' => $slug]);
+    $templatePath = storage_path("app/public/templates/{$slug}");
+
+    File::makeDirectory($templatePath, 0755, true);
+    File::put($templatePath.'/template.json', json_encode(['defaults' => []]));
+
+    $contract = $this->builder->buildTemplateDefaults($template);
+
+    expect($contract['sponsored_by'])->toBeFalse();
 });

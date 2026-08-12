@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Check, Eye, ShoppingCart } from 'lucide-vue-next';
+import { Check, Eye, ShoppingCart, Zap } from 'lucide-vue-next';
 import { ref } from 'vue';
 import PublicFooter from '@/components/PublicFooter.vue';
 import PublicNavbar from '@/components/PublicNavbar.vue';
@@ -14,6 +14,7 @@ interface Template {
     original_price?: number | null;
     discount_percent?: number;
     is_free: boolean;
+    is_granted: boolean;
 }
 
 defineProps<{
@@ -26,6 +27,25 @@ defineOptions({
 
 const addingId = ref<number | null>(null);
 const addedId = ref<number | null>(null);
+const activatingId = ref<number | null>(null);
+
+const activateTemplate = (template: Template) => {
+    if (activatingId.value !== null) {
+        return;
+    }
+
+    activatingId.value = template.id;
+
+    router.post(
+        `/grants/activate/${template.slug}`,
+        {},
+        {
+            onFinish: () => {
+                activatingId.value = null;
+            },
+        },
+    );
+};
 
 const addToCart = (template: Template) => {
     if (addingId.value !== null) {
@@ -109,7 +129,15 @@ const addToCart = (template: Template) => {
                             </div>
 
                             <div
-                                v-if="template.is_free"
+                                v-if="template.is_granted"
+                                class="absolute top-4 left-4 z-10 flex items-center gap-1.5 rounded-full bg-[var(--my-secondary)] px-3 py-1 text-xs font-bold tracking-[0.12em] text-[#5c3a34] uppercase"
+                            >
+                                <Zap class="size-3.5" />
+                                Akses Gratis
+                            </div>
+
+                            <div
+                                v-if="template.is_free && !template.is_granted"
                                 class="absolute top-4 right-4 rounded-full bg-[var(--my-primary)] px-3 py-1 text-xs font-bold tracking-[0.12em] text-white uppercase"
                             >
                                 Gratis
@@ -137,13 +165,16 @@ const addToCart = (template: Template) => {
                                         class="text-2xl font-bold text-[var(--my-primary)]"
                                     >
                                         {{
-                                            template.is_free
-                                                ? 'Gratis'
-                                                : `Rp ${template.price.toLocaleString('id-ID')}`
+                                            template.is_granted
+                                                ? 'Akses Gratis'
+                                                : template.is_free
+                                                  ? 'Gratis'
+                                                  : `Rp ${template.price.toLocaleString('id-ID')}`
                                         }}
                                     </p>
                                     <p
                                         v-if="
+                                            !template.is_granted &&
                                             !template.is_free &&
                                             template.original_price &&
                                             template.original_price >
@@ -201,6 +232,25 @@ const addToCart = (template: Template) => {
                                 </a>
 
                                 <button
+                                    v-if="template.is_granted"
+                                    class="my-btn-primary w-full gap-2 disabled:cursor-not-allowed disabled:opacity-60"
+                                    type="button"
+                                    :disabled="activatingId === template.id"
+                                    @click="activateTemplate(template)"
+                                >
+                                    <Zap
+                                        v-if="activatingId === template.id"
+                                        class="size-4 animate-pulse"
+                                    />
+                                    <Check v-else class="size-4" />
+                                    {{
+                                        activatingId === template.id
+                                            ? 'Mengaktifkan...'
+                                            : 'Aktifkan Sekarang'
+                                    }}
+                                </button>
+                                <button
+                                    v-else
                                     class="my-btn-primary w-full gap-2 disabled:cursor-not-allowed disabled:opacity-60"
                                     type="button"
                                     :disabled="addingId === template.id"

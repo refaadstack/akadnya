@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Invitation;
 use App\Models\MediaUpload;
 use App\Models\User;
+use App\Models\UserGrant;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -98,6 +99,10 @@ class MediaService
             ->where(fn ($query) => $query->whereNull('expires_at')->orWhere('expires_at', '>', now()))
             ->get()
             ->sum(fn ($feature) => (int) ($feature->metadata['storage_gb'] ?? 1) * self::ADDON_QUOTA_BYTES_PER_GB);
+
+        if ($user->hasGrant(UserGrant::TYPE_ADDON, 'extra_storage') || $user->hasGrant(UserGrant::TYPE_ADDON)) {
+            $extraBytes += self::ADDON_QUOTA_BYTES_PER_GB;
+        }
 
         return self::BASE_QUOTA_BYTES + $extraBytes;
     }

@@ -22,6 +22,8 @@ class TemplateController extends Controller
      */
     public function index(): Response
     {
+        $user = request()->user()?->load('grants');
+
         $templates = Template::active()
             ->orderBy('is_free', 'desc')
             ->orderBy('name')
@@ -35,6 +37,7 @@ class TemplateController extends Controller
                 'original_price' => $template->original_price !== null ? (float) $template->original_price : null,
                 'discount_percent' => $template->discount_percent,
                 'is_free' => $template->is_free,
+                'is_granted' => $user?->hasTemplateAccess($template) ?? false,
             ]);
 
         return Inertia::render('Templates/Index', [

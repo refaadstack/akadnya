@@ -47,7 +47,7 @@ class FaqController extends Controller
                     ],
                     [
                         'question' => 'Berapa lama undangan aktif?',
-                        'answer' => 'Durasi aktif undangan tergantung paket yang Anda pilih. Kami menyediakan paket 1 bulan, 3 bulan, dan lifetime (selamanya). Setelah masa aktif berakhir, undangan tidak bisa diakses kecuali Anda perpanjang paket.',
+                        'answer' => 'Undangan Anda selalu aktif tanpa batas waktu selama layanan MyAkad berjalan. Tidak ada masa kedaluwarsa, jadi Anda tidak perlu perpanjang paket — undangan tetap bisa diakses oleh tamu kapan saja.',
                     ],
                     [
                         'question' => 'Apakah ada batasan jumlah tamu?',
@@ -65,7 +65,7 @@ class FaqController extends Controller
                 'questions' => [
                     [
                         'question' => 'Apa saja paket yang tersedia?',
-                        'answer' => 'MyAkad menyediakan beberapa paket: Basic (1 bulan), Premium (3 bulan), dan Lifetime (selamanya). Setiap paket memiliki fitur yang sama, perbedaannya hanya pada durasi aktif undangan. Paket Premium dan Lifetime juga mendukung custom domain.',
+                        'answer' => 'MyAkad menyediakan beberapa paket: Basic, Premium, dan Lifetime. Semua paket memiliki fitur yang sama dan undangan akan selalu aktif tanpa batas waktu selama layanan MyAkad berjalan — paket hanya menentukan apa yang Anda bayar di awal, bukan berapa lama undangan bisa diakses.',
                     ],
                     [
                         'question' => 'Bagaimana cara pembayaran?',
@@ -77,7 +77,7 @@ class FaqController extends Controller
                     ],
                     [
                         'question' => 'Apakah ada biaya tambahan?',
-                        'answer' => 'Tidak ada biaya tersembunyi! Harga yang tertera sudah termasuk semua fitur. Biaya tambahan hanya berlaku jika Anda ingin perpanjang paket atau upgrade ke paket yang lebih tinggi.',
+                        'answer' => 'Tidak ada biaya tersembunyi! Harga yang tertera sudah termasuk semua fitur. Undangan Anda tetap aktif tanpa batas waktu, jadi tidak ada biaya perpanjangan.',
                     ],
                 ],
             ],

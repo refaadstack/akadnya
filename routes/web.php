@@ -8,9 +8,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EditorController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\GrantController;
 use App\Http\Controllers\GuestBookController;
 use App\Http\Controllers\GuestController;
-use App\Http\Controllers\GrantController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\InvitationSettingsController;
 use App\Http\Controllers\LegalController;
@@ -40,7 +40,7 @@ Route::get('/health', function () {
             'database' => 'ok',
             'time' => now()->toIso8601String(),
         ]);
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
         return response()->json([
             'status' => 'degraded',
             'database' => 'error',
@@ -59,6 +59,7 @@ Route::get('/api/invitations/{invitationId}/wishes', [PublicInvitationController
 
 // Public template routes (templates now in storage, no conflict)
 Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');
+Route::get('/templates/{slug}', [TemplateController::class, 'show'])->name('templates.show');
 Route::get('/templates/{slug}/preview', [TemplateController::class, 'preview'])->name('templates.preview');
 Route::get('/templates/{slug}/render', [TemplateController::class, 'render'])->name('templates.render');
 

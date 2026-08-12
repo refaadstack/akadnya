@@ -109,8 +109,9 @@ const addToCart = (template: Template) => {
                         :key="template.id"
                         class="my-card group overflow-hidden p-3 transition duration-300 hover:-translate-y-1"
                     >
-                        <div
-                            class="relative overflow-hidden rounded-lg bg-[var(--my-surface-soft)]"
+                        <Link
+                            :href="`/templates/${template.slug}`"
+                            class="relative block overflow-hidden rounded-lg bg-[var(--my-surface-soft)]"
                         >
                             <img
                                 v-if="template.thumbnail_url"
@@ -151,12 +152,17 @@ const addToCart = (template: Template) => {
                             >
                                 -{{ template.discount_percent }}%
                             </div>
-                        </div>
+                        </Link>
 
                         <div class="p-4">
-                            <h3 class="my-heading text-2xl">
-                                {{ template.name }}
-                            </h3>
+                            <Link
+                                :href="`/templates/${template.slug}`"
+                                class="group-hover:text-[var(--my-primary)]"
+                            >
+                                <h3 class="my-heading text-2xl">
+                                    {{ template.name }}
+                                </h3>
+                            </Link>
                             <div
                                 class="mt-3 flex items-end justify-between gap-4"
                             >

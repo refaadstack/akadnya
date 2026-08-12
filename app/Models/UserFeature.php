@@ -17,6 +17,9 @@ class UserFeature extends Model
         'feature',
         'order_item_id',
         'metadata',
+        'setup_status',
+        'setup_notes',
+        'setup_updated_at',
         'activated_at',
         'expires_at',
     ];
@@ -25,7 +28,17 @@ class UserFeature extends Model
         'metadata' => 'array',
         'activated_at' => 'datetime',
         'expires_at' => 'datetime',
+        'setup_updated_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (UserFeature $feature) {
+            if ($feature->feature === 'managed_setup' && $feature->setup_status === null) {
+                $feature->setup_status = 'pending';
+            }
+        });
+    }
 
     public function user(): BelongsTo
     {

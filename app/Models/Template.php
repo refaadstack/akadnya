@@ -106,8 +106,16 @@ class Template extends Model
             return $value;
         }
 
-        // Otherwise, treat as storage path and generate URL
-        return asset('storage/'.$value);
+        $url = asset('storage/'.$value);
+
+        // Cache-bust by appending the file mtime so updated thumbnails are never served from browser cache
+        $path = storage_path('app/public/'.$value);
+
+        if (is_file($path)) {
+            $url .= (str_contains($url, '?') ? '&' : '?').'v='.filemtime($path);
+        }
+
+        return $url;
     }
 
     /**

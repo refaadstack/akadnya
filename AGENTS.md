@@ -211,15 +211,25 @@ Vue components must have a single root element.
 
 # Project Workflow (MyAkad)
 
+## Domain Knowledge
+
+- This is a digital wedding-invitation platform: users buy templates, customize invitations in a dashboard, and publish them on a public subdomain (`/i/{subdomain}`). Admin panel is Filament at `/admin` (`app/Providers/Filament/AdminPanelProvider.php`), auth is Fortify.
+- Domain-specific docs live in `docs/` — read `docs/templates/QUICK_REFERENCE.md` (or `TEMPLATE_CREATION_GUIDE.md`) before touching the template system, `docs/admin/FILAMENT_ADMIN.md` for the Filament panel, and `docs/development/PAYMENT_TESTING.md` for Midtrans sandbox checkout flows.
+- The repo-root `myakad/` directory is a stale, gitignored leftover — ignore it; the real source is at the repo root (`app/`, `routes/`, `resources/`).
+- Dev DB is MySQL via a separate `mysql` container on the external `infra_default` network (see docker-compose.yml); `.env` has `DB_HOST=mysql`. Payments go to an external `payment-service-app` container, not in this repo.
+
 ## No Errors Before Finishing
 
 - Before considering work done, verify the code has no errors:
   1. Run the affected Pest tests in Docker (host has no PHP):
-     `docker run --rm --network container:myakad-app -v /data/projects/myakad:/app -w /app php:8.3-cli sh -c 'docker-php-ext-install pdo_mysql >/dev/null 2>&1 && php vendor/bin/pest <file> --compact'`
+     `docker run --rm --network container:myakad-app -v /data/projects/myakad:/app -w /app php:8.3-cli sh -c 'apt-get update -qq >/dev/null 2>&1; apt-get install -y -qq libzip-dev libicu-dev >/dev/null 2>&1; docker-php-ext-install pdo_mysql zip intl >/dev/null 2>&1; BREVO_API_KEY=test php vendor/bin/pest <file> --compact'`
+     - Tests run against the MySQL `myakad_test` database (phpunit.xml); `--network container:myakad-app` gives the container access to the app's MySQL service. Without it, DB connections fail.
+     - The full suite needs the `zip` (TemplateServiceTest) and `intl` (Filament pagination) extensions plus a dummy `BREVO_API_KEY` to avoid runtime exceptions; focused tests that don't touch those can use the shorter `docker-php-ext-install pdo_mysql` form.
   2. Run Pint on changed PHP files:
      `docker run --rm -v /data/projects/myakad:/app -w /app php:8.3-cli php vendor/bin/pint --dirty`
   3. Run Prettier on changed frontend files: `npx prettier --write resources/`
-  4. If ESLint crashes with a fast-glob/@nodelib error, node_modules is corrupted; run `npm ci` to fix it before linting.
+  4. Node/npm ARE available on the host — run `npm run types:check` (vue-tsc) and `npm run lint:check` for frontend static checks (no PHP needed).
+  5. If ESLint crashes with a fast-glob/@nodelib error, node_modules is corrupted; run `npm ci` to fix it before linting.
 
 ## Commit & Push
 
@@ -227,13 +237,14 @@ Vue components must have a single root element.
 
 ## Update Docker So Results Go Live
 
-- The `myakad-app` Docker container runs its own copy of the code (only `storage/app/public/templates` is bind-mounted). After commit/push (or after any code change), sync the container so it is live with the new work:
+- The `myakad-app` Docker container runs its own copy of the app code; only `./storage/app/public` and `./storage/logs` are bind-mounted (docker-compose.yml). After commit/push (or after any code change), sync the container so it is live with the new work:
   1. Copy every changed PHP/frontend/migration file into the container:
      `docker cp <file> myakad-app:/app/<same-path>`
-  2. Run pending migrations: `docker exec myakad-app php artisan migrate --force`
-  3. Clear compiled views/blade cache after template changes: `docker exec myakad-app php artisan view:clear`
-  4. For frontend changes: copy `resources/js` files into the container (the in-container Vite dev server hot-reloads them), or rebuild assets with `npm run build` and copy `public/build` if the container has no Vite dev server.
-  5. Verify the live result: `curl -s http://localhost:8081/i/redho-dan-yeli`
+  2. Templates live in `storage/app/public/templates/{slug}/` (already bind-mounted/shared). After adding/editing template files, register them in the DB: `docker exec myakad-app php artisan templates:sync`
+  3. Run pending migrations: `docker exec myakad-app php artisan migrate --force`
+  4. Clear compiled views/blade cache after template changes: `docker exec myakad-app php artisan view:clear`
+  5. For frontend changes: copy `resources/js` files into the container (the in-container Vite dev server hot-reloads them), or rebuild assets with `npm run build` and copy `public/build` if the container has no Vite dev server.
+  6. Verify the live result: `curl -s http://localhost:8081/i/redho-dan-yeli` (public invitation route is `/i/{subdomain}`)
 - Production (`myakad.refaadstack.com`) only updates after a redeploy — the Docker sync above applies to the dev environment.
 
 </laravel-boost-guidelines>

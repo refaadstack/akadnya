@@ -86,8 +86,8 @@ test('user without grant cannot activate via the web route', function () {
 
 test('templates page flags granted templates for the user', function () {
     $user = User::factory()->create();
-    $granted = Template::factory()->create(['slug' => 'granted-template', 'is_free' => false]);
-    $regular = Template::factory()->create(['slug' => 'regular-template', 'is_free' => false]);
+    $granted = Template::factory()->create(['name' => 'Aaa Granted', 'slug' => 'granted-template', 'is_free' => false]);
+    $regular = Template::factory()->create(['name' => 'Bbb Regular', 'slug' => 'regular-template', 'is_free' => false]);
 
     UserGrant::create([
         'user_id' => $user->id,

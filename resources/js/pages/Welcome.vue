@@ -115,6 +115,15 @@ const steps = [
     'Untuk undangan kedua, cukup tambah template baru lalu kelola semuanya di satu dashboard.',
 ];
 
+const marqueeItems = [
+    'Undangan Digital',
+    'Check-in QR Tamu',
+    'Galeri & Love Story',
+    'Musik Pembuka',
+    'Sekali Bayar, Seumur Hidup',
+    'Template Nusantara',
+];
+
 const revealObserver = ref<IntersectionObserver | null>(null);
 
 onMounted(() => {
@@ -241,6 +250,28 @@ onBeforeUnmount(() => {
                     </div>
                 </div>
             </section>
+
+            <div
+                class="my-marquee border-y border-[var(--my-primary)]/30 bg-[var(--my-primary)] py-4"
+                aria-hidden="true"
+            >
+                <div class="my-marquee-track">
+                    <div
+                        v-for="copy in [0, 1]"
+                        :key="copy"
+                        class="my-marquee-content"
+                    >
+                        <span
+                            v-for="item in marqueeItems"
+                            :key="`${copy}-${item}`"
+                            class="my-marquee-item"
+                        >
+                            {{ item }}
+                            <span class="my-marquee-star">✦</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
 
             <section id="templates" class="bg-white/45 py-24">
                 <div class="my-container">

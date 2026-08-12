@@ -265,6 +265,54 @@
         line-height: 1.7;
     }
 
+    .my-marquee {
+        overflow: hidden;
+    }
+
+    .my-marquee-track {
+        display: flex;
+        width: max-content;
+        animation: my-marquee-scroll 30s linear infinite;
+    }
+
+    .my-marquee-content {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    .my-marquee-item {
+        display: inline-flex;
+        align-items: center;
+        color: var(--my-background);
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.15rem;
+        font-style: italic;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        padding-inline: 1.5rem;
+        white-space: nowrap;
+    }
+
+    .my-marquee-star {
+        color: var(--my-secondary);
+        font-size: 0.8rem;
+        font-style: normal;
+        margin-left: 3rem;
+    }
+
+    @keyframes my-marquee-scroll {
+        to {
+            transform: translateX(-50%);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .my-marquee-track {
+            animation: none;
+        }
+    }
+
     .my-card {
         border: 1px solid rgb(216 209 200 / 0.76);
         border-radius: 0.75rem;

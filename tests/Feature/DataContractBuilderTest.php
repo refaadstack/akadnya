@@ -573,6 +573,7 @@ test('build includes guest book data when feature enabled and valid guest code',
     expect($contract['guest_qr_svg'])->toContain('<image');
     expect($contract['guest_qr_svg'])->toContain('/favicon.svg');
     expect($contract['guest_qr_svg'])->toContain('width="180" height="180"');
+    expect($contract['guest_qr_svg'])->toContain('<rect x="0" y="0" width="300" height="300" fill="#ffffff"/>');
 });
 
 test('build embeds the configured QR logo from site settings', function () {

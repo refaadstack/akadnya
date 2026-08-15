@@ -484,8 +484,8 @@ class DataContractBuilder
             $svg = str_replace('</svg>', $logoBlock.'</svg>', $svg);
 
             return str_replace(
-                'width="300" height="300"',
-                'width="180" height="180"',
+                '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="300" height="300"',
+                '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="180" height="180"',
                 $svg
             );
         } catch (\Throwable $e) {

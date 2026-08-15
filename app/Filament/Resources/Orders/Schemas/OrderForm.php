@@ -22,6 +22,15 @@ class OrderForm
                     ->options(['pending' => 'Pending', 'paid' => 'Paid', 'failed' => 'Failed', 'expired' => 'Expired'])
                     ->default('pending')
                     ->required(),
+                TextInput::make('subtotal_amount')
+                    ->numeric()
+                    ->default(0),
+                TextInput::make('payment_gateway_fee')
+                    ->numeric()
+                    ->default(0),
+                TextInput::make('tax_amount')
+                    ->numeric()
+                    ->default(0),
                 TextInput::make('total_amount')
                     ->required()
                     ->numeric(),

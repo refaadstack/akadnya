@@ -56,6 +56,20 @@ class OrderInfolist
                         Section::make('Payment Summary')
                             ->columnSpan(1)
                             ->schema([
+                                TextEntry::make('subtotal_amount')
+                                    ->label('Subtotal')
+                                    ->money('IDR'),
+
+                                TextEntry::make('payment_gateway_fee')
+                                    ->label('Payment Gateway Fee')
+                                    ->money('IDR')
+                                    ->placeholder('No fee'),
+
+                                TextEntry::make('tax_amount')
+                                    ->label('Tax (PPN)')
+                                    ->money('IDR')
+                                    ->placeholder('No tax'),
+
                                 TextEntry::make('total_amount')
                                     ->label('Total Amount')
                                     ->money('IDR')

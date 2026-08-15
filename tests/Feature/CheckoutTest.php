@@ -52,6 +52,9 @@ test('checkout page renders all cart items', function () {
         ->where('items.1.type', 'product')
         ->where('items.1.quantity', 2)
         ->where('totals.subtotal', 248000)
+        ->where('totals.payment_gateway_fee', 4960)
+        ->where('totals.tax_amount', 27825.6)
+        ->where('totals.grand_total', 280785.6)
     );
 });
 
@@ -84,7 +87,10 @@ test('store creates one order with all cart items and clears the cart', function
 
     $order = Order::where('user_id', $user->id)->first();
     expect($order)->not->toBeNull()
-        ->and($order->total_amount)->toBe('188000.00')
+        ->and($order->subtotal_amount)->toBe('188000.00')
+        ->and($order->payment_gateway_fee)->toBe('3760.00')
+        ->and($order->tax_amount)->toBe('21093.60')
+        ->and($order->total_amount)->toBe('212853.60')
         ->and($order->items)->toHaveCount(2)
         ->and($order->items->firstWhere('item_type', 'template')->item_id)->toBe($template->id)
         ->and($order->items->firstWhere('item_type', 'product')->quantity)->toBe(2)

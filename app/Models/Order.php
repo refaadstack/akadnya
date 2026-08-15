@@ -18,12 +18,18 @@ class Order extends Model
         'order_number',
         'status',
         'total_amount',
+        'subtotal_amount',
+        'payment_gateway_fee',
+        'tax_amount',
         'metadata',
         'paid_at',
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'subtotal_amount' => 'decimal:2',
+        'payment_gateway_fee' => 'decimal:2',
+        'tax_amount' => 'decimal:2',
         'metadata' => 'array',
         'paid_at' => 'datetime',
     ];

@@ -27,6 +27,24 @@ class PaymentService
             ];
         })->toArray();
 
+        if ((float) $order->payment_gateway_fee > 0) {
+            $items[] = [
+                'id' => 'fee-payment-gateway',
+                'name' => 'Biaya Payment Gateway',
+                'price' => (int) $order->payment_gateway_fee,
+                'quantity' => 1,
+            ];
+        }
+
+        if ((float) $order->tax_amount > 0) {
+            $items[] = [
+                'id' => 'fee-tax',
+                'name' => 'Pajak (PPN)',
+                'price' => (int) $order->tax_amount,
+                'quantity' => 1,
+            ];
+        }
+
         $payload = [
             'product_order_id' => $order->order_number,
             'amount' => (int) $order->total_amount,

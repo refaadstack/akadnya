@@ -26,6 +26,9 @@ interface Totals {
     subtotal: number;
     original_subtotal?: number | null;
     savings: number;
+    payment_gateway_fee: number;
+    tax_amount: number;
+    grand_total: number;
 }
 
 const props = defineProps<{
@@ -45,7 +48,7 @@ const hasDiscount = (
 ): item is CheckoutItem & { original_price: number } =>
     item.original_price != null && item.original_price > item.price;
 
-const total = computed(() => Number(props.totals.subtotal));
+const total = computed(() => Number(props.totals.grand_total));
 
 const hasTemplate = computed(() =>
     props.items.some((item) => item.type === 'template'),
@@ -435,6 +438,38 @@ const submitOrder = async () => {
                                             -Rp
                                             {{
                                                 totals.savings.toLocaleString(
+                                                    'id-ID',
+                                                )
+                                            }}
+                                        </span>
+                                    </div>
+                                    <div
+                                        v-if="totals.payment_gateway_fee > 0"
+                                        class="flex justify-between gap-3 text-sm"
+                                    >
+                                        <span class="text-[var(--my-muted)]"
+                                            >Biaya Payment Gateway</span
+                                        >
+                                        <span class="font-medium">
+                                            Rp
+                                            {{
+                                                totals.payment_gateway_fee.toLocaleString(
+                                                    'id-ID',
+                                                )
+                                            }}
+                                        </span>
+                                    </div>
+                                    <div
+                                        v-if="totals.tax_amount > 0"
+                                        class="flex justify-between gap-3 text-sm"
+                                    >
+                                        <span class="text-[var(--my-muted)]"
+                                            >Pajak (PPN)</span
+                                        >
+                                        <span class="font-medium">
+                                            Rp
+                                            {{
+                                                totals.tax_amount.toLocaleString(
                                                     'id-ID',
                                                 )
                                             }}

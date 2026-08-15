@@ -81,11 +81,28 @@ class OrderService
                 ]);
             }
 
-            // Update total amount
-            $order->update(['total_amount' => $totalAmount]);
+            // Update total amount with administrative fees
+            $order->update($this->amounts($totalAmount));
 
             return $order->fresh(['items']);
         });
+    }
+
+    /**
+     * Build the amount columns (subtotal + admin fees) for an order.
+     *
+     * @return array{subtotal_amount: string, payment_gateway_fee: string, tax_amount: string, total_amount: string}
+     */
+    protected function amounts(float $subtotal): array
+    {
+        $fees = app(FeeCalculator::class)->calculate($subtotal);
+
+        return [
+            'subtotal_amount' => $fees['subtotal'],
+            'payment_gateway_fee' => $fees['payment_gateway_fee'],
+            'tax_amount' => $fees['tax_amount'],
+            'total_amount' => $fees['total_amount'],
+        ];
     }
 
     /**
@@ -153,7 +170,7 @@ class OrderService
                 ]);
             }
 
-            $order->update(['total_amount' => $totalAmount]);
+            $order->update($this->amounts($totalAmount));
 
             return $order->fresh(['items']);
         });

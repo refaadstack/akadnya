@@ -129,6 +129,8 @@ class CartService
             ? (float) $item['original_price'] * $item['quantity']
             : 0.0);
 
+        $fees = app(FeeCalculator::class)->calculate($subtotal);
+
         return [
             'items' => $items,
             'totals' => [
@@ -136,6 +138,9 @@ class CartService
                 'subtotal' => $subtotal,
                 'original_subtotal' => $originalSubtotal > $subtotal ? $originalSubtotal : null,
                 'savings' => $originalSubtotal > $subtotal ? $originalSubtotal - $subtotal : 0,
+                'payment_gateway_fee' => $fees['payment_gateway_fee'],
+                'tax_amount' => $fees['tax_amount'],
+                'grand_total' => $fees['total_amount'],
             ],
         ];
     }

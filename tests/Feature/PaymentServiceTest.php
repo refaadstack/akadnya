@@ -6,6 +6,7 @@ use App\Models\Template;
 use App\Models\User;
 use App\Services\OrderService;
 use App\Services\PaymentService;
+use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
@@ -32,6 +33,32 @@ beforeEach(function () {
         'status' => 'pending',
         'created_at' => now(),
     ]);
+});
+
+test('createTransaction charges the fee-inclusive total and sends fee items', function () {
+    config()->set('services.payment_service.base_url', 'https://payment.example.com');
+    config()->set('services.payment_service.product_key', 'test-key');
+
+    Http::fake([
+        '*' => Http::response([
+            'transaction_number' => 'txn-67890',
+            'payment_url' => 'https://pay.example.com/pay/abc',
+        ]),
+    ]);
+
+    $payment = app(PaymentService::class)->createTransaction($this->order);
+
+    expect($payment->provider_transaction_id)->toBe('txn-67890')
+        ->and($payment->amount)->toBe($this->order->total_amount);
+
+    Http::assertSent(function ($request) {
+        $payload = $request->data();
+        $names = collect($payload['items'])->pluck('name');
+
+        return $payload['amount'] === (int) $this->order->total_amount
+            && $names->contains('Biaya Payment Gateway')
+            && $names->contains('Pajak (PPN)');
+    });
 });
 
 test('handlePaymentServiceCallback marks order and payment as paid', function () {

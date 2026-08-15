@@ -2,6 +2,7 @@
 
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\SiteSetting;
 use App\Models\Template;
 use App\Models\User;
 use App\Services\OrderService;
@@ -57,6 +58,36 @@ test('createTransaction charges the fee-inclusive total and sends fee items', fu
 
         return $payload['amount'] === (int) $this->order->total_amount
             && $names->contains('Biaya Payment Gateway')
+            && ! $names->contains('Pajak (PPN)');
+    });
+});
+
+test('createTransaction includes a tax item when tax is enabled', function () {
+    config()->set('services.payment_service.base_url', 'https://payment.example.com');
+    config()->set('services.payment_service.product_key', 'test-key');
+
+    SiteSetting::set('tax_enabled', true);
+
+    $order = app(OrderService::class)->createOrder($this->user, $this->template, $this->basePackage);
+
+    expect($order->tax_amount)->toBe('16830.00')
+        ->and($order->total_amount)->toBe('169830.00');
+
+    Http::fake([
+        '*' => Http::response([
+            'transaction_number' => 'txn-67891',
+            'payment_url' => 'https://pay.example.com/pay/def',
+        ]),
+    ]);
+
+    $payment = app(PaymentService::class)->createTransaction($order);
+
+    expect($payment->amount)->toBe($order->total_amount);
+
+    Http::assertSent(function ($request) {
+        $names = collect($request->data()['items'])->pluck('name');
+
+        return $names->contains('Biaya Payment Gateway')
             && $names->contains('Pajak (PPN)');
     });
 });

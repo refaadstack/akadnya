@@ -31,11 +31,14 @@ return [
     |--------------------------------------------------------------------------
     |
     | Value-added tax applied to the taxable base, which is the subtotal
-    | plus the payment gateway fee.
+    | plus the payment gateway fee. Disabled by default because the
+    | business is below the PKP threshold; the admin can enable and
+    | configure it from the Filament panel (Pengaturan > Biaya).
     |
     */
 
     'tax' => [
+        'enabled' => env('TAX_ENABLED', false),
         'rate' => env('TAX_RATE_PERCENTAGE', 11.0),
     ],
 

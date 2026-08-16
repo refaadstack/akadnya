@@ -21,6 +21,7 @@ use App\Http\Controllers\PublicInvitationController;
 use App\Http\Controllers\TemplateAssetController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\TemplatePreviewController;
+use App\Http\Controllers\TransactionHistoryController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -97,6 +98,7 @@ Route::get('/payment/finish', [PaymentFinishController::class, '__invoke'])->nam
 // Dashboard routes (requires authentication)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard/transactions', [TransactionHistoryController::class, 'index'])->name('dashboard.transactions');
     Route::post('dashboard/invitations/{invitation}/select', [DashboardController::class, 'selectInvitation'])->name('dashboard.invitations.select');
 
     // Admin panel is now handled by Filament at /admin

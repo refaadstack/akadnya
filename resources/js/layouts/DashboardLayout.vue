@@ -11,6 +11,7 @@ import {
     LogOut,
     Palette,
     PenLine,
+    ReceiptText,
     Settings,
     Users,
 } from 'lucide-vue-next';
@@ -83,6 +84,11 @@ const navItems = computed<NavItem[]>(() => {
             href: '/dashboard/rsvp',
             icon: CalendarCheck,
             requiresInvitation: true,
+        },
+        {
+            label: 'Transaksi',
+            href: '/dashboard/transactions',
+            icon: ReceiptText,
         },
         {
             label: 'Pengaturan',

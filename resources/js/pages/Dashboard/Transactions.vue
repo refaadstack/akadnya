@@ -58,12 +58,14 @@ const formatDate = (dateString: string | null) => {
     });
 };
 
-const getOrderStatusBadge = (status: string) => {
+const getStatusBadge = (order: Order) => {
+    const status = order.payment?.status ?? order.status;
+
     switch (status) {
         case 'paid':
             return {
                 class: 'bg-green-100 text-green-800 border-green-200',
-                label: 'Lunas',
+                label: 'Settlement',
             };
         case 'pending':
             return {
@@ -90,38 +92,6 @@ const getOrderStatusBadge = (status: string) => {
                 class: 'bg-gray-100 text-gray-700 border-gray-200',
                 label: status,
             };
-    }
-};
-
-const getPaymentStatusBadge = (status: string | null) => {
-    switch (status) {
-        case 'paid':
-            return {
-                class: 'bg-green-100 text-green-800 border-green-200',
-                label: 'Settlement',
-            };
-        case 'pending':
-            return {
-                class: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                label: 'Pending',
-            };
-        case 'failed':
-            return {
-                class: 'bg-red-100 text-red-800 border-red-200',
-                label: 'Gagal',
-            };
-        case 'refunded':
-            return {
-                class: 'bg-gray-100 text-gray-700 border-gray-200',
-                label: 'Refund',
-            };
-        case 'expired':
-            return {
-                class: 'bg-gray-100 text-gray-700 border-gray-200',
-                label: 'Kedaluwarsa',
-            };
-        default:
-            return null;
     }
 };
 
@@ -181,34 +151,9 @@ const formatPaymentMethod = (method: string | null) => {
                                     </p>
                                     <span
                                         class="rounded-full border px-2.5 py-0.5 text-xs font-semibold"
-                                        :class="
-                                            getOrderStatusBadge(order.status)
-                                                .class
-                                        "
+                                        :class="getStatusBadge(order).class"
                                     >
-                                        {{
-                                            getOrderStatusBadge(order.status)
-                                                .label
-                                        }}
-                                    </span>
-                                    <span
-                                        v-if="
-                                            getPaymentStatusBadge(
-                                                order.payment?.status ?? null,
-                                            )
-                                        "
-                                        class="rounded-full border px-2.5 py-0.5 text-xs font-semibold"
-                                        :class="
-                                            getPaymentStatusBadge(
-                                                order.payment?.status ?? null,
-                                            )!.class
-                                        "
-                                    >
-                                        {{
-                                            getPaymentStatusBadge(
-                                                order.payment?.status ?? null,
-                                            )!.label
-                                        }}
+                                        {{ getStatusBadge(order).label }}
                                     </span>
                                 </div>
                                 <p class="mt-1 text-sm text-gray-500">

@@ -58,6 +58,17 @@ const mobileMenuOpen = ref(false);
                         Cara Pesan
                     </Link>
                     <Link
+                        href="/tutorial"
+                        class="text-sm font-semibold transition"
+                        :class="
+                            currentPage === 'tutorial'
+                                ? 'border-b-2 border-[var(--my-primary)] text-[var(--my-primary)]'
+                                : 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                        "
+                    >
+                        Tutorial
+                    </Link>
+                    <Link
                         href="/faq"
                         class="text-sm font-semibold transition"
                         :class="
@@ -149,6 +160,13 @@ const mobileMenuOpen = ref(false);
                     @click="mobileMenuOpen = false"
                 >
                     Cara Pesan
+                </Link>
+                <Link
+                    href="/tutorial"
+                    class="py-2 font-semibold text-[var(--my-neutral)]"
+                    @click="mobileMenuOpen = false"
+                >
+                    Tutorial
                 </Link>
                 <Link
                     href="/faq"

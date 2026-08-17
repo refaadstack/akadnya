@@ -22,12 +22,14 @@ use App\Http\Controllers\TemplateAssetController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\TemplatePreviewController;
 use App\Http\Controllers\TransactionHistoryController;
+use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
+Route::get('/tutorial', [TutorialController::class, 'index'])->name('tutorial');
 Route::get('/terms', [LegalController::class, 'terms'])->name('terms');
 Route::get('/privacy', [LegalController::class, 'privacy'])->name('privacy');
 

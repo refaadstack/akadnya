@@ -66,6 +66,13 @@ const support = usePage().props.support;
                     <ul class="grid gap-2 text-sm text-[var(--my-muted)]">
                         <li>
                             <Link
+                                href="/tutorial"
+                                class="hover:text-[var(--my-primary)]"
+                                >Tutorial</Link
+                            >
+                        </li>
+                        <li>
+                            <Link
                                 href="/faq"
                                 class="hover:text-[var(--my-primary)]"
                                 >FAQ</Link

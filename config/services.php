@@ -29,6 +29,21 @@ return [
         'from_name' => env('MAIL_FROM_NAME', 'MyAkad'),
     ],
 
+    'cloudmail' => [
+        'enabled' => env('CLOUDMAIL_ENABLED', false),
+        'base_url' => env('CLOUDMAIL_BASE_URL', 'https://mail.refaadstack.com/api'),
+        'email' => env('CLOUDMAIL_EMAIL'),
+        'password' => env('CLOUDMAIL_PASSWORD'),
+        'timeout' => env('CLOUDMAIL_TIMEOUT', 20),
+        'cache_ttl' => env('CLOUDMAIL_CACHE_TTL', 3600),
+        'senders' => [
+            'default' => env('CLOUDMAIL_SENDER_DEFAULT'),
+            'registration' => env('CLOUDMAIL_SENDER_REGISTRATION'),
+            'payment' => env('CLOUDMAIL_SENDER_PAYMENT'),
+            'notif' => env('CLOUDMAIL_SENDER_NOTIF'),
+        ],
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),

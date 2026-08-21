@@ -4,6 +4,8 @@ namespace App\Notifications;
 
 use App\Models\Order;
 use App\Notifications\Channels\BrevoMailChannel;
+use App\Notifications\Channels\CloudMailMailChannel;
+use App\Services\CloudMailMailer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -20,13 +22,31 @@ class PaymentSuccessfulNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return [BrevoMailChannel::class];
+        return app(CloudMailMailer::class)->enabled()
+            ? [CloudMailMailChannel::class]
+            : [BrevoMailChannel::class];
     }
 
     /**
      * @return array{subject: string, htmlContent: string, textContent: string}
      */
     public function toBrevoMail(object $notifiable): array
+    {
+        return $this->payload($notifiable);
+    }
+
+    /**
+     * @return array{sender: string, subject: string, htmlContent: string, textContent: string}
+     */
+    public function toCloudMailMail(object $notifiable): array
+    {
+        return ['sender' => 'payment'] + $this->payload($notifiable);
+    }
+
+    /**
+     * @return array{subject: string, htmlContent: string, textContent: string}
+     */
+    protected function payload(object $notifiable): array
     {
         $order = $this->order->loadMissing('items');
         $amount = 'Rp '.number_format((float) $order->total_amount, 0, ',', '.');

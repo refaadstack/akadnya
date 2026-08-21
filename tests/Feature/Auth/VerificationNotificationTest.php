@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use App\Notifications\VerifyEmailViaBrevo;
+use App\Notifications\VerifyEmailNotification;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Fortify\Features;
 
@@ -18,7 +18,7 @@ test('sends verification notification', function () {
         ->post(route('verification.send'))
         ->assertRedirect('/');
 
-    Notification::assertSentTo($user, VerifyEmailViaBrevo::class);
+    Notification::assertSentTo($user, VerifyEmailNotification::class);
 });
 
 test('does not send verification notification if email is verified', function () {

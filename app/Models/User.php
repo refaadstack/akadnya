@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Notifications\VerifyEmailViaBrevo;
+use App\Notifications\VerifyEmailNotification;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -150,7 +150,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new VerifyEmailViaBrevo);
+        $this->notify(new VerifyEmailNotification);
     }
 
     // Filament authorization

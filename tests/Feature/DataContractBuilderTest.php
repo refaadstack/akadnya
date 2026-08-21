@@ -571,7 +571,8 @@ test('build includes guest book data when feature enabled and valid guest code',
     expect($contract['guest']['unique_code'])->toBe($guest->unique_code);
     expect($contract['guest_qr_svg'])->toBeString()->toContain('<svg');
     expect($contract['guest_qr_svg'])->toContain('<image');
-    expect($contract['guest_qr_svg'])->toContain('/favicon.svg');
+    expect($contract['guest_qr_svg'])->toContain('data:image/svg+xml;base64,');
+    expect($contract['guest_qr_svg'])->toContain('xmlns:xlink="http://www.w3.org/1999/xlink"');
     expect($contract['guest_qr_svg'])->toContain('width="180" height="180"');
     expect($contract['guest_qr_svg'])->toContain('<rect x="0" y="0" width="300" height="300" fill="#ffffff"/>');
 });

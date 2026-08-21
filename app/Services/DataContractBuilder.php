@@ -475,17 +475,20 @@ class DataContractBuilder
             );
 
             // Embed the brand logo in the center of the QR code.
-            $logoUrl = SiteSetting::get('qr_logo_url') ?? url('/favicon.svg');
+            // The logo is inlined as a data URI when it resolves to a local file so the
+            // QR stays fully self-contained (mobile browsers/proxies may block or skip
+            // external sub-resources inside inline SVG).
+            $logoHref = $this->resolveGuestQrLogoDataUri() ?? SiteSetting::get('qr_logo_url') ?? url('/favicon.svg');
             $logoBlock = '<g>'
                 .'<rect x="117" y="117" width="66" height="66" rx="12" fill="#ffffff"/>'
-                .sprintf('<image x="122" y="122" width="56" height="56" href="%s" xlink:href="%s" preserveAspectRatio="xMidYMid meet"/>', $logoUrl, $logoUrl)
+                .sprintf('<image x="122" y="122" width="56" height="56" href="%s" xlink:href="%s" preserveAspectRatio="xMidYMid meet"/>', e($logoHref), e($logoHref))
                 .'</g>';
 
             $svg = str_replace('</svg>', $logoBlock.'</svg>', $svg);
 
             return str_replace(
                 '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="300" height="300"',
-                '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="180" height="180"',
+                '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="180" height="180"',
                 $svg
             );
         } catch (\Throwable $e) {
@@ -493,6 +496,45 @@ class DataContractBuilder
 
             return null;
         }
+    }
+
+    /**
+     * Inline the guest QR brand logo as a base64 data URI when it points to a local
+     * public file. Returns null for remote/missing files so callers fall back to URLs.
+     */
+    protected function resolveGuestQrLogoDataUri(): ?string
+    {
+        $logoUrl = SiteSetting::get('qr_logo_url');
+
+        if (! is_string($logoUrl) || $logoUrl === '') {
+            $logoUrl = '/favicon.svg';
+        }
+
+        $path = (string) (parse_url($logoUrl, PHP_URL_PATH) ?: '');
+
+        if ($path === '' || str_contains($path, '..')) {
+            return null;
+        }
+
+        $file = public_path(ltrim($path, '/'));
+
+        if (! is_file($file) || filesize($file) > 512 * 1024) {
+            return null;
+        }
+
+        $contents = file_get_contents($file);
+
+        if ($contents === false || $contents === '') {
+            return null;
+        }
+
+        $mime = mime_content_type($file) ?: 'application/octet-stream';
+
+        if (! str_starts_with((string) $mime, 'image/')) {
+            return null;
+        }
+
+        return sprintf('data:%s;base64,%s', $mime, base64_encode($contents));
     }
 
     /**

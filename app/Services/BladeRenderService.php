@@ -67,6 +67,7 @@ class BladeRenderService
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
     <meta name="csrf-token" content="{$csrfToken}">
     <title>{$data['bride_name']} & {$data['groom_name']}</title>
     {$assetTags}
@@ -127,6 +128,7 @@ HTML;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
     <title>Preview: {$template->name}</title>
     {$assetTags}
 </head>

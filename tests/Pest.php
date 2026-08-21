@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /*
@@ -47,4 +48,47 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+function setCloudMailConfig(): void
+{
+    config()->set('services.cloudmail', [
+        'enabled' => true,
+        'base_url' => 'https://mail.example.com/api',
+        'email' => 'service@myakad.id',
+        'password' => 'secret',
+        'timeout' => 5,
+        'cache_ttl' => 3600,
+        'senders' => [
+            'default' => 'no-reply@myakad.id',
+            'registration' => 'register@myakad.id',
+            'payment' => 'payment@myakad.id',
+            'notif' => null,
+        ],
+    ]);
+}
+
+function fakeCloudMailApi(): void
+{
+    Http::fake([
+        '*/login' => Http::response([
+            'code' => 200,
+            'message' => 'success',
+            'data' => ['token' => 'jwt-test-token'],
+        ]),
+        '*/account/list*' => Http::response([
+            'code' => 200,
+            'message' => 'success',
+            'data' => ['list' => [
+                ['accountId' => 11, 'email' => 'no-reply@myakad.id', 'name' => 'MyAkad'],
+                ['accountId' => 22, 'email' => 'register@myakad.id', 'name' => 'Registration'],
+                ['accountId' => 33, 'email' => 'payment@myakad.id', 'name' => 'Payment'],
+            ]],
+        ]),
+        '*/email/send' => Http::response([
+            'code' => 200,
+            'message' => 'success',
+            'data' => ['emailId' => 99],
+        ]),
+    ]);
 }

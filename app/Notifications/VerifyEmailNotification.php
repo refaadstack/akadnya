@@ -3,28 +3,54 @@
 namespace App\Notifications;
 
 use App\Notifications\Channels\BrevoMailChannel;
+use App\Notifications\Channels\CloudMailMailChannel;
+use App\Services\CloudMailMailer;
 use Illuminate\Auth\Notifications\VerifyEmail;
 
-class VerifyEmailViaBrevo extends VerifyEmail
+class VerifyEmailNotification extends VerifyEmail
 {
     /**
      * Get the notification delivery channels.
      *
-     * @param mixed $notifiable
-     * @return array<int, string>
+     * @param  mixed  $notifiable
+     * @return array<int, class-string>
      */
     public function via($notifiable): array
     {
-        return [BrevoMailChannel::class];
+        return app(CloudMailMailer::class)->enabled()
+            ? [CloudMailMailChannel::class]
+            : [BrevoMailChannel::class];
     }
 
     /**
      * Build the payload for Brevo.
      *
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array{subject:string,htmlContent:string,textContent:string}
      */
     public function toBrevoMail($notifiable): array
+    {
+        return $this->payload($notifiable);
+    }
+
+    /**
+     * Build the payload for CloudMail.
+     *
+     * @param  mixed  $notifiable
+     * @return array{sender:string,subject:string,htmlContent:string,textContent:string}
+     */
+    public function toCloudMailMail($notifiable): array
+    {
+        return ['sender' => 'registration'] + $this->payload($notifiable);
+    }
+
+    /**
+     * Build the shared message payload.
+     *
+     * @param  mixed  $notifiable
+     * @return array{subject:string,htmlContent:string,textContent:string}
+     */
+    protected function payload($notifiable): array
     {
         $url = $this->verificationUrl($notifiable);
 
@@ -59,7 +85,7 @@ class VerifyEmailViaBrevo extends VerifyEmail
                 </p>
                 HTML,
 
-                            'textContent' => <<<TEXT
+            'textContent' => <<<TEXT
                 Halo {$notifiable->name},
 
                 Terima kasih sudah membuat akun MyAkad.

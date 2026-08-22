@@ -101,6 +101,7 @@ class PublicInvitationController extends Controller
 
         $wishes = $invitation->rsvps()
             ->whereNotNull('message')
+            ->where('is_hidden', false)
             ->latest()
             ->paginate(20);
 
@@ -124,6 +125,7 @@ class PublicInvitationController extends Controller
 
         $wishes = $invitation->rsvps()
             ->whereNotNull('message')
+            ->where('is_hidden', false)
             ->latest()
             ->paginate(20);
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { Head, Link, router } from '@inertiajs/vue3';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
 
 interface Rsvp {
     id: number;
@@ -10,6 +10,7 @@ interface Rsvp {
     attendance: string;
     guests_count: number;
     message: string | null;
+    is_hidden: boolean;
     created_at: string;
     guest?: {
         name: string;
@@ -37,6 +38,7 @@ const props = defineProps<{
 
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
+
     return date.toLocaleDateString('id-ID', {
         year: 'numeric',
         month: 'long',
@@ -53,10 +55,22 @@ const getAttendanceBadge = (attendance: string) => {
             label: 'Hadir',
         };
     }
+
     return {
         class: 'bg-red-100 text-red-800 border-red-200',
         label: 'Tidak Hadir',
     };
+};
+
+const toggleWishVisibility = (rsvp: Rsvp) => {
+    const hide = !rsvp.is_hidden;
+    const message = hide
+        ? `Sembunyikan ucapan dari ${rsvp.name} dari undangan publik?`
+        : `Tampilkan kembali ucapan dari ${rsvp.name} di undangan?`;
+
+    if (confirm(message)) {
+        router.post(`/dashboard/rsvp/${rsvp.id}/${hide ? 'hide' : 'show'}`);
+    }
 };
 </script>
 
@@ -326,11 +340,49 @@ const getAttendanceBadge = (attendance: string) => {
 
                                     <div
                                         v-if="rsvp.message"
-                                        class="mt-3 rounded-lg bg-gray-50 p-3"
+                                        class="mt-3 rounded-lg p-3 transition"
+                                        :class="
+                                            rsvp.is_hidden
+                                                ? 'bg-yellow-50 ring-1 ring-yellow-200'
+                                                : 'bg-gray-50'
+                                        "
                                     >
-                                        <p class="text-sm text-gray-700 italic">
+                                        <p
+                                            class="text-sm text-gray-700 italic"
+                                            :class="{
+                                                'opacity-60': rsvp.is_hidden,
+                                            }"
+                                        >
                                             "{{ rsvp.message }}"
                                         </p>
+                                        <div
+                                            class="mt-2 flex items-center gap-3"
+                                        >
+                                            <span
+                                                v-if="rsvp.is_hidden"
+                                                class="rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800"
+                                            >
+                                                Disembunyikan dari undangan
+                                            </span>
+                                            <button
+                                                type="button"
+                                                class="text-xs font-medium hover:underline"
+                                                :class="
+                                                    rsvp.is_hidden
+                                                        ? 'text-green-600 hover:text-green-700'
+                                                        : 'text-red-600 hover:text-red-700'
+                                                "
+                                                @click="
+                                                    toggleWishVisibility(rsvp)
+                                                "
+                                            >
+                                                {{
+                                                    rsvp.is_hidden
+                                                        ? 'Tampilkan di undangan'
+                                                        : 'Sembunyikan dari undangan'
+                                                }}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

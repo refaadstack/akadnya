@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Rsvp;
 use App\Services\CustomerInvitationService;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -39,5 +40,40 @@ class RsvpController extends Controller
             'rsvps' => $rsvps,
             'stats' => $stats,
         ]);
+    }
+
+    /**
+     * Hide a wish message from the public invitation.
+     */
+    public function hide(Request $request, Rsvp $rsvp): RedirectResponse
+    {
+        $this->authorizeOwner($request, $rsvp);
+
+        $rsvp->update(['is_hidden' => true]);
+
+        return back()->with('success', 'Ucapan disembunyikan dari undangan');
+    }
+
+    /**
+     * Show a previously hidden wish message on the public invitation.
+     */
+    public function show(Request $request, Rsvp $rsvp): RedirectResponse
+    {
+        $this->authorizeOwner($request, $rsvp);
+
+        $rsvp->update(['is_hidden' => false]);
+
+        return back()->with('success', 'Ucapan ditampilkan kembali di undangan');
+    }
+
+    private function authorizeOwner(Request $request, Rsvp $rsvp): void
+    {
+        // The Invitation global scope hides other users' invitations, so a
+        // missing relation means the RSVP does not belong to this user.
+        $invitation = $rsvp->invitation;
+
+        if (! $invitation || $invitation->user_id !== $request->user()->id) {
+            abort(403);
+        }
     }
 }

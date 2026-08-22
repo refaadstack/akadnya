@@ -175,8 +175,10 @@ test('renderSection emits no undefined variable warnings when payment data is mi
     ];
 
     $files = [
-        'red-cream' => ['full.html', 'class="rg-qris"'],
-        '01kz1heyw9mwm46c7xgqvegrqh' => ['full.html', 'class="rg-qris"'],
+        // The demo guest-book QR block also uses class="rg-qris", so match
+        // the payment QRIS <img> tag specifically.
+        'red-cream' => ['full.html', '<img class="rg-qris"'],
+        '01kz1heyw9mwm46c7xgqvegrqh' => ['full.html', '<img class="rg-qris"'],
         'melayu-jambi' => ['gift.html', 'jambi-gift-qris'],
         'sunda-merbak' => ['gift.html', 'sunda-gift-qris'],
         'chinese-imperial-luxe' => ['gift.html', 'ci-qris'],

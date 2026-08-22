@@ -55,6 +55,7 @@ class DataContractBuilder
 
         $wishes = $invitation->rsvps()
             ->whereNotNull('message')
+            ->where('is_hidden', false)
             ->latest()
             ->take(10)
             ->get()

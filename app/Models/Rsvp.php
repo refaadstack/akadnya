@@ -17,11 +17,13 @@ class Rsvp extends Model
         'attendance',
         'pax_count',
         'message',
+        'is_hidden',
         'check_in_at',
     ];
 
     protected $casts = [
         'pax_count' => 'integer',
+        'is_hidden' => 'boolean',
         'check_in_at' => 'datetime',
     ];
 

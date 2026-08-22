@@ -31,8 +31,8 @@ class RsvpController extends Controller
 
         $stats = [
             'total' => Rsvp::where('invitation_id', $invitation->id)->count(),
-            'hadir' => Rsvp::where('invitation_id', $invitation->id)->where('attendance', 'hadir')->count(),
-            'tidak_hadir' => Rsvp::where('invitation_id', $invitation->id)->where('attendance', 'tidak_hadir')->count(),
+            'hadir' => Rsvp::where('invitation_id', $invitation->id)->where('attendance', 'yes')->count(),
+            'tidak_hadir' => Rsvp::where('invitation_id', $invitation->id)->where('attendance', 'no')->count(),
         ];
 
         return Inertia::render('Dashboard/Rsvp/Index', [

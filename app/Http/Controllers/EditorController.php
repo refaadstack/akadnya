@@ -58,6 +58,7 @@ class EditorController extends Controller
                 'reception_venue' => $invitation->content->reception_venue,
                 'reception_maps_url' => $invitation->content->reception_maps_url,
                 'show_reception' => $invitation->content->show_reception ?? true,
+                'show_wishes' => $invitation->content->show_wishes ?? true,
                 'love_story' => $invitation->content->love_story,
                 'special_message' => $invitation->content->special_message,
                 'cover_photo_url' => $invitation->content->cover_photo_url,

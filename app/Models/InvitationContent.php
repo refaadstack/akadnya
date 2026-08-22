@@ -31,6 +31,7 @@ class InvitationContent extends Model
         'reception_venue',
         'reception_maps_url',
         'show_reception',
+        'show_wishes',
         'cover_photo_url',
         'video_url',
         'background_url',
@@ -53,6 +54,7 @@ class InvitationContent extends Model
         'akad_datetime' => 'datetime',
         'reception_datetime' => 'datetime',
         'show_reception' => 'boolean',
+        'show_wishes' => 'boolean',
         'gallery_photos' => 'array',
     ];
 

@@ -74,6 +74,11 @@ class PublicInvitationController extends Controller
             'message' => 'nullable|string|max:500',
         ]);
 
+        // Wishes are hidden by the couple: drop any message content entirely.
+        if (! ($invitation->content?->show_wishes ?? true)) {
+            $validated['message'] = null;
+        }
+
         // Create RSVP directly without guest record
         $invitation->rsvps()->create([
             'name' => $validated['name'],

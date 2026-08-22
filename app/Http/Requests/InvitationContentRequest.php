@@ -42,6 +42,7 @@ class InvitationContentRequest extends FormRequest
             'reception_venue' => 'nullable|string|max:500',
             'reception_maps_url' => 'nullable|url|max:500',
             'show_reception' => 'boolean',
+            'show_wishes' => 'boolean',
 
             // Konten
             'love_story' => 'nullable|string',

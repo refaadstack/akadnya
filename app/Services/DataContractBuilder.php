@@ -88,6 +88,7 @@ class DataContractBuilder
             'groom_photo_url' => $content?->groom_photo_url ?? null,
             'groom_initial' => $groomInitial,
             'cover_name_display' => $content?->cover_name_display ?? 'full',
+            'show_wishes' => $content?->show_wishes ?? true,
             'cover_names' => $this->coverNames(
                 $content?->cover_name_display ?? 'full',
                 $content?->bride_name,
@@ -328,6 +329,7 @@ class DataContractBuilder
             'groom_photo_url' => null,
             'groom_initial' => null,
             'cover_name_display' => 'full',
+            'show_wishes' => true,
             'cover_names' => null,
             'couple_photo_url' => null,
             'couple_initials' => null,

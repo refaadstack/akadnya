@@ -32,11 +32,14 @@ interface InvitationContent {
     reception_venue: string | null;
     reception_maps_url: string | null;
     show_reception: boolean;
+    show_wishes: boolean;
     love_story: string | null;
     special_message: string | null;
     cover_photo_url: string | null;
     video_url: string | null;
+    background_url: string | null;
     music_url: string | null;
+    music_title: string | null;
     gallery_photos: GalleryPhoto[] | null;
     bank_name: string | null;
     account_number: string | null;
@@ -45,6 +48,7 @@ interface InvitationContent {
     gopay_number: string | null;
     ovo_number: string | null;
     dana_number: string | null;
+    gift_address: string | null;
 }
 
 const props = defineProps<{
@@ -79,6 +83,7 @@ const form = useForm({
     reception_venue: props.content?.reception_venue || '',
     reception_maps_url: props.content?.reception_maps_url || '',
     show_reception: props.content?.show_reception ?? true,
+    show_wishes: props.content?.show_wishes ?? true,
     love_story: props.content?.love_story || '',
     special_message: props.content?.special_message || '',
     cover_photo_url: props.content?.cover_photo_url || '',
@@ -1496,6 +1501,32 @@ const submit = () => {
                                 ></textarea>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Ucapan & Doa -->
+                    <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
+                        <h2 class="mb-4 text-xl font-bold text-gray-900">
+                            Ucapan &amp; Doa
+                        </h2>
+
+                        <label class="flex items-center gap-3">
+                            <input
+                                v-model="form.show_wishes"
+                                type="checkbox"
+                                class="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                            />
+                            <span class="text-sm font-medium text-gray-700"
+                                >Tampilkan ucapan &amp; doa di undangan</span
+                            >
+                        </label>
+
+                        <p
+                            v-if="!form.show_wishes"
+                            class="mt-3 rounded-lg bg-gray-100 p-3 text-sm text-gray-600"
+                        >
+                            Ucapan disembunyikan. Tamu tetap bisa mengisi
+                            konfirmasi kehadiran, tanpa kolom pesan.
+                        </p>
                     </div>
 
                     <!-- Amplop Digital -->

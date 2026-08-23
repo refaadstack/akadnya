@@ -25,7 +25,7 @@ interface Stats {
     tidak_hadir: number;
 }
 
-const props = defineProps<{
+defineProps<{
     rsvps: {
         data: Rsvp[];
         current_page: number;

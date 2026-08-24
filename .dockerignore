@@ -1,6 +1,6 @@
 .git
 .github
-.kiro
+.agents
 .vscode
 node_modules
 vendor

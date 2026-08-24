@@ -40,7 +40,7 @@ Dokumentasi terkait development dan testing:
 5. Gunakan [QUICK_REFERENCE.md](templates/QUICK_REFERENCE.md) sebagai cheat sheet
 
 ### Untuk Developers
-1. Lihat `.agent/specs/template-system-refactor/` untuk spec lengkap template system
+1. Lihat `.agents/specs/template-system-refactor/` untuk spec lengkap template system
 2. Baca [FILAMENT_ADMIN.md](admin/FILAMENT_ADMIN.md) untuk admin panel development
 
 ### Untuk Admin

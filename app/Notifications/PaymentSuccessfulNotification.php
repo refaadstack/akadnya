@@ -5,6 +5,8 @@ namespace App\Notifications;
 use App\Models\Order;
 use App\Notifications\Channels\CloudMailMailChannel;
 use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
 
 class PaymentSuccessfulNotification extends Notification
@@ -20,7 +22,21 @@ class PaymentSuccessfulNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return [CloudMailMailChannel::class];
+        return config('services.cloudmail.enabled')
+            ? [CloudMailMailChannel::class]
+            : [MailChannel::class];
+    }
+
+    /**
+     * Build the mailable used when the standard SMTP channel is active.
+     */
+    public function toMail(object $notifiable): Mailable
+    {
+        $payload = $this->payload($notifiable);
+
+        return (new Mailable)
+            ->subject($payload['subject'])
+            ->html($payload['htmlContent']);
     }
 
     /**

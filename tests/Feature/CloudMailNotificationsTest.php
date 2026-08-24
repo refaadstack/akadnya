@@ -9,6 +9,7 @@ use App\Notifications\VerifyEmailNotification;
 use App\Services\CloudMailMailer;
 use App\Services\OrderService;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Notifications\Channels\MailChannel;
 use Laravel\Fortify\Features;
 
 beforeEach(function () {
@@ -35,7 +36,7 @@ test('verification email goes through cloudmail when enabled', function () {
     });
 });
 
-test('notifications always use cloudmail regardless of the enabled flag', function () {
+test('notifications select the channel based on the enabled flag', function () {
     $user = User::factory()->create();
     $order = createPaidOrder()[1];
 
@@ -44,8 +45,8 @@ test('notifications always use cloudmail regardless of the enabled flag', functi
     expect((new PaymentSuccessfulNotification($order))->via($user))->toBe([CloudMailMailChannel::class]);
 
     config()->set('services.cloudmail.enabled', false);
-    expect((new VerifyEmailNotification)->via($user))->toBe([CloudMailMailChannel::class]);
-    expect((new PaymentSuccessfulNotification($order))->via($user))->toBe([CloudMailMailChannel::class]);
+    expect((new VerifyEmailNotification)->via($user))->toBe([MailChannel::class]);
+    expect((new PaymentSuccessfulNotification($order))->via($user))->toBe([MailChannel::class]);
 });
 
 function createPaidOrder(): array
@@ -64,6 +65,8 @@ function createPaidOrder(): array
 }
 
 test('payment notification selects the cloudmail channel', function () {
+    config()->set('services.cloudmail.enabled', true);
+
     [$user, $order] = createPaidOrder();
 
     expect((new PaymentSuccessfulNotification($order))->via($user))->toBe([CloudMailMailChannel::class]);

@@ -216,6 +216,7 @@ Vue components must have a single root element.
 - This is a digital wedding-invitation platform: users buy templates, customize invitations in a dashboard, and publish them on a public subdomain (`/i/{subdomain}`). Admin panel is Filament at `/admin` (`app/Providers/Filament/AdminPanelProvider.php`), auth is Fortify.
 - Domain-specific docs live in `docs/` — read `docs/templates/QUICK_REFERENCE.md` (or `TEMPLATE_CREATION_GUIDE.md`) before touching the template system, `docs/admin/FILAMENT_ADMIN.md` for the Filament panel, and `docs/development/PAYMENT_TESTING.md` for Midtrans sandbox checkout flows.
 - Dev DB is MySQL via a separate `mysql` container on the external `infra_default` network (see docker-compose.yml); `.env` has `DB_HOST=mysql`. Payments go to an external `payment-service-app` container, not in this repo.
+- Outbound email: notifications go through the `postfix` container (`boky/postfix`, also on `infra_default`) when `CLOUDMAIL_ENABLED=false`; Laravel submits via SMTP host `postfix:587` (user `myakad`). When `CLOUDMAIL_ENABLED=true`, the custom CloudMail channel sends through `mail.refaadstack.com`. Channel selection lives in each notification's `via()`. NOTE: outbound port 25 is blocked on the dev machine, so final delivery defers in Postfix — acceptance + DKIM signing in `docker logs postfix` is the success signal locally.
 
 ## No Errors Before Finishing
 

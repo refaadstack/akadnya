@@ -4,6 +4,8 @@ namespace App\Notifications;
 
 use App\Notifications\Channels\CloudMailMailChannel;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Mail\Mailable;
+use Illuminate\Notifications\Channels\MailChannel;
 
 class VerifyEmailNotification extends VerifyEmail
 {
@@ -15,7 +17,23 @@ class VerifyEmailNotification extends VerifyEmail
      */
     public function via($notifiable): array
     {
-        return [CloudMailMailChannel::class];
+        return config('services.cloudmail.enabled')
+            ? [CloudMailMailChannel::class]
+            : [MailChannel::class];
+    }
+
+    /**
+     * Build the mailable used when the standard SMTP channel is active.
+     *
+     * @param  mixed  $notifiable
+     */
+    public function toMail($notifiable): Mailable
+    {
+        $payload = $this->payload($notifiable);
+
+        return (new Mailable)
+            ->subject($payload['subject'])
+            ->html($payload['htmlContent']);
     }
 
     /**
@@ -68,6 +86,11 @@ class VerifyEmailNotification extends VerifyEmail
                         {$escapedUrl}
                     </a>
                 </p>
+
+                <p style="color:#6b7280;font-size:13px;">
+                    Email tidak muncul di inbox? Coba periksa folder
+                    <strong>Spam</strong> atau <strong>Promosi</strong>.
+                </p>
                 HTML,
 
             'textContent' => <<<TEXT
@@ -78,6 +101,8 @@ class VerifyEmailNotification extends VerifyEmail
                 Verifikasi email kamu melalui link berikut:
 
                 {$url}
+
+                Email tidak muncul? Periksa folder Spam atau Promosi.
                 TEXT,
         ];
     }

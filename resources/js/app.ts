@@ -8,11 +8,17 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
-        // Inertia v3: a page component's own `layout` option always wins;
-        // this callback only applies to pages without one. Every non-auth
-        // page ships its own chrome (DashboardLayout, AdminLayout or an
-        // inline PublicNavbar), so only auth pages share a layout here.
-        if (name.startsWith('auth/')) {
+        // Inertia v3: a page component's `layout` option only wins when it
+        // is truthy or an explicit function — `layout: undefined` still
+        // falls through to this callback. Pages that ship their own chrome
+        // (DashboardLayout, AdminLayout or an inline PublicNavbar) must
+        // therefore declare `layout: () => null`. Only auth pages that rely
+        // on shared chrome (ConfirmPassword, TwoFactorChallenge) are
+        // wrapped here.
+        if (
+            name === 'auth/ConfirmPassword' ||
+            name === 'auth/TwoFactorChallenge'
+        ) {
             return AuthLayout;
         }
 

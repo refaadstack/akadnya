@@ -10,7 +10,9 @@ import {
 import PublicNavbar from '@/components/PublicNavbar.vue';
 
 defineOptions({
-    layout: undefined,
+    // Inertia v3: `layout: undefined` still falls through to the global
+    // layout callback; return null explicitly to opt out.
+    layout: () => null,
 });
 
 const props = defineProps<{

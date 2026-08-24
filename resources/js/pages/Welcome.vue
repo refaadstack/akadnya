@@ -711,7 +711,9 @@ onBeforeUnmount(() => {
     transform: none;
 }
 
-.guest-qr-svg svg {
+/* The QR SVG is injected via v-html, so it lacks the scoped data
+   attribute — target it with :deep() or the rule never matches. */
+.guest-qr-svg :deep(svg) {
     width: 100%;
     height: auto;
     display: block;

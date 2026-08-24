@@ -2,9 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Notifications\Channels\BrevoMailChannel;
 use App\Notifications\Channels\CloudMailMailChannel;
-use App\Services\CloudMailMailer;
 use Illuminate\Auth\Notifications\VerifyEmail;
 
 class VerifyEmailNotification extends VerifyEmail
@@ -17,20 +15,7 @@ class VerifyEmailNotification extends VerifyEmail
      */
     public function via($notifiable): array
     {
-        return app(CloudMailMailer::class)->enabled()
-            ? [CloudMailMailChannel::class]
-            : [BrevoMailChannel::class];
-    }
-
-    /**
-     * Build the payload for Brevo.
-     *
-     * @param  mixed  $notifiable
-     * @return array{subject:string,htmlContent:string,textContent:string}
-     */
-    public function toBrevoMail($notifiable): array
-    {
-        return $this->payload($notifiable);
+        return [CloudMailMailChannel::class];
     }
 
     /**

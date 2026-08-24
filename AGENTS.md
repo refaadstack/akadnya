@@ -221,9 +221,9 @@ Vue components must have a single root element.
 
 - Before considering work done, verify the code has no errors:
   1. Run the affected Pest tests in Docker (host has no PHP):
-     `docker run --rm --network container:myakad-app -v /data/projects/myakad:/app -w /app php:8.3-cli sh -c 'apt-get update -qq >/dev/null 2>&1; apt-get install -y -qq libzip-dev libicu-dev >/dev/null 2>&1; docker-php-ext-install pdo_mysql zip intl >/dev/null 2>&1; BREVO_API_KEY=test php vendor/bin/pest <file> --compact'`
-     - Tests run against the MySQL `myakad_test` database (phpunit.xml); `--network container:myakad-app` gives the container access to the app's MySQL service. Without it, DB connections fail.
-     - The full suite needs the `zip` (TemplateServiceTest) and `intl` (Filament pagination) extensions plus a dummy `BREVO_API_KEY` to avoid runtime exceptions; focused tests that don't touch those can use the shorter `docker-php-ext-install pdo_mysql` form.
+      `docker run --rm --network container:myakad-app -v /data/projects/myakad:/app -w /app php:8.3-cli sh -c 'apt-get update -qq >/dev/null 2>&1; apt-get install -y -qq libzip-dev libicu-dev >/dev/null 2>&1; docker-php-ext-install pdo_mysql zip intl >/dev/null 2>&1; php vendor/bin/pest <file> --compact'`
+      - Tests run against the MySQL `myakad_test` database (phpunit.xml); `--network container:myakad-app` gives the container access to the app's MySQL service. Without it, DB connections fail.
+      - The full suite needs the `zip` (TemplateServiceTest) and `intl` (Filament pagination) extensions; focused tests that don't touch those can use the shorter `docker-php-ext-install pdo_mysql` form.
   2. Run Pint on changed PHP files:
      `docker run --rm -v /data/projects/myakad:/app -w /app php:8.3-cli php vendor/bin/pint --dirty`
   3. Run Prettier on changed frontend files: `npx prettier --write resources/`

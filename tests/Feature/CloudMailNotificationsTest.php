@@ -3,10 +3,10 @@
 use App\Models\Product;
 use App\Models\Template;
 use App\Models\User;
-use App\Notifications\Channels\BrevoMailChannel;
 use App\Notifications\Channels\CloudMailMailChannel;
 use App\Notifications\PaymentSuccessfulNotification;
 use App\Notifications\VerifyEmailNotification;
+use App\Services\CloudMailMailer;
 use App\Services\OrderService;
 use Illuminate\Support\Facades\Http;
 use Laravel\Fortify\Features;
@@ -35,14 +35,17 @@ test('verification email goes through cloudmail when enabled', function () {
     });
 });
 
-test('verification email falls back to brevo when cloudmail is disabled', function () {
-    $this->skipUnlessFortifyHas(Features::emailVerification());
+test('notifications always use cloudmail regardless of the enabled flag', function () {
+    $user = User::factory()->create();
+    $order = createPaidOrder()[1];
+
+    config()->set('services.cloudmail.enabled', true);
+    expect((new VerifyEmailNotification)->via($user))->toBe([CloudMailMailChannel::class]);
+    expect((new PaymentSuccessfulNotification($order))->via($user))->toBe([CloudMailMailChannel::class]);
 
     config()->set('services.cloudmail.enabled', false);
-
-    $user = User::factory()->unverified()->create();
-
-    expect((new VerifyEmailNotification)->via($user))->toBe([BrevoMailChannel::class]);
+    expect((new VerifyEmailNotification)->via($user))->toBe([CloudMailMailChannel::class]);
+    expect((new PaymentSuccessfulNotification($order))->via($user))->toBe([CloudMailMailChannel::class]);
 });
 
 function createPaidOrder(): array
@@ -60,14 +63,10 @@ function createPaidOrder(): array
     return [$user, $order];
 }
 
-test('payment notification selects the channel based on the cloudmail flag', function () {
+test('payment notification selects the cloudmail channel', function () {
     [$user, $order] = createPaidOrder();
 
-    config()->set('services.cloudmail.enabled', true);
     expect((new PaymentSuccessfulNotification($order))->via($user))->toBe([CloudMailMailChannel::class]);
-
-    config()->set('services.cloudmail.enabled', false);
-    expect((new PaymentSuccessfulNotification($order))->via($user))->toBe([BrevoMailChannel::class]);
 });
 
 test('payment notification builds a cloudmail payload with the payment sender', function () {
@@ -79,4 +78,38 @@ test('payment notification builds a cloudmail payload with the payment sender', 
         ->and($payload['subject'])->toBe('Pembayaran MyAkad Berhasil')
         ->and($payload['htmlContent'])->toContain($order->order_number)
         ->and($payload['textContent'])->toContain($order->order_number);
+});
+
+test('registration still succeeds when cloudmail rejects the verification email', function () {
+    $this->skipUnlessFortifyHas(Features::emailVerification());
+
+    setCloudMailConfig();
+    fakeFailingCloudMailSend();
+
+    $response = $this->post('/register', [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+        'terms' => true,
+    ]);
+
+    $this->assertAuthenticated();
+    $response->assertRedirect('/dashboard');
+    expect(User::where('email', 'test@example.com')->exists())->toBeTrue();
+});
+
+test('cloudmail channel swallows transport failures so auth flows never break', function () {
+    setCloudMailConfig();
+
+    $mailer = Mockery::mock(CloudMailMailer::class);
+    $mailer->shouldReceive('sendAs')
+        ->once()
+        ->andThrow(new RuntimeException('CloudMail API error: destination address is not a verified address'));
+
+    $user = User::factory()->create();
+
+    (new CloudMailMailChannel($mailer))->send($user, new VerifyEmailNotification);
+
+    expect(true)->toBeTrue();
 });

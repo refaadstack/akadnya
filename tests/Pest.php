@@ -92,3 +92,27 @@ function fakeCloudMailApi(): void
         ]),
     ]);
 }
+
+function fakeFailingCloudMailSend(): void
+{
+    Http::fake([
+        '*/login' => Http::response([
+            'code' => 200,
+            'message' => 'success',
+            'data' => ['token' => 'jwt-test-token'],
+        ]),
+        '*/account/list*' => Http::response([
+            'code' => 200,
+            'message' => 'success',
+            'data' => ['list' => [
+                ['accountId' => 11, 'email' => 'no-reply@myakad.id', 'name' => 'MyAkad'],
+                ['accountId' => 22, 'email' => 'register@myakad.id', 'name' => 'Registration'],
+                ['accountId' => 33, 'email' => 'payment@myakad.id', 'name' => 'Payment'],
+            ]],
+        ]),
+        '*/email/send' => Http::response([
+            'code' => 400,
+            'message' => 'destination address is not a verified address',
+        ]),
+    ]);
+}

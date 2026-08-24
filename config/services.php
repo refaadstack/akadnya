@@ -22,13 +22,6 @@ return [
         'key' => env('RESEND_API_KEY'),
     ],
 
-    'brevo' => [
-        'key' => env('BREVO_API_KEY'),
-        'endpoint' => env('BREVO_API_ENDPOINT', 'https://api.brevo.com/v3/smtp/email'),
-        'from_address' => env('MAIL_FROM_ADDRESS', 'no-replymyakad@refaadstack.com'),
-        'from_name' => env('MAIL_FROM_NAME', 'MyAkad'),
-    ],
-
     'cloudmail' => [
         'enabled' => env('CLOUDMAIL_ENABLED', false),
         'base_url' => env('CLOUDMAIL_BASE_URL', 'https://mail.refaadstack.com/api'),

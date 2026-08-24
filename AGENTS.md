@@ -215,7 +215,6 @@ Vue components must have a single root element.
 
 - This is a digital wedding-invitation platform: users buy templates, customize invitations in a dashboard, and publish them on a public subdomain (`/i/{subdomain}`). Admin panel is Filament at `/admin` (`app/Providers/Filament/AdminPanelProvider.php`), auth is Fortify.
 - Domain-specific docs live in `docs/` — read `docs/templates/QUICK_REFERENCE.md` (or `TEMPLATE_CREATION_GUIDE.md`) before touching the template system, `docs/admin/FILAMENT_ADMIN.md` for the Filament panel, and `docs/development/PAYMENT_TESTING.md` for Midtrans sandbox checkout flows.
-- The repo-root `myakad/` directory is a stale, gitignored leftover — ignore it; the real source is at the repo root (`app/`, `routes/`, `resources/`).
 - Dev DB is MySQL via a separate `mysql` container on the external `infra_default` network (see docker-compose.yml); `.env` has `DB_HOST=mysql`. Payments go to an external `payment-service-app` container, not in this repo.
 
 ## No Errors Before Finishing

@@ -19,7 +19,6 @@ Semua dokumentasi project telah dipindahkan ke folder `/docs/` untuk organisasi 
 
 ### 🚀 Deployment
 - [Domain Config](docs/deployment/DOMAIN_CONFIG.md) - Konfigurasi domain
-- [NGINX Wildcard Setup](docs/deployment/NGINX_WILDCARD_SETUP.md) - Setup NGINX
 
 ### 💻 Development
 - [Payment Testing](docs/development/PAYMENT_TESTING.md) - Testing payment

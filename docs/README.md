@@ -24,7 +24,6 @@ Dokumentasi terkait admin panel dan Filament:
 ### `/deployment/`
 Dokumentasi terkait deployment dan infrastructure:
 - **DOMAIN_CONFIG.md** - Konfigurasi domain dan subdomain
-- **NGINX_WILDCARD_SETUP.md** - Setup NGINX untuk wildcard subdomain
 
 ### `/development/`
 Dokumentasi terkait development dan testing:

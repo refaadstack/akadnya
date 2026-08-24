@@ -242,7 +242,9 @@ Vue components must have a single root element.
   2. Templates live in `storage/app/public/templates/{slug}/` (already bind-mounted/shared). After adding/editing template files, register them in the DB: `docker exec myakad-app php artisan templates:sync`
   3. Run pending migrations: `docker exec myakad-app php artisan migrate --force`
   4. Clear compiled views/blade cache after template changes: `docker exec myakad-app php artisan view:clear`
-  5. For frontend changes: copy `resources/js` files into the container (the in-container Vite dev server hot-reloads them), or rebuild assets with `npm run build` and copy `public/build` if the container has no Vite dev server.
+  5. Frontend changes: the container has NO Vite dev server (no `public/hot`, no node process) — copying `resources/js` files alone does NOT change the UI. You must run `npm run build` on the host, then sync the built assets:
+      `docker exec myakad-app sh -c 'rm -rf /app/public/build' && docker cp public/build myakad-app:/app/public/build`
+     Copy the source `.vue/.ts` files too so container code matches, but only a rebuild makes changes visible.
   6. Verify the live result: `curl -s http://localhost:8081/i/redho-dan-yeli` (public invitation route is `/i/{subdomain}`)
 - Production (`myakad.refaadstack.com`) only updates after a redeploy — the Docker sync above applies to the dev environment.
 

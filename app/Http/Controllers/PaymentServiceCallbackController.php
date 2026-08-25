@@ -14,9 +14,10 @@ class PaymentServiceCallbackController extends Controller
 
     public function handle(Request $request)
     {
-        $expected = config('services.payment_service.callback_secret');
+        $expected = (string) config('services.payment_service.callback_secret');
+        $provided = (string) $request->header('X-Payment-Callback-Key');
 
-        if (filled($expected) && ! hash_equals($expected, (string) $request->header('X-Payment-Callback-Key'))) {
+        if ($expected === '' || ! hash_equals($expected, $provided)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid callback key',

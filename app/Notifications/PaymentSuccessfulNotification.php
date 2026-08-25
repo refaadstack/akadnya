@@ -33,8 +33,10 @@ class PaymentSuccessfulNotification extends Notification
     public function toMail(object $notifiable): Mailable
     {
         $payload = $this->payload($notifiable);
+        $recipient = $notifiable->routeNotificationFor('mail', $this) ?? $notifiable->email;
 
         return (new Mailable)
+            ->to($recipient)
             ->subject($payload['subject'])
             ->html($payload['htmlContent']);
     }

@@ -30,8 +30,10 @@ class VerifyEmailNotification extends VerifyEmail
     public function toMail($notifiable): Mailable
     {
         $payload = $this->payload($notifiable);
+        $recipient = $notifiable->routeNotificationFor('mail', $this) ?? $notifiable->email;
 
         return (new Mailable)
+            ->to($recipient)
             ->subject($payload['subject'])
             ->html($payload['htmlContent']);
     }

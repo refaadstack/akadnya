@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Mail\Transports\BrevoTransport;
 use App\Mail\Transports\CloudMailTransport;
 use App\Services\CloudMailMailer;
 use Carbon\CarbonImmutable;
@@ -29,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
 
         Mail::extend('cloudmail', fn (): CloudMailTransport => new CloudMailTransport(app(CloudMailMailer::class)));
+
+        Mail::extend('brevo', fn (): BrevoTransport => new BrevoTransport);
     }
 
     /**

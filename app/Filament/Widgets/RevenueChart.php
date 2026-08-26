@@ -3,8 +3,11 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Order;
+use Carbon\CarbonInterface;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class RevenueChart extends ChartWidget
 {
@@ -13,6 +16,8 @@ class RevenueChart extends ChartWidget
     protected static ?int $sort = 2;
 
     protected int|string|array $columnSpan = 'full';
+
+    protected ?string $pollingInterval = '30s';
 
     public ?string $filter = 'last30days';
 
@@ -54,63 +59,35 @@ class RevenueChart extends ChartWidget
         ];
     }
 
+    /**
+     * @return array{labels: list<string>, revenue: list<float|int>, orders: list<int>}
+     */
     private function getRevenueData(): array
     {
-        $filter = $this->filter;
         $now = now();
 
-        $query = Order::where('status', 'paid');
+        [$days, $startDate] = match ($this->filter) {
+            'last7days' => [7, $now->copy()->subDays(7)],
+            'last90days' => [90, $now->copy()->subDays(90)],
+            'thisYear' => [$now->dayOfYear, $now->copy()->startOfYear()],
+            default => [30, $now->copy()->subDays(30)],
+        };
 
-        switch ($filter) {
-            case 'last7days':
-                $days = 7;
-                $query->where('paid_at', '>=', $now->copy()->subDays($days));
-                break;
-            case 'last30days':
-                $days = 30;
-                $query->where('paid_at', '>=', $now->copy()->subDays($days));
-                break;
-            case 'last90days':
-                $days = 90;
-                $query->where('paid_at', '>=', $now->copy()->subDays($days));
-                break;
-            case 'thisYear':
-                $query->whereYear('paid_at', $now->year);
-                $days = $now->dayOfYear;
-                break;
-            default:
-                $days = 30;
-                $query->where('paid_at', '>=', $now->copy()->subDays($days));
-        }
-
-        $orders = $query->get();
-
-        // Group by date
-        $groupedData = [];
-        for ($i = $days - 1; $i >= 0; $i--) {
-            $date = $now->copy()->subDays($i)->format('Y-m-d');
-            $groupedData[$date] = [
-                'revenue' => 0,
-                'orders' => 0,
-            ];
-        }
-
-        foreach ($orders as $order) {
-            $date = Carbon::parse($order->paid_at)->format('Y-m-d');
-            if (isset($groupedData[$date])) {
-                $groupedData[$date]['revenue'] += $order->total_amount;
-                $groupedData[$date]['orders'] += 1;
-            }
-        }
+        $dailyTotals = Cache::remember(
+            "admin.dashboard.revenue.{$this->filter}",
+            now()->addSeconds(60),
+            fn (): array => $this->fetchDailyTotals($startDate),
+        );
 
         $labels = [];
         $revenue = [];
         $orderCounts = [];
 
-        foreach ($groupedData as $date => $data) {
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $date = $now->copy()->subDays($i)->format('Y-m-d');
             $labels[] = Carbon::parse($date)->format('M d');
-            $revenue[] = $data['revenue'];
-            $orderCounts[] = $data['orders'];
+            $revenue[] = (float) ($dailyTotals[$date]['revenue'] ?? 0);
+            $orderCounts[] = (int) ($dailyTotals[$date]['orders'] ?? 0);
         }
 
         return [
@@ -118,5 +95,25 @@ class RevenueChart extends ChartWidget
             'revenue' => $revenue,
             'orders' => $orderCounts,
         ];
+    }
+
+    /**
+     * @return array<string, array{revenue: float, orders: int}>
+     */
+    private function fetchDailyTotals(CarbonInterface $startDate): array
+    {
+        return Order::query()
+            ->where('status', 'paid')
+            ->where('paid_at', '>=', $startDate)
+            ->selectRaw('DATE(paid_at) AS sale_date, SUM(total_amount) AS revenue, COUNT(*) AS orders')
+            ->groupBy(DB::raw('DATE(paid_at)'))
+            ->get()
+            ->mapWithKeys(fn (Order $order): array => [
+                (string) $order->sale_date => [
+                    'revenue' => (float) $order->revenue,
+                    'orders' => (int) $order->orders,
+                ],
+            ])
+            ->all();
     }
 }

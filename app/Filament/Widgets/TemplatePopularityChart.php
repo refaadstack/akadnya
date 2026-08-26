@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\Template;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Cache;
 
 class TemplatePopularityChart extends ChartWidget
 {
@@ -13,12 +14,24 @@ class TemplatePopularityChart extends ChartWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    protected ?string $pollingInterval = '30s';
+
     protected function getData(): array
     {
-        $templates = Template::withCount('invitations')
-            ->where('is_active', true)
-            ->orderBy('invitations_count', 'desc')
-            ->get();
+        $templates = Cache::remember(
+            'admin.dashboard.template_popularity',
+            now()->addSeconds(60),
+            fn (): array => Template::query()
+                ->withCount('invitations')
+                ->where('is_active', true)
+                ->orderByDesc('invitations_count')
+                ->get()
+                ->map(fn (Template $template): array => [
+                    'name' => $template->name,
+                    'count' => $template->invitations_count,
+                ])
+                ->all(),
+        );
 
         $labels = [];
         $data = [];
@@ -31,9 +44,9 @@ class TemplatePopularityChart extends ChartWidget
             'rgba(236, 72, 153, 0.8)',
         ];
 
-        foreach ($templates as $index => $template) {
-            $labels[] = $template->name;
-            $data[] = $template->invitations_count;
+        foreach ($templates as $template) {
+            $labels[] = $template['name'];
+            $data[] = $template['count'];
         }
 
         return [

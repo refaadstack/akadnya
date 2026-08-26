@@ -53,6 +53,7 @@ class LatestOrders extends TableWidget
                     ->dateTime('d M Y H:i')
                     ->sortable(),
             ])
-            ->heading('Latest Orders');
+            ->heading('Latest Orders')
+            ->poll('15s');
     }
 }

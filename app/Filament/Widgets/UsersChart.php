@@ -3,8 +3,11 @@
 namespace App\Filament\Widgets;
 
 use App\Models\User;
+use Carbon\CarbonInterface;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class UsersChart extends ChartWidget
 {
@@ -13,6 +16,8 @@ class UsersChart extends ChartWidget
     protected static ?int $sort = 3;
 
     protected int|string|array $columnSpan = 'full';
+
+    protected ?string $pollingInterval = '30s';
 
     public ?string $filter = 'last30days';
 
@@ -50,62 +55,52 @@ class UsersChart extends ChartWidget
         ];
     }
 
+    /**
+     * @return array{labels: list<string>, users: list<int>}
+     */
     private function getUserData(): array
     {
-        $filter = $this->filter;
         $now = now();
 
-        $query = User::where('role', 'user');
+        [$days, $startDate] = match ($this->filter) {
+            'last7days' => [7, $now->copy()->subDays(7)],
+            'last90days' => [90, $now->copy()->subDays(90)],
+            'thisYear' => [$now->dayOfYear, $now->copy()->startOfYear()],
+            default => [30, $now->copy()->subDays(30)],
+        };
 
-        switch ($filter) {
-            case 'last7days':
-                $days = 7;
-                $query->where('created_at', '>=', $now->copy()->subDays($days));
-                break;
-            case 'last30days':
-                $days = 30;
-                $query->where('created_at', '>=', $now->copy()->subDays($days));
-                break;
-            case 'last90days':
-                $days = 90;
-                $query->where('created_at', '>=', $now->copy()->subDays($days));
-                break;
-            case 'thisYear':
-                $query->whereYear('created_at', $now->year);
-                $days = $now->dayOfYear;
-                break;
-            default:
-                $days = 30;
-                $query->where('created_at', '>=', $now->copy()->subDays($days));
-        }
-
-        $users = $query->get();
-
-        // Group by date
-        $groupedData = [];
-        for ($i = $days - 1; $i >= 0; $i--) {
-            $date = $now->copy()->subDays($i)->format('Y-m-d');
-            $groupedData[$date] = 0;
-        }
-
-        foreach ($users as $user) {
-            $date = Carbon::parse($user->created_at)->format('Y-m-d');
-            if (isset($groupedData[$date])) {
-                $groupedData[$date] += 1;
-            }
-        }
+        $signupsPerDay = Cache::remember(
+            "admin.dashboard.users.{$this->filter}",
+            now()->addSeconds(60),
+            fn (): array => $this->fetchSignupsPerDay($startDate),
+        );
 
         $labels = [];
         $userCounts = [];
 
-        foreach ($groupedData as $date => $count) {
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $date = $now->copy()->subDays($i)->format('Y-m-d');
             $labels[] = Carbon::parse($date)->format('M d');
-            $userCounts[] = $count;
+            $userCounts[] = (int) ($signupsPerDay[$date] ?? 0);
         }
 
         return [
             'labels' => $labels,
             'users' => $userCounts,
         ];
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private function fetchSignupsPerDay(CarbonInterface $startDate): array
+    {
+        return User::query()
+            ->where('role', 'user')
+            ->where('created_at', '>=', $startDate)
+            ->selectRaw('DATE(created_at) AS signup_date, COUNT(*) AS users')
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->pluck('users', 'signup_date')
+            ->all();
     }
 }

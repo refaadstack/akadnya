@@ -107,3 +107,25 @@ test('auto wish does not pollute rsvp analytics and roster', function () {
         ->assertOk()
         ->assertInertia(fn ($page) => $page->where('stats.total', 0));
 });
+
+test('backfill seeds the MyAkad wish for published invitations that lack one', function () {
+    $published = createdAutoWishInvitation();
+    $published->forceFill(['status' => 'published', 'published_at' => now()])->save();
+
+    $draft = createdAutoWishInvitation();
+
+    $this->artisan('invitations:backfill-auto-wishes')->assertSuccessful();
+
+    expect($published->rsvps()->where('is_from_myakad', true)->count())->toBe(1);
+    expect($draft->rsvps()->where('is_from_myakad', true)->count())->toBe(0);
+});
+
+test('backfill is idempotent and never duplicates the MyAkad wish', function () {
+    $published = createdAutoWishInvitation();
+    $published->forceFill(['status' => 'published', 'published_at' => now()])->save();
+
+    $this->artisan('invitations:backfill-auto-wishes')->assertSuccessful();
+    $this->artisan('invitations:backfill-auto-wishes')->assertSuccessful();
+
+    expect($published->rsvps()->where('is_from_myakad', true)->count())->toBe(1);
+});

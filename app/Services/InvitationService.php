@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Invitation;
+use App\Models\SiteSetting;
 use Illuminate\Support\Facades\DB;
 
 class InvitationService
@@ -66,6 +67,42 @@ class InvitationService
         $invitation->status = 'published';
         $invitation->published_at = now();
         $invitation->save();
+
+        $this->ensureMyAkadAutoWish($invitation);
+    }
+
+    /**
+     * Seed a welcome wish from MyAkad so a freshly published invitation
+     * always has a greeting. Idempotent: only one platform wish per invitation.
+     */
+    public function ensureMyAkadAutoWish(Invitation $invitation): void
+    {
+        if ($invitation->rsvps()->where('is_from_myakad', true)->exists()) {
+            return;
+        }
+
+        $content = $invitation->content;
+
+        if (! ($content?->show_wishes ?? true)) {
+            return;
+        }
+
+        $couple = trim(trim((string) ($content->groom_name ?? '')).' & '.trim((string) ($content->bride_name ?? '')));
+
+        $sender = (string) SiteSetting::get('auto_wish_sender', 'MyAkad');
+
+        $messageTemplate = (string) SiteSetting::get(
+            'auto_wish_message',
+            'Selamat menempuh hidup baru, {couple}! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah, dan selalu dalam lindungan Tuhan Yang Maha Esa.'
+        );
+
+        $invitation->rsvps()->create([
+            'name' => $sender,
+            'attendance' => 'pending',
+            'pax_count' => 0,
+            'message' => str_replace('{couple}', $couple, $messageTemplate),
+            'is_from_myakad' => true,
+        ]);
     }
 
     /**

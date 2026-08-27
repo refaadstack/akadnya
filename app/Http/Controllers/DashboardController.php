@@ -65,17 +65,19 @@ class DashboardController extends Controller
         ];
 
         // Detailed analytics
+        $totalRsvpCount = $invitation->rsvps()->where('is_from_myakad', false)->count();
+
         $analytics = [
             'total_views' => $invitation->view_count ?? 0,
             'total_guests' => $invitation->guests()->count(),
-            'total_rsvp' => $invitation->rsvps()->count(),
+            'total_rsvp' => $totalRsvpCount,
             'rsvp_attending' => $invitation->rsvps()->where('attendance', 'yes')->count(),
             'rsvp_not_attending' => $invitation->rsvps()->where('attendance', 'no')->count(),
             'total_pax' => $invitation->rsvps()->where('attendance', 'yes')->sum('pax_count'),
             'total_wishes' => $invitation->rsvps()->whereNotNull('message')->count(),
             'total_gallery_photos' => $invitation->gallery()->count(),
-            'attendance_rate' => $invitation->rsvps()->count() > 0
-                ? (int) round($invitation->rsvps()->where('attendance', 'yes')->count() / $invitation->rsvps()->count() * 100)
+            'attendance_rate' => $totalRsvpCount > 0
+                ? (int) round($invitation->rsvps()->where('attendance', 'yes')->count() / $totalRsvpCount * 100)
                 : 0,
             'total_check_ins' => GuestBookEntry::where('invitation_id', $invitation->id)->count(),
             'rsvp_trend' => $this->buildRsvpTrend($invitation),
@@ -83,6 +85,7 @@ class DashboardController extends Controller
 
         // Get recent RSVPs (last 5)
         $recentRsvps = $invitation->rsvps()
+            ->where('is_from_myakad', false)
             ->latest()
             ->take(5)
             ->get()
@@ -154,6 +157,7 @@ class DashboardController extends Controller
         $start = now()->subDays(13)->startOfDay();
 
         $rows = $invitation->rsvps()
+            ->where('is_from_myakad', false)
             ->where('created_at', '>=', $start)
             ->get(['created_at', 'attendance'])
             ->groupBy(fn ($rsvp) => $rsvp->created_at->format('Y-m-d'));

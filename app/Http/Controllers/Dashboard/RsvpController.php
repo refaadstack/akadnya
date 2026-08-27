@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Rsvp;
 use App\Services\CustomerInvitationService;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,18 +20,19 @@ class RsvpController extends Controller
     {
         $user = $request->user();
         $invitation = $this->customerInvitations->activeInvitation($user);
-        
-        if (!$invitation) {
+
+        if (! $invitation) {
             abort(404, 'Tidak ada undangan aktif');
         }
 
         $rsvps = Rsvp::where('invitation_id', $invitation->id)
+            ->where('is_from_myakad', false)
             ->with('guest')
             ->latest()
             ->paginate(20);
 
         $stats = [
-            'total' => Rsvp::where('invitation_id', $invitation->id)->count(),
+            'total' => Rsvp::where('invitation_id', $invitation->id)->where('is_from_myakad', false)->count(),
             'hadir' => Rsvp::where('invitation_id', $invitation->id)->where('attendance', 'yes')->count(),
             'tidak_hadir' => Rsvp::where('invitation_id', $invitation->id)->where('attendance', 'no')->count(),
         ];

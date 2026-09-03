@@ -329,7 +329,9 @@ test('live invitation with no love story suppresses the hardcoded placeholder fa
     expect($html)->not->toContain('Pertemuan Pertama');
     expect($html)->not->toContain('Restu Keluarga');
     expect($html)->not->toContain('Pernikahan');
-    expect($html)->not->toContain('id="iv-story"');
+    // The section stays and shows a neutral "story will load" placeholder
+    expect($html)->toContain('id="iv-story"');
+    expect($html)->toContain('Cerita kami akan dimuat di sini.');
 });
 
 test('preview with no love story still shows the hardcoded placeholder fallback', function () {

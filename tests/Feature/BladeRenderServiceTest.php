@@ -175,10 +175,10 @@ test('renderSection emits no undefined variable warnings when payment data is mi
     ];
 
     $files = [
-        // The demo guest-book QR block also uses class="rg-qris", so match
-        // the payment QRIS <img> tag specifically.
-        'red-cream' => ['full.html', '<img class="rg-qris"'],
-        '01kz1heyw9mwm46c7xgqvegrqh' => ['full.html', '<img class="rg-qris"'],
+        // red-cream & red-gold are normalized to shared multi-section templates
+        // (their legacy full.html was removed), so they render the shared gift.html.
+        'red-cream' => ['gift.html', 'iv-gift-qris-img'],
+        '01kz1heyw9mwm46c7xgqvegrqh' => ['gift.html', 'iv-gift-qris-img'],
         'melayu-jambi' => ['gift.html', 'jambi-gift-qris'],
         'sunda-merbak' => ['gift.html', 'sunda-gift-qris'],
         'chinese-imperial-luxe' => ['gift.html', 'ci-qris'],
@@ -213,8 +213,8 @@ test('renderSection emits no undefined variable warnings when payment data is mi
 test('cover sections render guest name when provided', function () {
     $contractBuilder = new DataContractBuilder;
     $files = [
-        'red-cream' => 'full.html',
-        '01kz1heyw9mwm46c7xgqvegrqh' => 'full.html',
+        'red-cream' => 'opening.html',
+        '01kz1heyw9mwm46c7xgqvegrqh' => 'opening.html',
         'chinese-imperial-luxe' => 'opening.html',
         'klasik-elegan' => 'opening.html',
     ];
@@ -247,8 +247,8 @@ test('cover sections render guest name when provided', function () {
 test('cover sections fall back to generic guest label without guest name', function () {
     $contractBuilder = new DataContractBuilder;
     $files = [
-        'red-cream' => 'full.html',
-        '01kz1heyw9mwm46c7xgqvegrqh' => 'full.html',
+        'red-cream' => 'opening.html',
+        '01kz1heyw9mwm46c7xgqvegrqh' => 'opening.html',
         'chinese-imperial-luxe' => 'opening.html',
         'klasik-elegan' => 'opening.html',
     ];
@@ -262,4 +262,54 @@ test('cover sections fall back to generic guest label without guest name', funct
 
         expect($result)->toContain('Kepada Yth. Tamu Undangan');
     }
+});
+
+test('multi-section template loads shared base css before its local theme css', function () {
+    $template = (new Template)->forceFill(['slug' => 'red-cream']);
+
+    $result = $this->service->buildAssetTags($template);
+
+    $basePos = strpos($result, 'base.css');
+    $themePos = strpos($result, 'theme.css');
+
+    expect($basePos)->not->toBe(false);
+    expect($themePos)->not->toBe(false);
+    expect($basePos)->toBeLessThan($themePos);
+});
+
+test('shared rsvp section renders the list of doa and ucapan', function () {
+    $template = (new Template)->forceFill(['slug' => 'red-cream']);
+
+    $data = [
+        'show_wishes' => true,
+        'wishes' => [
+            [
+                'name' => 'Pak Ucok',
+                'message' => 'Selamat menempuh hidup baru!',
+                'created_at' => now()->toISOString(),
+            ],
+            [
+                'name' => 'MyAkad',
+                'message' => 'Bahagia selalu.',
+                'created_at' => now()->toISOString(),
+            ],
+        ],
+    ];
+
+    $result = $this->service->renderSection($template, 'rsvp.html', $data);
+
+    expect($result)->toContain('iv-wishes');
+    expect($result)->toContain('Ucapan untuk Kami');
+    expect($result)->toContain('Pak Ucok');
+    expect($result)->toContain('Selamat menempuh hidup baru!');
+    expect($result)->toContain('MyAkad');
+});
+
+test('shared rsvp section hides wishes list when disabled', function () {
+    $template = (new Template)->forceFill(['slug' => 'red-cream']);
+
+    $result = $this->service->renderSection($template, 'rsvp.html', ['show_wishes' => false]);
+
+    expect($result)->not->toContain('iv-wishes');
+    expect($result)->not->toContain('Ucapan untuk Kami');
 });

@@ -725,3 +725,29 @@ test('buildTemplateDefaults keeps sponsored_by false', function () {
 
     expect($contract['sponsored_by'])->toBeFalse();
 });
+
+test('buildTemplateDefaults marks contract as preview', function () {
+    $slug = 'test-'.uniqid();
+    $template = Template::factory()->create(['slug' => $slug]);
+    $templatePath = storage_path("app/public/templates/{$slug}");
+
+    File::makeDirectory($templatePath, 0755, true);
+    File::put($templatePath.'/template.json', json_encode(['defaults' => []]));
+
+    $contract = $this->builder->buildTemplateDefaults($template);
+
+    expect($contract['is_preview'])->toBeTrue();
+});
+
+test('build leaves contract unmarked as preview for live invitations', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['is_preview'] ?? null)->toBeNull();
+});

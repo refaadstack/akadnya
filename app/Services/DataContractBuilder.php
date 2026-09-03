@@ -368,6 +368,7 @@ class DataContractBuilder
             'guest_qr_demo' => null,
             'guest_book_url' => route('products.index'),
             'sponsored_by' => false,
+            'is_preview' => true,
             'akad_datetime' => null,
             'event_date' => null,
             ...$this->buildDatetimeVariables('akad', null),

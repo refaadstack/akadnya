@@ -291,3 +291,67 @@ test('rendered template omits background block when background url is empty', fu
 
     expect($html)->not->toContain('background: url("');
 });
+
+test('live invitation with no love story suppresses the hardcoded placeholder fallback', function () {
+    $user = User::factory()->create();
+    $slug = 'test-'.uniqid();
+    $template = Template::factory()->create(['slug' => $slug]);
+    $storySection = $template->sections()->create([
+        'file' => 'story.html',
+        'label' => 'Story',
+        'sort_order' => 1,
+        'is_required' => false,
+    ]);
+
+    // No local story.html -> falls back to the shared _shared/sections/story.html
+    $templatePath = storage_path("app/public/templates/{$slug}");
+    File::makeDirectory($templatePath.'/sections', 0755, true);
+    File::makeDirectory($templatePath.'/assets', 0755, true);
+    File::put($templatePath.'/assets/style.css', '');
+    File::put($templatePath.'/assets/script.js', '');
+
+    $invitation = Invitation::factory()->for($user)->for($template)->create();
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'bride_name' => 'Nadia',
+        'groom_name' => 'Raka',
+    ]);
+    // No love stories and no love_story text
+    $invitation->sections()->create([
+        'template_section_id' => $storySection->id,
+        'sort_order' => 1,
+        'is_visible' => true,
+    ]);
+
+    $data = (new DataContractBuilder)->build($invitation);
+    $html = (new BladeRenderService)->renderInvitation($invitation, $data);
+
+    expect($html)->not->toContain('Pertemuan Pertama');
+    expect($html)->not->toContain('Restu Keluarga');
+    expect($html)->not->toContain('Pernikahan');
+    expect($html)->not->toContain('id="iv-story"');
+});
+
+test('preview with no love story still shows the hardcoded placeholder fallback', function () {
+    $slug = 'test-'.uniqid();
+    $template = Template::factory()->create(['slug' => $slug]);
+    $template->sections()->create([
+        'file' => 'story.html',
+        'label' => 'Story',
+        'sort_order' => 1,
+        'is_required' => false,
+    ]);
+
+    $templatePath = storage_path("app/public/templates/{$slug}");
+    File::makeDirectory($templatePath.'/sections', 0755, true);
+    File::makeDirectory($templatePath.'/assets', 0755, true);
+    File::put($templatePath.'/assets/style.css', '');
+    File::put($templatePath.'/assets/script.js', '');
+
+    $data = (new DataContractBuilder)->buildTemplateDefaults($template);
+    $html = (new BladeRenderService)->renderPreview($template, $data);
+
+    expect($html)->toContain('Pertemuan Pertama');
+    expect($html)->toContain('Restu Keluarga');
+    expect($html)->toContain('Pernikahan');
+});

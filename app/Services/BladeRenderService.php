@@ -146,7 +146,11 @@ HTML;
     public function renderSection(Template $template, string $sectionFile, array $data): string
     {
         $config = $this->getTemplateConfig($template);
-        $data = array_replace($config['defaults'] ?? $config['data'] ?? [], $data);
+        $defaults = $config['defaults'] ?? $config['data'] ?? [];
+        // Template-level photo credits (stock/Pinterest attribution) must never leak
+        // into a live render via defaults. They only show when the invitation data
+        // (or preview data) explicitly provides them.
+        $data = array_replace($this->stripPhotoCredits($defaults), $data);
 
         $path = $template->getFolderPath().'/sections/'.$sectionFile;
 
@@ -389,6 +393,26 @@ HTML;
         }
 
         return $normalizedPath;
+    }
+
+    /**
+     * Remove photo attributions (stock/Pinterest credit) from template defaults so
+     * they don't leak into live invitation renders where the couple supplies their
+     * own photos. They still appear in previews because preview data provides them.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function stripPhotoCredits(array $data): array
+    {
+        foreach (['cover', 'bride', 'groom'] as $subject) {
+            unset(
+                $data["{$subject}_photo_credit_url"],
+                $data["{$subject}_photo_source_label"],
+            );
+        }
+
+        return $data;
     }
 
     /**

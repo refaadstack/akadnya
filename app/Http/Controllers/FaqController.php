@@ -19,9 +19,9 @@ class FaqController extends Controller
         return Inertia::render('Faq', [
             'faqs' => $faqs,
             'meta' => [
-                'title' => 'FAQ - Pertanyaan yang Sering Diajukan | MyAkad',
-                'description' => 'Temukan jawaban untuk pertanyaan umum tentang MyAkad - platform undangan digital pernikahan online. Panduan lengkap tentang cara membuat, mengelola, dan membagikan undangan digital.',
-                'keywords' => 'faq myakad, pertanyaan undangan digital, cara membuat undangan online, panduan myakad, bantuan undangan digital, tutorial undangan pernikahan online',
+                'title' => 'FAQ - Pertanyaan yang Sering Diajukan | Akadnya.com',
+                'description' => 'Temukan jawaban untuk pertanyaan umum tentang Akadnya.com - platform undangan digital pernikahan online. Panduan lengkap tentang cara membuat, mengelola, dan membagikan undangan digital.',
+                'keywords' => 'faq akadnya, pertanyaan undangan digital, cara membuat undangan online, panduan akadnya, bantuan undangan digital, tutorial undangan pernikahan online',
             ],
             'canRegister' => Route::has('register'),
         ]);
@@ -38,20 +38,20 @@ class FaqController extends Controller
                 'icon' => 'info',
                 'questions' => [
                     [
-                        'question' => 'Apa itu MyAkad?',
-                        'answer' => 'MyAkad adalah platform undangan digital pernikahan online yang memungkinkan Anda membuat undangan pernikahan yang indah, modern, dan mudah dibagikan. Dengan MyAkad, Anda bisa membuat undangan digital dengan berbagai template menarik, mengelola daftar tamu, menerima konfirmasi kehadiran (RSVP), dan bahkan menerima amplop digital.',
+                        'question' => 'Apa itu Akadnya.com?',
+                        'answer' => 'Akadnya.com adalah platform undangan digital pernikahan online yang memungkinkan Anda membuat undangan pernikahan yang indah, modern, dan mudah dibagikan. Dengan Akadnya.com, Anda bisa membuat undangan digital dengan berbagai template menarik, mengelola daftar tamu, menerima konfirmasi kehadiran (RSVP), dan bahkan menerima amplop digital.',
                     ],
                     [
                         'question' => 'Apakah undangan bisa diakses tanpa internet?',
-                        'answer' => 'Tidak, undangan digital MyAkad memerlukan koneksi internet untuk diakses. Namun, undangan kami dioptimalkan untuk loading cepat dan bisa diakses dari berbagai perangkat (smartphone, tablet, laptop, desktop).',
+                        'answer' => 'Tidak, undangan digital Akadnya.com memerlukan koneksi internet untuk diakses. Namun, undangan kami dioptimalkan untuk loading cepat dan bisa diakses dari berbagai perangkat (smartphone, tablet, laptop, desktop).',
                     ],
                     [
                         'question' => 'Berapa lama undangan aktif?',
-                        'answer' => 'Undangan Anda selalu aktif tanpa batas waktu selama layanan MyAkad berjalan. Tidak ada masa kedaluwarsa, jadi Anda tidak perlu perpanjang paket — undangan tetap bisa diakses oleh tamu kapan saja.',
+                        'answer' => 'Undangan Anda selalu aktif tanpa batas waktu selama layanan Akadnya.com berjalan. Tidak ada masa kedaluwarsa, jadi Anda tidak perlu perpanjang paket — undangan tetap bisa diakses oleh tamu kapan saja.',
                     ],
                     [
                         'question' => 'Apakah ada batasan jumlah tamu?',
-                        'answer' => 'Tidak ada batasan! Semua paket MyAkad mendukung unlimited guests. Anda bisa mengundang sebanyak mungkin tamu tanpa biaya tambahan.',
+                        'answer' => 'Tidak ada batasan! Semua paket Akadnya.com mendukung unlimited guests. Anda bisa mengundang sebanyak mungkin tamu tanpa biaya tambahan.',
                     ],
                     [
                         'question' => 'Apakah tamu perlu login untuk melihat undangan?',
@@ -65,7 +65,7 @@ class FaqController extends Controller
                 'questions' => [
                     [
                         'question' => 'Apa saja paket yang tersedia?',
-                        'answer' => 'MyAkad menyediakan beberapa paket: Basic, Premium, dan Lifetime. Semua paket memiliki fitur yang sama dan undangan akan selalu aktif tanpa batas waktu selama layanan MyAkad berjalan — paket hanya menentukan apa yang Anda bayar di awal, bukan berapa lama undangan bisa diakses.',
+                        'answer' => 'Akadnya.com menyediakan beberapa paket: Basic, Premium, dan Lifetime. Semua paket memiliki fitur yang sama dan undangan akan selalu aktif tanpa batas waktu selama layanan Akadnya.com berjalan — paket hanya menentukan apa yang Anda bayar di awal, bukan berapa lama undangan bisa diakses.',
                     ],
                     [
                         'question' => 'Bagaimana cara pembayaran?',
@@ -73,7 +73,7 @@ class FaqController extends Controller
                     ],
                     [
                         'question' => 'Apakah bisa refund jika tidak jadi pakai?',
-                        'answer' => 'Karena ini produk digital, pembelian dianggap final setelah checkout. Refund hanya bisa dilakukan dalam kondisi yang wajar, misalnya karena kesalahan dari pihak MyAkad atau kondisi khusus lain yang memang layak. Silakan hubungi customer support kami untuk proses refund.',
+                        'answer' => 'Karena ini produk digital, pembelian dianggap final setelah checkout. Refund hanya bisa dilakukan dalam kondisi yang wajar, misalnya karena kesalahan dari pihak Akadnya.com atau kondisi khusus lain yang memang layak. Silakan hubungi customer support kami untuk proses refund.',
                     ],
                     [
                         'question' => 'Apakah ada biaya tambahan?',
@@ -99,7 +99,7 @@ class FaqController extends Controller
                     ],
                     [
                         'question' => 'Apakah template responsive di semua device?',
-                        'answer' => 'Ya! Semua template MyAkad dirancang responsive dan mobile-first. Undangan akan tampil sempurna di smartphone, tablet, laptop, dan desktop dengan berbagai ukuran layar.',
+                        'answer' => 'Ya! Semua template Akadnya.com dirancang responsive dan mobile-first. Undangan akan tampil sempurna di smartphone, tablet, laptop, dan desktop dengan berbagai ukuran layar.',
                     ],
                 ],
             ],
@@ -109,7 +109,7 @@ class FaqController extends Controller
                 'questions' => [
                     [
                         'question' => 'Apa itu subdomain?',
-                        'answer' => 'Subdomain adalah alamat unik untuk undangan Anda di MyAkad. Contoh: siti-budi-2024.myakad.com. Subdomain ini yang akan Anda bagikan ke tamu undangan.',
+                        'answer' => 'Subdomain adalah alamat unik untuk undangan Anda di Akadnya.com. Contoh: siti-budi-2024.akadnya.com. Subdomain ini yang akan Anda bagikan ke tamu undangan.',
                     ],
                     [
                         'question' => 'Kenapa subdomain otomatis jadi nama saya?',
@@ -129,7 +129,7 @@ class FaqController extends Controller
                     ],
                     [
                         'question' => 'Bagaimana cara setup custom domain?',
-                        'answer' => 'Beli domain dari provider (Niagahoster, Dewaweb, dll), login ke DNS Management, buat CNAME record yang mengarah ke myakad.com, tunggu propagasi DNS (5-30 menit), lalu masukkan domain di Settings MyAkad. Panduan lengkap tersedia di halaman Settings.',
+                        'answer' => 'Beli domain dari provider (Niagahoster, Dewaweb, dll), login ke DNS Management, buat CNAME record yang mengarah ke akadnya.com, tunggu propagasi DNS (5-30 menit), lalu masukkan domain di Settings Akadnya.com. Panduan lengkap tersedia di halaman Settings.',
                     ],
                 ],
             ],
@@ -139,7 +139,7 @@ class FaqController extends Controller
                 'questions' => [
                     [
                         'question' => 'Format foto apa yang didukung?',
-                        'answer' => 'MyAkad mendukung format JPG, PNG, dan WebP. Untuk hasil terbaik, gunakan foto dengan resolusi tinggi dan ukuran file tidak lebih dari 5MB per foto.',
+                        'answer' => 'Akadnya.com mendukung format JPG, PNG, dan WebP. Untuk hasil terbaik, gunakan foto dengan resolusi tinggi dan ukuran file tidak lebih dari 5MB per foto.',
                     ],
                     [
                         'question' => 'Berapa ukuran maksimal foto?',
@@ -147,11 +147,11 @@ class FaqController extends Controller
                     ],
                     [
                         'question' => 'Apakah bisa upload video?',
-                        'answer' => 'Saat ini MyAkad belum mendukung upload video langsung. Namun, Anda bisa embed video dari YouTube atau Vimeo dengan menambahkan link di bagian konten.',
+                        'answer' => 'Saat ini Akadnya.com belum mendukung upload video langsung. Namun, Anda bisa embed video dari YouTube atau Vimeo dengan menambahkan link di bagian konten.',
                     ],
                     [
                         'question' => 'Format musik apa yang didukung?',
-                        'answer' => 'MyAkad mendukung format MP3 dan WAV dengan ukuran maksimal 10MB. Pilih musik instrumental atau lagu romantis yang sesuai dengan tema pernikahan Anda.',
+                        'answer' => 'Akadnya.com mendukung format MP3 dan WAV dengan ukuran maksimal 10MB. Pilih musik instrumental atau lagu romantis yang sesuai dengan tema pernikahan Anda.',
                     ],
                     [
                         'question' => 'Berapa banyak foto yang bisa diupload ke galeri?',
@@ -207,7 +207,7 @@ class FaqController extends Controller
                     ],
                     [
                         'question' => 'Apakah bisa buat undangan untuk setiap tamu?',
-                        'answer' => 'Saat ini MyAkad menggunakan satu URL untuk semua tamu. Fitur personalized invitation (URL unik per tamu) sedang dalam pengembangan dan akan segera hadir.',
+                        'answer' => 'Saat ini Akadnya.com menggunakan satu URL untuk semua tamu. Fitur personalized invitation (URL unik per tamu) sedang dalam pengembangan dan akan segera hadir.',
                     ],
                 ],
             ],
@@ -235,7 +235,7 @@ class FaqController extends Controller
                         'question' => 'Bagaimana cara menghubungi support?',
                         'answer' => sprintf(
                             'Anda bisa menghubungi kami via Email: %s atau WhatsApp: %s (Senin-Jumat, 09:00-17:00 WIB). Kami siap membantu Anda!',
-                            SiteSetting::get('support_email', 'support@refaadstack.com'),
+                            SiteSetting::get('support_email', 'support@akadnya.com'),
                             $this->formatWhatsApp(SiteSetting::get('support_whatsapp', '6282374338273'))
                         ),
                     ],

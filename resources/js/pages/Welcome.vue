@@ -159,32 +159,37 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="my-page">
-        <Head title="MyAkad - Undangan Digital Pernikahan" />
+        <Head title="Akadnya.com - Undangan Digital Pernikahan" />
 
         <PublicNavbar :can-register="canRegister" current-page="home" />
 
         <main>
-            <section class="px-0 pt-24 md:pt-20">
+            <section class="bg-[var(--ink)] px-0 pt-24 md:pt-20">
                 <div
                     class="my-container grid min-h-[720px] items-center gap-14 py-16 lg:grid-cols-[1.05fr_0.95fr]"
                 >
                     <div class="my-reveal">
-                        <p class="my-label mb-5">Undangan Digital Premium</p>
+                        <p class="mb-5 text-[0.78rem] font-bold tracking-[0.18em] text-[var(--gold-light)] uppercase">
+                            Undangan Digital Premium
+                        </p>
                         <h1
-                            class="my-heading max-w-xl text-5xl leading-[1.02] md:text-[3.6rem]"
+                            class="my-heading max-w-xl text-5xl leading-[1.02] text-[var(--text-light)] md:text-[3.6rem]"
                         >
                             Undangan digital dengan karakter,
-                            <span class="my-heading-accent"
+                            <span class="text-[var(--gold-light)]"
                                 >bukan template pasaran.</span
                             >
                         </h1>
-                        <p class="my-copy mt-7 max-w-lg">
+                        <p class="my-copy mt-7 max-w-lg text-[var(--text-light)]">
                             Pilih template dengan karakter budaya yang kamu
                             suka, isi detail acara, bagikan linknya ke semua
                             tamu.
                         </p>
                         <div class="mt-10 flex flex-wrap gap-4">
-                            <Link href="/templates" class="my-btn-primary px-9">
+                            <Link
+                                href="/templates"
+                                class="px-9 py-3 inline-flex items-center justify-center rounded-lg bg-[var(--gold-light)] text-sm font-bold text-[var(--ink)] transition hover:bg-[var(--ink-2)] hover:text-[var(--text-light)]"
+                            >
                                 Pilih Template Undanganku
                             </Link>
                             <a
@@ -195,7 +200,7 @@ onBeforeUnmount(() => {
                             </a>
                         </div>
                         <p
-                            class="mt-6 text-sm font-semibold text-[var(--my-muted)]"
+                            class="mt-6 text-sm font-semibold text-[var(--text-light-muted)]"
                         >
                             Preview asli tiap template sebelum checkout — yang
                             kamu lihat, yang dibuka tamu.
@@ -208,39 +213,39 @@ onBeforeUnmount(() => {
                     >
                         <div class="relative w-full max-w-[440px]">
                             <img
-                                class="aspect-[4/5] w-full rounded-[24px_96px_24px_96px] object-cover shadow-[0_28px_70px_rgb(51_51_51_/_16%)]"
+                                class="aspect-[4/5] w-full rounded-[24px_96px_24px_96px] object-cover shadow-[0_28px_70px_rgb(0_0_0_/_40%)]"
                                 src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=1000&q=85"
                                 alt="Detail undangan pernikahan dengan bunga putih dan dedaunan sage"
                             />
                             <div
-                                class="absolute top-6 -left-4 rounded-lg border border-[var(--my-border)] bg-white/88 px-4 py-3 shadow-lg backdrop-blur-md md:-left-8"
+                                class="absolute top-6 -left-4 rounded-lg border border-white/15 bg-[var(--ink)]/90 px-4 py-3 shadow-lg backdrop-blur-md md:-left-8"
                             >
-                                <p class="my-label text-[0.66rem]">
+                                <p class="my-label text-[0.66rem] text-[var(--gold-light)]">
                                     Mulai dari
                                 </p>
                                 <p
-                                    class="font-display mt-0.5 text-2xl font-bold text-[var(--my-neutral)]"
+                                    class="font-display mt-0.5 text-2xl font-bold text-[var(--text-light)]"
                                 >
                                     {{ formattedPrice }}
                                 </p>
                                 <p
-                                    class="text-xs font-semibold text-[var(--my-muted)]"
+                                    class="text-xs font-semibold text-[var(--text-light-muted)]"
                                 >
                                     sekali bayar
                                 </p>
                             </div>
                             <div
-                                class="absolute right-6 -bottom-5 flex items-center gap-3 rounded-lg border border-[var(--my-border)] bg-white/88 px-4 py-3 shadow-lg backdrop-blur-md"
+                                class="absolute right-6 -bottom-5 flex items-center gap-3 rounded-lg border border-white/15 bg-[var(--ink)]/90 px-4 py-3 shadow-lg backdrop-blur-md"
                             >
                                 <QrCode
-                                    class="size-6 shrink-0 text-[var(--my-primary)]"
+                                    class="size-6 shrink-0 text-[var(--gold-light)]"
                                 />
                                 <div>
-                                    <p class="my-label text-[0.66rem]">
+                                    <p class="my-label text-[0.66rem] text-[var(--gold-light)]">
                                         Check-in Tamu
                                     </p>
                                     <p
-                                        class="mt-0.5 text-sm font-bold text-[var(--my-neutral)]"
+                                        class="mt-0.5 text-sm font-bold text-[var(--text-light)]"
                                     >
                                         Scan QR saat hari-H
                                     </p>
@@ -399,7 +404,7 @@ onBeforeUnmount(() => {
                             <p
                                 class="mt-4 font-mono text-xs tracking-widest text-[var(--my-muted)]"
                             >
-                                MyAkad-DEMO-0001
+                                Akadnya.com-DEMO-0001
                             </p>
                             <p
                                 class="mt-3 text-xs leading-5 text-[var(--my-muted)]"
@@ -629,7 +634,7 @@ onBeforeUnmount(() => {
                         <div class="flex items-baseline justify-between gap-4">
                             <h3 class="my-heading text-2xl">
                                 {{
-                                    startingTemplate?.name ?? 'Template MyAkad'
+                                    startingTemplate?.name ?? 'Template Akadnya.com'
                                 }}
                             </h3>
                             <span

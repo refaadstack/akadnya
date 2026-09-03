@@ -129,7 +129,7 @@ onBeforeUnmount(() => {
 
                 <div
                     v-if="$page.props.flash?.success"
-                    class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800"
+                    class="rounded-lg border border-[#AD7F35]/30 bg-[#AD7F35]/10 px-4 py-3 text-[#5A1B24]"
                 >
                     {{ $page.props.flash.success }}
                 </div>
@@ -190,7 +190,7 @@ onBeforeUnmount(() => {
                     class="rounded-xl border p-6"
                     :class="
                         lastResult.status === 'success'
-                            ? 'border-green-200 bg-green-50'
+                            ? 'border-[#AD7F35]/30 bg-[#AD7F35]/10'
                             : 'border-red-200 bg-red-50'
                     "
                 >
@@ -198,7 +198,7 @@ onBeforeUnmount(() => {
                         class="font-bold"
                         :class="
                             lastResult.status === 'success'
-                                ? 'text-green-800'
+                                ? 'text-[#5A1B24]'
                                 : 'text-red-800'
                         "
                     >
@@ -212,7 +212,7 @@ onBeforeUnmount(() => {
                         class="mt-1 text-sm"
                         :class="
                             lastResult.status === 'success'
-                                ? 'text-green-700'
+                                ? 'text-[#9f6b61]'
                                 : 'text-red-700'
                         "
                     >

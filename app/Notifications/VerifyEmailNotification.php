@@ -63,15 +63,15 @@ class VerifyEmailNotification extends VerifyEmail
         $escapedUrl = e($url);
 
         return [
-            'subject' => 'Verifikasi Email MyAkad',
+            'subject' => 'Verifikasi Email Akadnya.com',
 
             'htmlContent' => <<<HTML
-                <h1>Verifikasi Email MyAkad</h1>
+                <h1>Verifikasi Email Akadnya.com</h1>
 
                 <p>Halo {$name},</p>
 
                 <p>
-                Terima kasih sudah membuat akun MyAkad.
+                Terima kasih sudah membuat akun Akadnya.com.
                 Klik tombol di bawah ini untuk mengaktifkan akun kamu.
                 </p>
 
@@ -98,7 +98,7 @@ class VerifyEmailNotification extends VerifyEmail
             'textContent' => <<<TEXT
                 Halo {$notifiable->name},
 
-                Terima kasih sudah membuat akun MyAkad.
+                Terima kasih sudah membuat akun Akadnya.com.
 
                 Verifikasi email kamu melalui link berikut:
 

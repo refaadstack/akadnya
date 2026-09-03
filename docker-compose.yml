@@ -1,7 +1,7 @@
 services:
   app:
-    image: myakad:latest
-    container_name: myakad-app
+    image: akadnya:latest
+    container_name: akadnya-app
     build:
       context: .
     restart: unless-stopped
@@ -12,7 +12,7 @@ services:
     environment:
       APP_ENV: local
       APP_DEBUG: "true"
-      APP_URL: https://myakad.refaadstack.com
+      APP_URL: https://akadnya.com
       DB_CONNECTION: mysql
       DB_HOST: 192.168.18.250
       DB_PORT: 3306
@@ -21,8 +21,8 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       PAYMENT_SERVICE_URL: http://payment-service-app:8080
       PAYMENT_SERVICE_PUBLIC_URL: https://pay.refaadstack.com
-      MYAKAD_PRODUCT_KEY: ${MYAKAD_PRODUCT_KEY}
-      MYAKAD_CALLBACK_SECRET: ${MYAKAD_CALLBACK_SECRET}
+      AKADNYA_PRODUCT_KEY: ${AKADNYA_PRODUCT_KEY}
+      AKADNYA_CALLBACK_SECRET: ${AKADNYA_CALLBACK_SECRET}
     volumes:
       - ./storage/app/public:/app/storage/app/public
       - ./storage/logs:/app/storage/logs

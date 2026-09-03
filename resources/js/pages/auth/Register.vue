@@ -47,7 +47,7 @@ const submit = () => {
                     Buat akun, pilih template, lalu publish undanganmu.
                 </h1>
                 <p class="my-copy mt-5 max-w-lg">
-                    MyAkad dibuat agar proses undangan digital terasa tenang:
+                    Akadnya.com dibuat agar proses undangan digital terasa tenang:
                     preview dulu, isi data pelan-pelan, lalu bagikan satu link
                     saat sudah siap.
                 </p>
@@ -80,7 +80,7 @@ const submit = () => {
                         <Link
                             href="/"
                             class="font-display text-4xl font-bold text-[var(--my-primary)]"
-                            >MyAkad</Link
+                            >Akadnya.com</Link
                         >
                         <h2 class="my-heading mt-6 text-3xl">Buat akun baru</h2>
                         <p class="mt-2 text-[var(--my-muted)]">
@@ -240,7 +240,7 @@ const submit = () => {
                                         class="font-semibold text-[var(--my-primary)] hover:underline"
                                         >Kebijakan Privasi</Link
                                     >
-                                    MyAkad.
+                                    Akadnya.com.
                                 </span>
                             </label>
                             <p

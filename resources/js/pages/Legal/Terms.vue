@@ -44,9 +44,9 @@ const updatedDate = 'Agustus 2026';
 
                     <div class="my-card grid gap-8 p-7 md:p-10">
                         <p class="my-copy">
-                            Dengan mengakses atau menggunakan Layanan MyAkad
+                            Dengan mengakses atau menggunakan Layanan Akadnya.com
                             (selanjutnya disebut "Layanan") di
-                            myakad.refaadstack.com, Anda menyetujui syarat dan
+                            akadnya.com, Anda menyetujui syarat dan
                             ketentuan berikut. Jika Anda tidak setuju, mohon
                             berhenti menggunakan Layanan.
                         </p>
@@ -57,7 +57,7 @@ const updatedDate = 'Agustus 2026';
                                 class="grid list-decimal gap-2 pl-5 text-sm leading-6 text-[var(--my-muted)]"
                             >
                                 <li>
-                                    <strong>MyAkad</strong> adalah platform
+                                    <strong>Akadnya.com</strong> adalah platform
                                     undangan digital yang memungkinkan Pengguna
                                     membuat undangan dengan template, mengelola
                                     tamu, RSVP, amplop digital, dan fitur
@@ -94,7 +94,7 @@ const updatedDate = 'Agustus 2026';
                                 Dengan mendaftar, membeli, atau memublikasikan
                                 undangan, Anda dianggap telah membaca, memahami,
                                 dan menyetujui seluruh ketentuan ini beserta
-                                Kebijakan Privasi MyAkad.
+                                Kebijakan Privasi Akadnya.com.
                             </p>
                         </section>
 
@@ -112,7 +112,7 @@ const updatedDate = 'Agustus 2026';
                                 <li>
                                     Data akun harus akurat dan mutakhir.
                                     Kehilangan akses akibat informasi yang salah
-                                    bukan tanggung jawab MyAkad.
+                                    bukan tanggung jawab Akadnya.com.
                                 </li>
                                 <li>
                                     Akun tidak boleh dibagikan, dijual, atau
@@ -121,7 +121,7 @@ const updatedDate = 'Agustus 2026';
                                 <li>
                                     Dengan mendaftar, Anda menyatakan telah
                                     membaca dan menyetujui seluruh isi halaman
-                                    ini serta Kebijakan Privasi MyAkad.
+                                    ini serta Kebijakan Privasi Akadnya.com.
                                 </li>
                             </ol>
                         </section>
@@ -150,7 +150,7 @@ const updatedDate = 'Agustus 2026';
                                 </li>
                                 <li>
                                     Pembayaran diproses melalui payment gateway
-                                    yang aman; MyAkad tidak menyimpan data kartu
+                                    yang aman; Akadnya.com tidak menyimpan data kartu
                                     kredit/debit secara utuh.
                                 </li>
                             </ol>
@@ -165,12 +165,12 @@ const updatedDate = 'Agustus 2026';
                             >
                                 <li>
                                     Seluruh template, desain, kode, dan tampilan
-                                    Layanan milik MyAkad yang tidak boleh
+                                    Layanan milik Akadnya.com yang tidak boleh
                                     disalin, dijual, atau didistribusikan ulang.
                                 </li>
                                 <li>
                                     Konten yang Anda unggah tetap milik Anda;
-                                    Anda memberi MyAkad lisensi terbatas untuk
+                                    Anda memberi Akadnya.com lisensi terbatas untuk
                                     menyimpan dan menampilkan Konten agar
                                     Layanan berfungsi.
                                 </li>
@@ -199,7 +199,7 @@ const updatedDate = 'Agustus 2026';
                                     melanggar hak pihak ketiga.
                                 </li>
                                 <li>
-                                    MyAkad berhak menahan atau menghapus
+                                    Akadnya.com berhak menahan atau menghapus
                                     undangan yang melanggar ketentuan ini tanpa
                                     pemberitahuan.
                                 </li>
@@ -246,8 +246,8 @@ const updatedDate = 'Agustus 2026';
                                 <li>
                                     Pengembalian dana hanya dapat dilakukan
                                     dalam kondisi yang wajar dan disetujui oleh
-                                    MyAkad, misalnya karena kesalahan dari pihak
-                                    MyAkad (produk tidak dapat digunakan) atau
+                                    Akadnya.com, misalnya karena kesalahan dari pihak
+                                    Akadnya.com (produk tidak dapat digunakan) atau
                                     kondisi khusus lainnya yang memang layak.
                                 </li>
                                 <li>
@@ -265,10 +265,10 @@ const updatedDate = 'Agustus 2026';
                             </h2>
                             <p class="my-copy">
                                 Layanan dapat mengalami pemeliharaan
-                                (maintenance) atau downtime sementara. MyAkad
+                                (maintenance) atau downtime sementara. Akadnya.com
                                 berhak menonaktifkan atau menahan akses akun
                                 yang melanggar ketentuan. Layanan infrastruktur
-                                pihak ketiga berada di luar kendali MyAkad.
+                                pihak ketiga berada di luar kendali Akadnya.com.
                             </p>
                         </section>
 
@@ -281,16 +281,16 @@ const updatedDate = 'Agustus 2026';
                             >
                                 <li>
                                     Layanan diberikan "sebagaimana ada" (as-is).
-                                    MyAkad tidak menjamin Layanan bebas gangguan
+                                    Akadnya.com tidak menjamin Layanan bebas gangguan
                                     atau bebas dari kesalahan.
                                 </li>
                                 <li>
-                                    MyAkad tidak bertanggung jawab atas
+                                    Akadnya.com tidak bertanggung jawab atas
                                     kehilangan data, kegagalan akses, perubahan
                                     link, atau kerugian tidak langsung.
                                 </li>
                                 <li>
-                                    Sejauh diizinkan hukum, kewajiban MyAkad
+                                    Sejauh diizinkan hukum, kewajiban Akadnya.com
                                     dibatasi pada jumlah yang Anda bayarkan
                                     untuk Layanan.
                                 </li>
@@ -302,7 +302,7 @@ const updatedDate = 'Agustus 2026';
                                 11. Perubahan Syarat &amp; Ketentuan
                             </h2>
                             <p class="my-copy">
-                                MyAkad dapat mengubah syarat &amp; ketentuan
+                                Akadnya.com dapat mengubah syarat &amp; ketentuan
                                 sewaktu-waktu. Perubahan berlaku sejak diumumkan
                                 di halaman ini. Kelanjutan penggunaan Layanan
                                 berarti Anda menerima perubahan tersebut.

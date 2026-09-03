@@ -76,7 +76,7 @@ const submit = () => {
                         <Link
                             href="/"
                             class="font-display text-4xl font-bold text-[var(--my-primary)]"
-                            >MyAkad</Link
+                            >Akadnya.com</Link
                         >
 
                         <div

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { Menu, ShoppingCart, X } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 
 defineProps<{
     canRegister?: boolean;
@@ -13,19 +13,41 @@ const user = computed(() => page.props.auth?.user ?? null);
 const cartCount = computed(() => (page.props.cartCount as number) || 0);
 
 const mobileMenuOpen = ref(false);
+
+const scrolled = ref(false);
+const onScroll = () => {
+    scrolled.value = window.scrollY > 40;
+};
+onMounted(() => {
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+});
+onBeforeUnmount(() => {
+    window.removeEventListener('scroll', onScroll);
+});
 </script>
 
 <template>
     <nav
-        class="fixed top-0 right-0 left-0 z-50 border-b border-[var(--my-border)]/60 bg-[var(--my-background)]/86 backdrop-blur-md"
+        class="fixed top-0 right-0 left-0 z-50 transition-colors duration-300"
+        :class="
+            scrolled
+                ? 'border-b border-[var(--my-border)]/60 bg-[var(--my-background)]/86 backdrop-blur-md'
+                : 'border-b border-transparent bg-transparent'
+        "
     >
         <div class="my-container">
             <div class="flex min-h-16 items-center justify-between">
                 <Link
                     href="/"
-                    class="font-display text-3xl leading-none font-bold text-[var(--my-primary)]"
+                    class="font-display text-3xl leading-none font-bold"
+                    :class="
+                        scrolled
+                            ? 'text-[var(--my-primary)]'
+                            : 'text-[var(--gold-light)]'
+                    "
                 >
-                    MyAkad
+                    Akadnya.com
                 </Link>
 
                 <div class="hidden items-center gap-8 md:flex">
@@ -34,8 +56,10 @@ const mobileMenuOpen = ref(false);
                         class="text-sm font-semibold transition"
                         :class="
                             currentPage === 'templates'
-                                ? 'border-b-2 border-[var(--my-primary)] text-[var(--my-primary)]'
-                                : 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                                ? 'border-b-2 border-[var(--gold-light)] text-[var(--gold-light)]'
+                                : scrolled
+                                  ? 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                                  : 'text-[var(--text-light)] hover:text-[var(--gold-light)]'
                         "
                     >
                         Koleksi
@@ -45,15 +69,22 @@ const mobileMenuOpen = ref(false);
                         class="text-sm font-semibold transition"
                         :class="
                             currentPage === 'products'
-                                ? 'border-b-2 border-[var(--my-primary)] text-[var(--my-primary)]'
-                                : 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                                ? 'border-b-2 border-[var(--gold-light)] text-[var(--gold-light)]'
+                                : scrolled
+                                  ? 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                                  : 'text-[var(--text-light)] hover:text-[var(--gold-light)]'
                         "
                     >
                         Produk
                     </Link>
                     <Link
                         href="/#how-it-works"
-                        class="text-sm font-semibold text-[var(--my-neutral)] transition hover:text-[var(--my-primary)]"
+                        class="text-sm font-semibold transition"
+                        :class="
+                            scrolled
+                                ? 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                                : 'text-[var(--text-light)] hover:text-[var(--gold-light)]'
+                        "
                     >
                         Cara Pesan
                     </Link>
@@ -62,8 +93,10 @@ const mobileMenuOpen = ref(false);
                         class="text-sm font-semibold transition"
                         :class="
                             currentPage === 'tutorial'
-                                ? 'border-b-2 border-[var(--my-primary)] text-[var(--my-primary)]'
-                                : 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                                ? 'border-b-2 border-[var(--gold-light)] text-[var(--gold-light)]'
+                                : scrolled
+                                  ? 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                                  : 'text-[var(--text-light)] hover:text-[var(--gold-light)]'
                         "
                     >
                         Tutorial
@@ -73,8 +106,10 @@ const mobileMenuOpen = ref(false);
                         class="text-sm font-semibold transition"
                         :class="
                             currentPage === 'faq'
-                                ? 'border-b-2 border-[var(--my-primary)] text-[var(--my-primary)]'
-                                : 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                                ? 'border-b-2 border-[var(--gold-light)] text-[var(--gold-light)]'
+                                : scrolled
+                                  ? 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                                  : 'text-[var(--text-light)] hover:text-[var(--gold-light)]'
                         "
                     >
                         FAQ
@@ -84,13 +119,18 @@ const mobileMenuOpen = ref(false);
                 <div class="hidden items-center gap-3 md:flex">
                     <Link
                         href="/keranjang"
-                        class="relative inline-flex size-10 items-center justify-center rounded-lg border border-[var(--my-border)] text-[var(--my-neutral)] transition hover:text-[var(--my-primary)]"
+                        class="relative inline-flex size-10 items-center justify-center rounded-lg border transition"
+                        :class="
+                            scrolled
+                                ? 'border-[var(--my-border)] text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                                : 'border-white/20 text-[var(--text-light)] hover:text-[var(--gold-light)]'
+                        "
                         aria-label="Keranjang"
                     >
                         <ShoppingCart class="size-5" />
                         <span
                             v-if="cartCount > 0"
-                            class="absolute -top-1.5 -right-1.5 grid min-w-5 place-items-center rounded-full bg-[var(--my-primary)] px-1 text-[0.65rem] font-bold text-white"
+                            class="absolute -top-1.5 -right-1.5 grid min-w-5 place-items-center rounded-full bg-[var(--gold-light)] px-1 text-[0.65rem] font-bold text-[var(--ink)]"
                         >
                             {{ cartCount > 99 ? '99+' : cartCount }}
                         </span>
@@ -98,35 +138,60 @@ const mobileMenuOpen = ref(false);
                     <Link
                         v-if="user"
                         href="/dashboard"
-                        class="px-3 py-2 text-sm font-semibold text-[var(--my-neutral)] transition hover:text-[var(--my-primary)]"
+                        class="px-3 py-2 text-sm font-semibold transition"
+                        :class="
+                            scrolled
+                                ? 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                                : 'text-[var(--text-light)] hover:text-[var(--gold-light)]'
+                        "
                     >
                         Dashboard
                     </Link>
                     <Link
                         v-else
                         href="/login"
-                        class="px-3 py-2 text-sm font-semibold text-[var(--my-neutral)] transition hover:text-[var(--my-primary)]"
+                        class="px-3 py-2 text-sm font-semibold transition"
+                        :class="
+                            scrolled
+                                ? 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
+                                : 'text-[var(--text-light)] hover:text-[var(--gold-light)]'
+                        "
                     >
                         Masuk
                     </Link>
                     <Link
                         v-if="canRegister"
                         href="/register"
-                        class="my-btn-primary min-h-10 px-5"
+                        class="min-h-10 px-5"
+                        :class="
+                            scrolled
+                                ? 'my-btn-primary'
+                                : 'inline-flex items-center justify-center rounded-lg bg-[var(--gold-light)] px-5 text-sm font-bold text-[var(--ink)] transition hover:bg-[var(--ink-2)] hover:text-[var(--text-light)]'
+                        "
                     >
                         Mulai Desain
                     </Link>
                     <Link
                         v-else
                         href="/templates"
-                        class="my-btn-primary min-h-10 px-5"
+                        class="min-h-10 px-5"
+                        :class="
+                            scrolled
+                                ? 'my-btn-primary'
+                                : 'inline-flex items-center justify-center rounded-lg bg-[var(--gold-light)] px-5 text-sm font-bold text-[var(--ink)] transition hover:bg-[var(--ink-2)] hover:text-[var(--text-light)]'
+                        "
                     >
                         Mulai Desain
                     </Link>
                 </div>
 
                 <button
-                    class="inline-flex size-10 items-center justify-center rounded-lg border border-[var(--my-border)] text-[var(--my-neutral)] md:hidden"
+                    class="inline-flex size-10 items-center justify-center rounded-lg border transition md:hidden"
+                    :class="
+                        scrolled
+                            ? 'border-[var(--my-border)] text-[var(--my-neutral)]'
+                            : 'border-white/20 text-[var(--text-light)]'
+                    "
                     type="button"
                     aria-label="Buka menu"
                     @click="mobileMenuOpen = !mobileMenuOpen"
@@ -138,7 +203,7 @@ const mobileMenuOpen = ref(false);
 
             <div
                 v-if="mobileMenuOpen"
-                class="grid gap-3 border-t border-[var(--my-border)]/70 py-4 md:hidden"
+                class="grid gap-3 border-t border-[var(--my-border)]/70 bg-[var(--my-background)] py-4 md:hidden"
             >
                 <Link
                     href="/templates"

@@ -69,7 +69,7 @@ class DashboardController extends Controller
         ];
 
         // Detailed analytics
-        $totalRsvpCount = $invitation->rsvps()->where('is_from_myakad', false)->count();
+        $totalRsvpCount = $invitation->rsvps()->where('is_from_akadnya', false)->count();
 
         $analytics = [
             'total_views' => $invitation->view_count ?? 0,
@@ -89,7 +89,7 @@ class DashboardController extends Controller
 
         // Get recent RSVPs (last 5)
         $recentRsvps = $invitation->rsvps()
-            ->where('is_from_myakad', false)
+            ->where('is_from_akadnya', false)
             ->latest()
             ->take(5)
             ->get()
@@ -201,7 +201,7 @@ class DashboardController extends Controller
         $start = now()->subDays(13)->startOfDay();
 
         $rows = $invitation->rsvps()
-            ->where('is_from_myakad', false)
+            ->where('is_from_akadnya', false)
             ->where('created_at', '>=', $start)
             ->get(['created_at', 'attendance'])
             ->groupBy(fn ($rsvp) => $rsvp->created_at->format('Y-m-d'));

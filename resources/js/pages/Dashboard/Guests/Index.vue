@@ -88,9 +88,9 @@ const categoryLabels: Record<string, string> = {
 };
 
 const categoryColors: Record<string, string> = {
-    family: 'bg-green-100 text-green-800',
-    friends: 'bg-blue-100 text-blue-800',
-    colleagues: 'bg-green-100 text-green-800',
+    family: 'bg-[#AD7F35]/10 text-[#5A1B24]',
+    friends: 'bg-[#5A1B24]/10 text-[#5A1B24]',
+    colleagues: 'bg-[#AD7F35]/10 text-[#5A1B24]',
     others: 'bg-gray-100 text-gray-800',
 };
 
@@ -262,7 +262,7 @@ const downloadTemplate = () => {
                         </button>
                         <button
                             @click="openAddModal"
-                            class="rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-3 font-semibold text-white transition hover:shadow-lg"
+                            class="rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-3 font-semibold text-white transition hover:shadow-lg"
                         >
                             + Tambah Tamu
                         </button>
@@ -272,7 +272,7 @@ const downloadTemplate = () => {
                 <!-- Flash Messages -->
                 <div
                     v-if="$page.props.flash?.success"
-                    class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800"
+                    class="mb-6 rounded-lg border border-[#AD7F35]/30 bg-[#AD7F35]/10 px-4 py-3 text-[#5A1B24]"
                 >
                     {{ $page.props.flash.success }}
                 </div>
@@ -305,7 +305,7 @@ const downloadTemplate = () => {
                         <div class="text-sm text-gray-600">Total Tamu</div>
                     </div>
                     <div class="rounded-xl bg-white p-6 shadow-md">
-                        <div class="mb-1 text-3xl font-bold text-green-600">
+                        <div class="mb-1 text-3xl font-bold text-[#AD7F35]">
                             {{ stats.confirmed }}
                         </div>
                         <div class="text-sm text-gray-600">
@@ -338,7 +338,7 @@ const downloadTemplate = () => {
                                 @keyup.enter="search"
                                 type="text"
                                 placeholder="Cari nama atau telepon..."
-                                class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                             />
                         </div>
 
@@ -351,7 +351,7 @@ const downloadTemplate = () => {
                                 class="rounded-lg px-4 py-2 font-medium transition"
                                 :class="
                                     selectedCategory === key
-                                        ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white'
+                                        ? 'bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] text-white'
                                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 "
                             >
@@ -391,7 +391,7 @@ const downloadTemplate = () => {
                         </p>
                         <button
                             @click="openAddModal"
-                            class="rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-3 font-semibold text-white transition hover:shadow-lg"
+                            class="rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-3 font-semibold text-white transition hover:shadow-lg"
                         >
                             + Tambah Tamu Pertama
                         </button>
@@ -473,7 +473,7 @@ const downloadTemplate = () => {
                                         class="rounded-full px-2 py-1 text-xs font-medium"
                                         :class="
                                             guest.rsvp?.attendance === 'yes'
-                                                ? 'bg-green-100 text-green-800'
+                                                ? 'bg-[#AD7F35]/10 text-[#5A1B24]'
                                                 : 'bg-red-100 text-red-800'
                                         "
                                     >
@@ -496,7 +496,7 @@ const downloadTemplate = () => {
                                             @click="
                                                 copyLink(guest.personal_link)
                                             "
-                                            class="text-blue-600 hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-30"
+                                            class="text-[#5A1B24] hover:text-[#5A1B24] disabled:cursor-not-allowed disabled:opacity-30"
                                             title="Copy Link"
                                             :disabled="!isPublished"
                                         >
@@ -505,7 +505,7 @@ const downloadTemplate = () => {
                                         <button
                                             v-if="guest.phone"
                                             @click="sendWhatsApp(guest.id)"
-                                            class="text-green-600 hover:text-green-800 disabled:cursor-not-allowed disabled:opacity-30"
+                                            class="text-[#AD7F35] hover:text-[#5A1B24] disabled:cursor-not-allowed disabled:opacity-30"
                                             title="Kirim WhatsApp"
                                             :disabled="!isPublished"
                                         >
@@ -558,7 +558,7 @@ const downloadTemplate = () => {
                                 class="rounded px-3 py-1"
                                 :class="
                                     page === guests.current_page
-                                        ? 'bg-green-600 text-white'
+                                        ? 'bg-[#AD7F35] text-white'
                                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 "
                             >
@@ -590,7 +590,7 @@ const downloadTemplate = () => {
                             v-model="addForm.name"
                             type="text"
                             required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         />
                         <div
                             v-if="addForm.errors.name"
@@ -609,7 +609,7 @@ const downloadTemplate = () => {
                             v-model="addForm.phone"
                             type="text"
                             placeholder="081234567890"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         />
                         <div
                             v-if="addForm.errors.phone"
@@ -627,7 +627,7 @@ const downloadTemplate = () => {
                         <select
                             v-model="addForm.category"
                             required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         >
                             <option value="family">Keluarga</option>
                             <option value="friends">Teman</option>
@@ -653,7 +653,7 @@ const downloadTemplate = () => {
                             min="1"
                             max="10"
                             required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         />
                         <div
                             v-if="addForm.errors.max_pax"
@@ -671,7 +671,7 @@ const downloadTemplate = () => {
                         <textarea
                             v-model="addForm.notes"
                             rows="3"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         ></textarea>
                         <div
                             v-if="addForm.errors.notes"
@@ -692,7 +692,7 @@ const downloadTemplate = () => {
                         <button
                             type="submit"
                             :disabled="addForm.processing"
-                            class="flex-1 rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-3 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
+                            class="flex-1 rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-3 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
                         >
                             {{ addForm.processing ? 'Menyimpan...' : 'Simpan' }}
                         </button>
@@ -719,7 +719,7 @@ const downloadTemplate = () => {
                             v-model="editForm.name"
                             type="text"
                             required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         />
                         <div
                             v-if="editForm.errors.name"
@@ -738,7 +738,7 @@ const downloadTemplate = () => {
                             v-model="editForm.phone"
                             type="text"
                             placeholder="081234567890"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         />
                         <div
                             v-if="editForm.errors.phone"
@@ -756,7 +756,7 @@ const downloadTemplate = () => {
                         <select
                             v-model="editForm.category"
                             required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         >
                             <option value="family">Keluarga</option>
                             <option value="friends">Teman</option>
@@ -782,7 +782,7 @@ const downloadTemplate = () => {
                             min="1"
                             max="10"
                             required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         />
                         <div
                             v-if="editForm.errors.max_pax"
@@ -800,7 +800,7 @@ const downloadTemplate = () => {
                         <textarea
                             v-model="editForm.notes"
                             rows="3"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         ></textarea>
                         <div
                             v-if="editForm.errors.notes"
@@ -821,7 +821,7 @@ const downloadTemplate = () => {
                         <button
                             type="submit"
                             :disabled="editForm.processing"
-                            class="flex-1 rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-3 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
+                            class="flex-1 rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-3 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
                         >
                             {{
                                 editForm.processing ? 'Menyimpan...' : 'Simpan'
@@ -843,13 +843,13 @@ const downloadTemplate = () => {
                 </h2>
 
                 <div
-                    class="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4"
+                    class="mb-4 rounded-lg border border-[#5A1B24]/30 bg-[#5A1B24]/10 p-4"
                 >
-                    <p class="mb-2 text-sm text-blue-800">Format CSV:</p>
-                    <code class="text-xs text-blue-900"
+                    <p class="mb-2 text-sm text-[#5A1B24]">Format CSV:</p>
+                    <code class="text-xs text-[#5A1B24]"
                         >Nama,Telepon,Kategori,Max Pax,Catatan</code
                     >
-                    <p class="mt-2 text-xs text-blue-700">
+                    <p class="mt-2 text-xs text-[#9f6b61]">
                         Kategori: family, friends, colleagues, others
                     </p>
                 </div>
@@ -872,7 +872,7 @@ const downloadTemplate = () => {
                             accept=".csv,.txt"
                             required
                             @change="handleFileChange"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         />
                         <div
                             v-if="importForm.errors.file"
@@ -893,7 +893,7 @@ const downloadTemplate = () => {
                         <button
                             type="submit"
                             :disabled="importForm.processing"
-                            class="flex-1 rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-3 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
+                            class="flex-1 rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-3 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
                         >
                             {{
                                 importForm.processing

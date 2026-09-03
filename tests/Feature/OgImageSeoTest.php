@@ -92,7 +92,7 @@ test('public invitation renders a landscape og:image generated from a portrait c
     $response->assertDontSee('favicon', false);
 });
 
-test('invitation without a cover photo falls back to a myakad branded placeholder, never localhost', function () {
+test('invitation without a cover photo falls back to an akadnya.com branded placeholder, never localhost', function () {
     $user = User::factory()->create();
     $slug = 'test-'.uniqid();
     $template = ogTestTemplate($slug);

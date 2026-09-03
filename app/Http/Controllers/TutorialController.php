@@ -16,9 +16,9 @@ class TutorialController extends Controller
         return Inertia::render('Tutorial', [
             'groups' => $this->getTutorialData(),
             'meta' => [
-                'title' => 'Tutorial - Panduan Menggunakan Seluruh Menu | MyAkad',
-                'description' => 'Panduan lengkap menggunakan semua menu MyAkad: mulai dari koleksi template, produk, keranjang, hingga editor undangan, galeri, tamu, RSVP, buku tamu, dan publikasi undangan.',
-                'keywords' => 'tutorial myakad, panduan undangan digital, cara membuat undangan online, cara pakai myakad, tutorial editor undangan, cara publish undangan, cara cek rsvp, cara isi galeri undangan',
+                'title' => 'Tutorial - Panduan Menggunakan Seluruh Menu | Akadnya.com',
+                'description' => 'Panduan lengkap menggunakan semua menu Akadnya.com: mulai dari koleksi template, produk, keranjang, hingga editor undangan, galeri, tamu, RSVP, buku tamu, dan publikasi undangan.',
+                'keywords' => 'tutorial akadnya, panduan undangan digital, cara membuat undangan online, cara pakai akadnya, tutorial editor undangan, cara publish undangan, cara cek rsvp, cara isi galeri undangan',
             ],
             'canRegister' => Route::has('register'),
         ]);
@@ -58,7 +58,7 @@ class TutorialController extends Controller
                     [
                         'name' => 'Cara Pesan',
                         'route' => '/#how-it-works',
-                        'description' => 'Ringkasan alur pemesanan undangan digital MyAkad.',
+                        'description' => 'Ringkasan alur pemesanan undangan digital Akadnya.com.',
                         'steps' => [
                             ['title' => 'Buka bagian Cara Pesan', 'detail' => 'Klik menu "Cara Pesan" di navbar, halaman akan scroll ke bagian penjelasan alur pemesanan di halaman utama.'],
                             ['title' => 'Ikuti 4 langkah', 'detail' => 'Alurnya: pilih template, buat akun & bayar, isi konten undangan, lalu publikasikan dan bagikan ke tamu.'],
@@ -77,10 +77,10 @@ class TutorialController extends Controller
                     [
                         'name' => 'Masuk / Mulai Desain',
                         'route' => '/register',
-                        'description' => 'Membuat akun atau masuk ke akun MyAkad.',
+                        'description' => 'Membuat akun atau masuk ke akun Akadnya.com.',
                         'steps' => [
                             ['title' => 'Klik "Mulai Desain"', 'detail' => 'Tombol "Mulai Desain" di navbar membawa Anda ke halaman pendaftaran. Isi nama, email, dan password.'],
-                            ['title' => 'Verifikasi email', 'detail' => 'Cek inbox email Anda dan klik link verifikasi yang dikirim MyAkad untuk mengaktifkan akun.'],
+                            ['title' => 'Verifikasi email', 'detail' => 'Cek inbox email Anda dan klik link verifikasi yang dikirim Akadnya.com untuk mengaktifkan akun.'],
                             ['title' => 'Masuk ke akun', 'detail' => 'Jika sudah punya akun, klik "Masuk" di navbar dan gunakan email serta password Anda.'],
                         ],
                     ],
@@ -181,7 +181,7 @@ class TutorialController extends Controller
                         'steps' => [
                             ['title' => 'Buka menu Pengaturan', 'detail' => 'Klik "Pengaturan" di menu dashboard.'],
                             ['title' => 'Atur subdomain', 'detail' => 'Tulis subdomain yang diinginkan (minimal 3 karakter, huruf kecil, angka, tanda hubung) atau klik "Generate Random", lalu simpan.'],
-                            ['title' => 'Pasang custom domain', 'detail' => 'Untuk paket Premium/Lifetime: buat CNAME record di DNS provider mengarah ke myakad.com, tunggu propagasi, lalu isi domain di sini.'],
+                            ['title' => 'Pasang custom domain', 'detail' => 'Untuk paket Premium/Lifetime: buat CNAME record di DNS provider mengarah ke akadnya.com, tunggu propagasi, lalu isi domain di sini.'],
                             ['title' => 'Publikasikan undangan', 'detail' => 'Setelah semua data lengkap, klik tombol "Publikasikan". Undangan langsung bisa diakses di URL subdomain Anda. Gunakan tombol yang sama untuk unpublish jika perlu.'],
                         ],
                     ],

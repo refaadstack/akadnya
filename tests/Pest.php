@@ -55,14 +55,14 @@ function setCloudMailConfig(): void
     config()->set('services.cloudmail', [
         'enabled' => true,
         'base_url' => 'https://mail.example.com/api',
-        'email' => 'service@myakad.id',
+        'email' => 'service@akadnya.com',
         'password' => 'secret',
         'timeout' => 5,
         'cache_ttl' => 3600,
         'senders' => [
-            'default' => 'no-reply@myakad.id',
-            'registration' => 'register@myakad.id',
-            'payment' => 'payment@myakad.id',
+            'default' => 'no-reply@akadnya.com',
+            'registration' => 'register@akadnya.com',
+            'payment' => 'payment@akadnya.com',
             'notif' => null,
         ],
     ]);
@@ -80,9 +80,9 @@ function fakeCloudMailApi(): void
             'code' => 200,
             'message' => 'success',
             'data' => ['list' => [
-                ['accountId' => 11, 'email' => 'no-reply@myakad.id', 'name' => 'MyAkad'],
-                ['accountId' => 22, 'email' => 'register@myakad.id', 'name' => 'Registration'],
-                ['accountId' => 33, 'email' => 'payment@myakad.id', 'name' => 'Payment'],
+                ['accountId' => 11, 'email' => 'no-reply@akadnya.com', 'name' => 'Akadnya'],
+                ['accountId' => 22, 'email' => 'register@akadnya.com', 'name' => 'Registration'],
+                ['accountId' => 33, 'email' => 'payment@akadnya.com', 'name' => 'Payment'],
             ]],
         ]),
         '*/email/send' => Http::response([
@@ -105,9 +105,9 @@ function fakeFailingCloudMailSend(): void
             'code' => 200,
             'message' => 'success',
             'data' => ['list' => [
-                ['accountId' => 11, 'email' => 'no-reply@myakad.id', 'name' => 'MyAkad'],
-                ['accountId' => 22, 'email' => 'register@myakad.id', 'name' => 'Registration'],
-                ['accountId' => 33, 'email' => 'payment@myakad.id', 'name' => 'Payment'],
+                ['accountId' => 11, 'email' => 'no-reply@akadnya.com', 'name' => 'Akadnya'],
+                ['accountId' => 22, 'email' => 'register@akadnya.com', 'name' => 'Registration'],
+                ['accountId' => 33, 'email' => 'payment@akadnya.com', 'name' => 'Payment'],
             ]],
         ]),
         '*/email/send' => Http::response([

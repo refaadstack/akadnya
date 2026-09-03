@@ -48,7 +48,7 @@ test('payment mailable keeps its content when using the smtp channel', function 
 
     $mailable = (new PaymentSuccessfulNotification($order))->toMail($user);
 
-    expect($mailable->subject)->toBe('Pembayaran MyAkad Berhasil')
+    expect($mailable->subject)->toBe('Pembayaran Akadnya.com Berhasil')
         ->and(mailableHtml($mailable))->toContain($order->order_number);
 });
 

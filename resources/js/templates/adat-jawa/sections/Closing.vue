@@ -77,7 +77,7 @@ defineProps<{
       <!-- Footer -->
       <div class="mt-12 pt-8 border-t border-amber-300">
         <p class="text-sm text-amber-600">
-          Made with ❤️ by MyAkad
+          Made with ❤️ by Akadnya.com
         </p>
       </div>
     </div>

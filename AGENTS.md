@@ -209,21 +209,21 @@ Vue components must have a single root element.
 
 === project rules ===
 
-# Project Workflow (MyAkad)
+# Project Workflow (Akadnya.com)
 
 ## Domain Knowledge
 
 - This is a digital wedding-invitation platform: users buy templates, customize invitations in a dashboard, and publish them on a public subdomain (`/i/{subdomain}`). Admin panel is Filament at `/admin` (`app/Providers/Filament/AdminPanelProvider.php`), auth is Fortify.
 - Domain-specific docs live in `docs/` — read `docs/templates/QUICK_REFERENCE.md` (or `TEMPLATE_CREATION_GUIDE.md`) before touching the template system, `docs/admin/FILAMENT_ADMIN.md` for the Filament panel, and `docs/development/PAYMENT_TESTING.md` for Midtrans sandbox checkout flows.
 - Dev DB is MySQL via a separate `mysql` container on the external `infra_default` network (see docker-compose.yml); `.env` has `DB_HOST=mysql`. Payments go to an external `payment-service-app` container, not in this repo.
-- Outbound email: notifications go through the `postfix` container (`boky/postfix`, also on `infra_default`) when `CLOUDMAIL_ENABLED=false`; Laravel submits via SMTP host `postfix:587` (user `myakad`). When `CLOUDMAIL_ENABLED=true`, the custom CloudMail channel sends through `mail.refaadstack.com`. Channel selection lives in each notification's `via()`. NOTE: outbound port 25 is blocked on the dev machine, so final delivery defers in Postfix — acceptance + DKIM signing in `docker logs postfix` is the success signal locally.
+- Outbound email: notifications go through the `postfix` container (`boky/postfix`, also on `infra_default`) when `CLOUDMAIL_ENABLED=false`; Laravel submits via SMTP host `postfix:587` (user `akadnya`). When `CLOUDMAIL_ENABLED=true`, the custom CloudMail channel sends through `mail.akadnya.com`. Channel selection lives in each notification's `via()`. NOTE: outbound port 25 is blocked on the dev machine, so final delivery defers in Postfix — acceptance + DKIM signing in `docker logs postfix` is the success signal locally.
 
 ## No Errors Before Finishing
 
 - Before considering work done, verify the code has no errors:
   1. Run the affected Pest tests in Docker (host has no PHP):
-      `docker run --rm --network container:myakad-app -v /data/projects/myakad:/app -w /app php:8.3-cli sh -c 'apt-get update -qq >/dev/null 2>&1; apt-get install -y -qq libzip-dev libicu-dev >/dev/null 2>&1; docker-php-ext-install pdo_mysql zip intl >/dev/null 2>&1; php vendor/bin/pest <file> --compact'`
-      - Tests run against the MySQL `myakad_test` database (phpunit.xml); `--network container:myakad-app` gives the container access to the app's MySQL service. Without it, DB connections fail.
+      `docker run --rm --network container:akadnya-app -v /data/projects/myakad:/app -w /app php:8.3-cli sh -c 'apt-get update -qq >/dev/null 2>&1; apt-get install -y -qq libzip-dev libicu-dev >/dev/null 2>&1; docker-php-ext-install pdo_mysql zip intl >/dev/null 2>&1; php vendor/bin/pest <file> --compact'`
+      - Tests run against the MySQL `myakad_test` database (phpunit.xml); `--network container:akadnya-app` gives the container access to the app's MySQL service. Without it, DB connections fail.
       - The full suite needs the `zip` (TemplateServiceTest) and `intl` (Filament pagination) extensions; focused tests that don't touch those can use the shorter `docker-php-ext-install pdo_mysql` form.
   2. Run Pint on changed PHP files:
      `docker run --rm -v /data/projects/myakad:/app -w /app php:8.3-cli php vendor/bin/pint --dirty`
@@ -237,16 +237,16 @@ Vue components must have a single root element.
 
 ## Update Docker So Results Go Live
 
-- The `myakad-app` Docker container runs its own copy of the app code; only `./storage/app/public` and `./storage/logs` are bind-mounted (docker-compose.yml). After commit/push (or after any code change), sync the container so it is live with the new work:
+- The `akadnya-app` Docker container runs its own copy of the app code; only `./storage/app/public` and `./storage/logs` are bind-mounted (docker-compose.yml). After commit/push (or after any code change), sync the container so it is live with the new work:
   1. Copy every changed PHP/frontend/migration file into the container:
-     `docker cp <file> myakad-app:/app/<same-path>`
-  2. Templates live in `storage/app/public/templates/{slug}/` (already bind-mounted/shared). After adding/editing template files, register them in the DB: `docker exec myakad-app php artisan templates:sync`
-  3. Run pending migrations: `docker exec myakad-app php artisan migrate --force`
-  4. Clear compiled views/blade cache after template changes: `docker exec myakad-app php artisan view:clear`
+     `docker cp <file> akadnya-app:/app/<same-path>`
+  2. Templates live in `storage/app/public/templates/{slug}/` (already bind-mounted/shared). After adding/editing template files, register them in the DB: `docker exec akadnya-app php artisan templates:sync`
+  3. Run pending migrations: `docker exec akadnya-app php artisan migrate --force`
+  4. Clear compiled views/blade cache after template changes: `docker exec akadnya-app php artisan view:clear`
   5. Frontend changes: the container has NO Vite dev server (no `public/hot`, no node process) — copying `resources/js` files alone does NOT change the UI. You must run `npm run build` on the host, then sync the built assets:
-      `docker exec myakad-app sh -c 'rm -rf /app/public/build' && docker cp public/build myakad-app:/app/public/build`
+      `docker exec akadnya-app sh -c 'rm -rf /app/public/build' && docker cp public/build akadnya-app:/app/public/build`
      Copy the source `.vue/.ts` files too so container code matches, but only a rebuild makes changes visible.
   6. Verify the live result: `curl -s http://localhost:8081/i/redho-dan-yeli` (public invitation route is `/i/{subdomain}`)
-- Production (`myakad.refaadstack.com`) only updates after a redeploy — the Docker sync above applies to the dev environment.
+- Production (`akadnya.com`) only updates after a redeploy — the Docker sync above applies to the dev environment.
 
 </laravel-boost-guidelines>

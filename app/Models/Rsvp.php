@@ -18,14 +18,14 @@ class Rsvp extends Model
         'pax_count',
         'message',
         'is_hidden',
-        'is_from_myakad',
+        'is_from_akadnya',
         'check_in_at',
     ];
 
     protected $casts = [
         'pax_count' => 'integer',
         'is_hidden' => 'boolean',
-        'is_from_myakad' => 'boolean',
+        'is_from_akadnya' => 'boolean',
         'check_in_at' => 'datetime',
     ];
 

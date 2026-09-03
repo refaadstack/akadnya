@@ -37,7 +37,7 @@ class ManageBranding extends Page
     {
         $this->form->fill([
             'qr_logo' => SiteSetting::get('qr_logo_url'),
-            'support_email' => SiteSetting::get('support_email', 'support@refaadstack.com'),
+            'support_email' => SiteSetting::get('support_email', 'support@akadnya.com'),
             'support_whatsapp' => SiteSetting::get('support_whatsapp', '6282374338273'),
         ]);
     }

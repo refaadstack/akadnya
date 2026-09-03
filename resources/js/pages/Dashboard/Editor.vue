@@ -389,7 +389,7 @@ const submit = () => {
                     <div>
                         <Link
                             href="/dashboard"
-                            class="mb-2 inline-flex items-center text-sm text-gray-600 hover:text-green-600"
+                            class="mb-2 inline-flex items-center text-sm text-gray-600 hover:text-[#AD7F35]"
                         >
                             <svg
                                 class="mr-1 h-4 w-4"
@@ -418,7 +418,7 @@ const submit = () => {
                 <!-- Flash Messages -->
                 <div
                     v-if="$page.props.flash?.success"
-                    class="mb-6 flex items-center rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800"
+                    class="mb-6 flex items-center rounded-lg border border-[#AD7F35]/30 bg-[#AD7F35]/10 px-4 py-3 text-[#5A1B24]"
                 >
                     <svg
                         class="mr-2 h-5 w-5"
@@ -504,7 +504,7 @@ const submit = () => {
                                 <input
                                     v-model="form.bride_name"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Siti Nurhaliza"
                                     required
                                 />
@@ -524,7 +524,7 @@ const submit = () => {
                                 <input
                                     v-model="form.bride_nickname"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Yeli"
                                 />
                             </div>
@@ -538,7 +538,7 @@ const submit = () => {
                                     <input
                                         v-model="form.bride_father"
                                         type="text"
-                                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                         placeholder="Contoh: Bapak Ahmad"
                                     />
                                 </div>
@@ -551,7 +551,7 @@ const submit = () => {
                                     <input
                                         v-model="form.bride_mother"
                                         type="text"
-                                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                         placeholder="Contoh: Ibu Siti"
                                     />
                                 </div>
@@ -656,7 +656,7 @@ const submit = () => {
                                 <input
                                     v-model="form.groom_name"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Muhammad Rizki"
                                     required
                                 />
@@ -676,7 +676,7 @@ const submit = () => {
                                 <input
                                     v-model="form.groom_nickname"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Redho"
                                 />
                             </div>
@@ -690,7 +690,7 @@ const submit = () => {
                                     <input
                                         v-model="form.groom_father"
                                         type="text"
-                                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                         placeholder="Contoh: Bapak Budi"
                                     />
                                 </div>
@@ -703,7 +703,7 @@ const submit = () => {
                                     <input
                                         v-model="form.groom_mother"
                                         type="text"
-                                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                         placeholder="Contoh: Ibu Ani"
                                     />
                                 </div>
@@ -891,7 +891,7 @@ const submit = () => {
                                 <input
                                     v-model="form.akad_datetime"
                                     type="datetime-local"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     required
                                 />
                                 <p
@@ -910,7 +910,7 @@ const submit = () => {
                                 <input
                                     v-model="form.akad_venue"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Masjid Al-Ikhlas"
                                     required
                                 />
@@ -930,7 +930,7 @@ const submit = () => {
                                 <input
                                     v-model="form.akad_maps_url"
                                     type="url"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="https://maps.google.com/..."
                                 />
                                 <p
@@ -957,7 +957,7 @@ const submit = () => {
                                 <input
                                     v-model="form.show_reception"
                                     type="checkbox"
-                                    class="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                    class="h-5 w-5 rounded border-gray-300 text-[#AD7F35] focus:ring-[#AD7F35]"
                                 />
                                 <span class="text-sm font-medium text-gray-700"
                                     >Tampilkan Resepsi di undangan</span
@@ -982,7 +982,7 @@ const submit = () => {
                                 <input
                                     v-model="form.reception_datetime"
                                     type="datetime-local"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                 />
                             </div>
 
@@ -994,7 +994,7 @@ const submit = () => {
                                 <input
                                     v-model="form.reception_venue"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Gedung Serbaguna"
                                 />
                             </div>
@@ -1007,7 +1007,7 @@ const submit = () => {
                                 <input
                                     v-model="form.reception_maps_url"
                                     type="url"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="https://maps.google.com/..."
                                 />
                             </div>
@@ -1194,7 +1194,7 @@ const submit = () => {
                                     type="url"
                                     v-model="form.video_url"
                                     placeholder="https://www.youtube.com/watch?v=..."
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-[#AD7F35] focus:outline-none"
                                 />
                                 <p class="mt-2 text-xs text-gray-500">
                                     Tempel link video YouTube (mis. video
@@ -1213,7 +1213,7 @@ const submit = () => {
                                 >
                                 <select
                                     v-model="form.cover_name_display"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                 >
                                     <option value="full">
                                         Nama Lengkap (Contoh: Siti Nurhaliza
@@ -1245,7 +1245,7 @@ const submit = () => {
                                         class="flex items-center space-x-3 rounded-lg bg-gray-50 p-3"
                                     >
                                         <svg
-                                            class="h-6 w-6 text-green-600"
+                                            class="h-6 w-6 text-[#AD7F35]"
                                             fill="none"
                                             stroke="currentColor"
                                             viewBox="0 0 24 24"
@@ -1343,7 +1343,7 @@ const submit = () => {
                                 <input
                                     v-model="form.music_title"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Sepanjang Hidup - Maher Zain"
                                 />
                                 <p
@@ -1415,7 +1415,7 @@ const submit = () => {
                                         <input
                                             v-model="photo.caption"
                                             type="text"
-                                            class="mt-2 w-full rounded border border-gray-300 px-2 py-1 text-xs focus:border-transparent focus:ring-1 focus:ring-green-500"
+                                            class="mt-2 w-full rounded border border-gray-300 px-2 py-1 text-xs focus:border-transparent focus:ring-1 focus:ring-[#AD7F35]"
                                             placeholder="Caption (opsional)"
                                         />
                                     </div>
@@ -1483,7 +1483,7 @@ const submit = () => {
                                 <textarea
                                     v-model="form.love_story"
                                     rows="5"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Ceritakan kisah cinta Anda..."
                                 ></textarea>
                             </div>
@@ -1496,7 +1496,7 @@ const submit = () => {
                                 <textarea
                                     v-model="form.special_message"
                                     rows="3"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Pesan untuk tamu undangan..."
                                 ></textarea>
                             </div>
@@ -1513,7 +1513,7 @@ const submit = () => {
                             <input
                                 v-model="form.show_wishes"
                                 type="checkbox"
-                                class="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                class="h-5 w-5 rounded border-gray-300 text-[#AD7F35] focus:ring-[#AD7F35]"
                             />
                             <span class="text-sm font-medium text-gray-700"
                                 >Tampilkan ucapan &amp; doa di undangan</span
@@ -1541,10 +1541,10 @@ const submit = () => {
                                 </p>
                             </div>
                             <div
-                                class="rounded-lg bg-gradient-to-r from-green-100 to-emerald-100 px-4 py-2"
+                                class="rounded-lg bg-gradient-to-r from-[#AD7F35]/10 to-[#D8BA82]/20 px-4 py-2"
                             >
                                 <span
-                                    class="text-sm font-semibold text-green-700"
+                                    class="text-sm font-semibold text-[#9f6b61]"
                                     >Opsional</span
                                 >
                             </div>
@@ -1557,7 +1557,7 @@ const submit = () => {
                                     class="mb-4 flex items-center text-lg font-semibold text-gray-900"
                                 >
                                     <svg
-                                        class="mr-2 h-5 w-5 text-green-600"
+                                        class="mr-2 h-5 w-5 text-[#AD7F35]"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -1581,7 +1581,7 @@ const submit = () => {
                                         <input
                                             v-model="form.bank_name"
                                             type="text"
-                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="Contoh: BCA"
                                         />
                                     </div>
@@ -1594,7 +1594,7 @@ const submit = () => {
                                         <input
                                             v-model="form.account_number"
                                             type="text"
-                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="1234567890"
                                         />
                                     </div>
@@ -1607,7 +1607,7 @@ const submit = () => {
                                         <input
                                             v-model="form.account_name"
                                             type="text"
-                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="Nama sesuai rekening"
                                         />
                                     </div>
@@ -1620,7 +1620,7 @@ const submit = () => {
                                     class="mb-4 flex items-center text-lg font-semibold text-gray-900"
                                 >
                                     <svg
-                                        class="mr-2 h-5 w-5 text-green-600"
+                                        class="mr-2 h-5 w-5 text-[#AD7F35]"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -1716,7 +1716,7 @@ const submit = () => {
                                     class="mb-4 flex items-center text-lg font-semibold text-gray-900"
                                 >
                                     <svg
-                                        class="mr-2 h-5 w-5 text-green-600"
+                                        class="mr-2 h-5 w-5 text-[#AD7F35]"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -1737,7 +1737,7 @@ const submit = () => {
                                             class="mb-2 block flex items-center text-sm font-medium text-gray-700"
                                         >
                                             <span
-                                                class="mr-2 rounded bg-blue-500 px-2 py-0.5 text-xs font-bold text-white"
+                                                class="mr-2 rounded bg-[#5A1B24] px-2 py-0.5 text-xs font-bold text-white"
                                                 >GoPay</span
                                             >
                                             Nomor HP
@@ -1745,7 +1745,7 @@ const submit = () => {
                                         <input
                                             v-model="form.gopay_number"
                                             type="text"
-                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="08123456789"
                                         />
                                     </div>
@@ -1755,7 +1755,7 @@ const submit = () => {
                                             class="mb-2 block flex items-center text-sm font-medium text-gray-700"
                                         >
                                             <span
-                                                class="mr-2 rounded bg-green-600 px-2 py-0.5 text-xs font-bold text-white"
+                                                class="mr-2 rounded bg-[#AD7F35] px-2 py-0.5 text-xs font-bold text-white"
                                                 >OVO</span
                                             >
                                             Nomor HP
@@ -1763,7 +1763,7 @@ const submit = () => {
                                         <input
                                             v-model="form.ovo_number"
                                             type="text"
-                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="08123456789"
                                         />
                                     </div>
@@ -1773,7 +1773,7 @@ const submit = () => {
                                             class="mb-2 block flex items-center text-sm font-medium text-gray-700"
                                         >
                                             <span
-                                                class="mr-2 rounded bg-blue-400 px-2 py-0.5 text-xs font-bold text-white"
+                                                class="mr-2 rounded bg-[#5A1B24] px-2 py-0.5 text-xs font-bold text-white"
                                                 >DANA</span
                                             >
                                             Nomor HP
@@ -1781,7 +1781,7 @@ const submit = () => {
                                         <input
                                             v-model="form.dana_number"
                                             type="text"
-                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="08123456789"
                                         />
                                     </div>
@@ -1796,7 +1796,7 @@ const submit = () => {
                                 <textarea
                                     v-model="form.gift_address"
                                     rows="3"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Jl. Melati No. 12, Kec. Telanaipura, Kota Jambi"
                                 ></textarea>
                                 <p
@@ -1819,7 +1819,7 @@ const submit = () => {
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 px-8 py-3 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
+                                class="rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-8 py-3 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
                             >
                                 {{
                                     form.processing
@@ -1839,7 +1839,7 @@ const submit = () => {
                         <Link
                             :href="`/dashboard/editor/preview`"
                             target="_blank"
-                            class="flex items-center rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
+                            class="flex items-center rounded-lg bg-[#5A1B24] px-6 py-3 font-semibold text-white transition hover:bg-[#5A1B24]/80"
                         >
                             <svg
                                 class="mr-2 h-5 w-5"

@@ -51,7 +51,7 @@ const formatDate = (dateString: string) => {
 const getAttendanceBadge = (attendance: string) => {
     if (attendance === 'yes') {
         return {
-            class: 'bg-green-100 text-green-800 border-green-200',
+            class: 'bg-[#AD7F35]/10 text-[#5A1B24] border-[#AD7F35]/30',
             label: 'Hadir',
         };
     }
@@ -107,10 +107,10 @@ const toggleWishVisibility = (rsvp: Rsvp) => {
                                 </p>
                             </div>
                             <div
-                                class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100"
+                                class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#5A1B24]/10"
                             >
                                 <svg
-                                    class="h-6 w-6 text-blue-600"
+                                    class="h-6 w-6 text-[#5A1B24]"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -135,16 +135,16 @@ const toggleWishVisibility = (rsvp: Rsvp) => {
                                     Konfirmasi Hadir
                                 </p>
                                 <p
-                                    class="mt-2 text-3xl font-bold text-green-600"
+                                    class="mt-2 text-3xl font-bold text-[#AD7F35]"
                                 >
                                     {{ stats.hadir }}
                                 </p>
                             </div>
                             <div
-                                class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100"
+                                class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#AD7F35]/10"
                             >
                                 <svg
-                                    class="h-6 w-6 text-green-600"
+                                    class="h-6 w-6 text-[#AD7F35]"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -369,7 +369,7 @@ const toggleWishVisibility = (rsvp: Rsvp) => {
                                                 class="text-xs font-medium hover:underline"
                                                 :class="
                                                     rsvp.is_hidden
-                                                        ? 'text-green-600 hover:text-green-700'
+                                                        ? 'text-[#AD7F35] hover:text-[#AD7F35]'
                                                         : 'text-red-600 hover:text-red-700'
                                                 "
                                                 @click="
@@ -418,7 +418,7 @@ const toggleWishVisibility = (rsvp: Rsvp) => {
                                     class="rounded px-3 py-1"
                                     :class="
                                         page === rsvps.current_page
-                                            ? 'bg-green-600 text-white'
+                                            ? 'bg-[#AD7F35] text-white'
                                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     "
                                 >

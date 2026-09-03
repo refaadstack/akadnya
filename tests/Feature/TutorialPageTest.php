@@ -16,7 +16,7 @@ test('tutorial page renders with all menu groups', function () {
             ->has('groups.0.menus', 5)
             ->has('groups.1.menus', 10)
             ->has('groups.2.menus', 3)
-            ->where('support.email', 'support@refaadstack.com')
+            ->where('support.email', 'support@akadnya.com')
             ->where('support.whatsapp', '6282374338273'));
 });
 

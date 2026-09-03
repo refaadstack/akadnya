@@ -68,16 +68,16 @@ class InvitationService
         $invitation->published_at = now();
         $invitation->save();
 
-        $this->ensureMyAkadAutoWish($invitation);
+        $this->ensureAkadnyaAutoWish($invitation);
     }
 
     /**
-     * Seed a welcome wish from MyAkad so a freshly published invitation
+     * Seed a welcome wish from Akadnya so a freshly published invitation
      * always has a greeting. Idempotent: only one platform wish per invitation.
      */
-    public function ensureMyAkadAutoWish(Invitation $invitation): void
+    public function ensureAkadnyaAutoWish(Invitation $invitation): void
     {
-        if ($invitation->rsvps()->where('is_from_myakad', true)->exists()) {
+        if ($invitation->rsvps()->where('is_from_akadnya', true)->exists()) {
             return;
         }
 
@@ -89,7 +89,7 @@ class InvitationService
 
         $couple = trim(trim((string) ($content->groom_name ?? '')).' & '.trim((string) ($content->bride_name ?? '')));
 
-        $sender = (string) SiteSetting::get('auto_wish_sender', 'MyAkad');
+        $sender = (string) SiteSetting::get('auto_wish_sender', 'Akadnya');
 
         $messageTemplate = (string) SiteSetting::get(
             'auto_wish_message',
@@ -101,7 +101,7 @@ class InvitationService
             'attendance' => 'pending',
             'pax_count' => 0,
             'message' => str_replace('{couple}', $couple, $messageTemplate),
-            'is_from_myakad' => true,
+            'is_from_akadnya' => true,
         ]);
     }
 

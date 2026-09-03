@@ -24,7 +24,7 @@ test('the cloudmail transport delivers mailables through the api', function () {
             public function envelope(): Envelope
             {
                 return new Envelope(
-                    from: new Address('no-reply@myakad.id', 'MyAkad'),
+                    from: new Address('no-reply@akadnya.com', 'Akadnya.com'),
                     subject: 'Reset kata sandi',
                 );
             }
@@ -45,7 +45,7 @@ test('the cloudmail transport delivers mailables through the api', function () {
                 && $request['receiveEmail'] === ['bride@example.com']
                 && $request['subject'] === 'Reset kata sandi'
                 && $request['content'] === '<p>Klik link reset.</p>'
-                && $request['name'] === 'MyAkad';
+                && $request['name'] === 'Akadnya.com';
         },
     ]);
 });
@@ -54,7 +54,7 @@ test('the transport forwards both html and plain text bodies', function () {
     fakeCloudMailApi();
 
     $email = (new Email)
-        ->from(new \Symfony\Component\Mime\Address('no-reply@myakad.id', 'MyAkad'))
+        ->from(new \Symfony\Component\Mime\Address('no-reply@akadnya.com', 'Akadnya.com'))
         ->to('bride@example.com')
         ->subject('Undangan siap')
         ->html('<p>Undangan kamu siap.</p>')

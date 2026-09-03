@@ -28,7 +28,7 @@ return [
 
     'cloudmail' => [
         'enabled' => env('CLOUDMAIL_ENABLED', false),
-        'base_url' => env('CLOUDMAIL_BASE_URL', 'https://mail.refaadstack.com/api'),
+        'base_url' => env('CLOUDMAIL_BASE_URL', 'https://mail.akadnya.com/api'),
         'email' => env('CLOUDMAIL_EMAIL'),
         'password' => env('CLOUDMAIL_PASSWORD'),
         'timeout' => env('CLOUDMAIL_TIMEOUT', 20),
@@ -57,8 +57,8 @@ return [
     'payment_service' => [
         'base_url' => env('PAYMENT_SERVICE_URL'),
         'public_url' => env('PAYMENT_SERVICE_PUBLIC_URL'),
-        'product_key' => env('MYAKAD_PRODUCT_KEY'),
-        'callback_secret' => env('MYAKAD_CALLBACK_SECRET'),
+        'product_key' => env('AKADNYA_PRODUCT_KEY'),
+        'callback_secret' => env('AKADNYA_CALLBACK_SECRET'),
     ],
 
 ];

@@ -20,7 +20,7 @@ class BackfillInvitationAutoWishes extends Command
      *
      * @var string
      */
-    protected $description = 'Seed the MyAkad welcome wish for published invitations that do not have one yet';
+    protected $description = 'Seed the Akadnya welcome wish for published invitations that do not have one yet';
 
     /**
      * Execute the console command.
@@ -29,23 +29,23 @@ class BackfillInvitationAutoWishes extends Command
     {
         $invitations = Invitation::query()
             ->where('status', 'published')
-            ->whereDoesntHave('rsvps', fn ($query) => $query->where('is_from_myakad', true))
+            ->whereDoesntHave('rsvps', fn ($query) => $query->where('is_from_akadnya', true))
             ->with('content')
             ->get();
 
         if ($invitations->isEmpty()) {
-            $this->info('All published invitations already have the MyAkad welcome wish.');
+            $this->info('All published invitations already have the Akadnya welcome wish.');
 
             return self::SUCCESS;
         }
 
         foreach ($invitations as $invitation) {
-            $invitationService->ensureMyAkadAutoWish($invitation);
+            $invitationService->ensureAkadnyaAutoWish($invitation);
             $this->line("  - Seeded wish for /i/{$invitation->subdomain}");
         }
 
         $this->newLine();
-        $this->info("Done! Added the MyAkad welcome wish to {$invitations->count()} invitation(s).");
+        $this->info("Done! Added the Akadnya welcome wish to {$invitations->count()} invitation(s).");
 
         return self::SUCCESS;
     }

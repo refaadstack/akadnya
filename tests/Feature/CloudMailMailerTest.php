@@ -11,12 +11,12 @@ beforeEach(function () {
 test('sends through the api using the resolved sender account', function () {
     fakeCloudMailApi();
 
-    app(CloudMailMailer::class)->send('no-reply@myakad.id', [
+    app(CloudMailMailer::class)->send('no-reply@akadnya.com', [
         ['email' => 'user@example.com', 'name' => 'Budi'],
     ], 'Hello', '<p>Hi</p>', 'Hi');
 
     Http::assertSentInOrder([
-        fn ($request) => str_contains($request->url(), '/login') && $request['email'] === 'service@myakad.id',
+        fn ($request) => str_contains($request->url(), '/login') && $request['email'] === 'service@akadnya.com',
         fn ($request) => str_contains($request->url(), '/account/list'),
         function ($request) {
             return str_contains($request->url(), '/email/send')
@@ -55,7 +55,7 @@ test('caches the jwt and reuses it across sends', function () {
         '*/account/list*' => Http::response([
             'code' => 200,
             'data' => ['list' => [
-                ['accountId' => 11, 'email' => 'no-reply@myakad.id', 'name' => 'MyAkad'],
+                ['accountId' => 11, 'email' => 'no-reply@akadnya.com', 'name' => 'Akadnya.com'],
             ]],
         ]),
         '*/email/send' => Http::response(['code' => 200, 'data' => []]),
@@ -63,8 +63,8 @@ test('caches the jwt and reuses it across sends', function () {
 
     $mailer = app(CloudMailMailer::class);
 
-    $mailer->send('no-reply@myakad.id', [['email' => 'a@example.com']], 'One', '<p>1</p>');
-    $mailer->send('no-reply@myakad.id', [['email' => 'b@example.com']], 'Two', '<p>2</p>');
+    $mailer->send('no-reply@akadnya.com', [['email' => 'a@example.com']], 'One', '<p>1</p>');
+    $mailer->send('no-reply@akadnya.com', [['email' => 'b@example.com']], 'Two', '<p>2</p>');
 
     expect($logins)->toBe(1);
 });
@@ -82,7 +82,7 @@ test('re-authenticates and retries when the token is rejected', function () {
         '*/account/list*' => Http::response([
             'code' => 200,
             'data' => ['list' => [
-                ['accountId' => 11, 'email' => 'no-reply@myakad.id', 'name' => 'MyAkad'],
+                ['accountId' => 11, 'email' => 'no-reply@akadnya.com', 'name' => 'Akadnya.com'],
             ]],
         ]),
         '*/email/send' => function () use (&$sendAttempts) {
@@ -94,7 +94,7 @@ test('re-authenticates and retries when the token is rejected', function () {
         },
     ]);
 
-    app(CloudMailMailer::class)->send('no-reply@myakad.id', [['email' => 'a@example.com']], 'S', '<p/>');
+    app(CloudMailMailer::class)->send('no-reply@akadnya.com', [['email' => 'a@example.com']], 'S', '<p/>');
 
     expect($sendAttempts)->toBe(2)->and($logins)->toBe(2);
 });
@@ -109,8 +109,8 @@ test('throws when the named sender is not configured', function () {
 test('throws when the sender account does not exist on cloudmail', function () {
     fakeCloudMailApi();
 
-    expect(fn () => app(CloudMailMailer::class)->send('ghost@myakad.id', [['email' => 'a@example.com']], 'S', '<p/>'))
-        ->toThrow(RuntimeException::class, '[ghost@myakad.id] was not found');
+    expect(fn () => app(CloudMailMailer::class)->send('ghost@akadnya.com', [['email' => 'a@example.com']], 'S', '<p/>'))
+        ->toThrow(RuntimeException::class, '[ghost@akadnya.com] was not found');
 });
 
 test('throws when the api responds with a business error', function () {
@@ -119,13 +119,13 @@ test('throws when the api responds with a business error', function () {
         '*/account/list*' => Http::response([
             'code' => 200,
             'data' => ['list' => [
-                ['accountId' => 11, 'email' => 'no-reply@myakad.id', 'name' => 'MyAkad'],
+                ['accountId' => 11, 'email' => 'no-reply@akadnya.com', 'name' => 'Akadnya.com'],
             ]],
         ]),
         '*/email/send' => Http::response(['code' => 403, 'message' => 'bannedSend']),
     ]);
 
-    expect(fn () => app(CloudMailMailer::class)->send('no-reply@myakad.id', [['email' => 'a@example.com']], 'S', '<p/>'))
+    expect(fn () => app(CloudMailMailer::class)->send('no-reply@akadnya.com', [['email' => 'a@example.com']], 'S', '<p/>'))
         ->toThrow(RuntimeException::class, 'bannedSend');
 });
 

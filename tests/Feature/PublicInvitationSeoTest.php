@@ -19,7 +19,7 @@ afterEach(function () {
     }
 });
 
-test('published invitation page includes seo meta tags with couple names and myakad branding', function () {
+test('published invitation page includes seo meta tags with couple names and akadnya.com branding', function () {
     $user = User::factory()->create();
     $slug = 'test-'.uniqid();
     $template = Template::factory()->create(['slug' => $slug]);
@@ -53,7 +53,7 @@ test('published invitation page includes seo meta tags with couple names and mya
 
     $response->assertOk();
 
-    $siteName = config('app.name', 'MyAkad');
+    $siteName = config('app.name', 'Akadnya.com');
     $response->assertSee("<title>Undangan Pernikahan Nadia &amp; Raka | {$siteName}</title>", false);
     $response->assertDontSee('<title>Nadia & Raka</title>', false);
 
@@ -64,7 +64,7 @@ test('published invitation page includes seo meta tags with couple names and mya
     $response->assertSee('<meta property="og:url"', false);
     $response->assertSee('<meta property="og:title"', false);
     $response->assertSee('<meta property="og:site_name" content="'.$siteName.'"', false);
-    // No usable local photo file in this test, so OG falls back to a MyAkad
+    // No usable local photo file in this test, so OG falls back to a Akadnya.com
     // branded placeholder hosted at the configured app URL (never localhost/favicon).
     $response->assertSee('<meta property="og:image" content="'.rtrim(config('app.url'), '/').'/images/placeholder-template.png"', false);
     $response->assertDontSee('favicon', false);
@@ -113,7 +113,7 @@ test('single-file template page gets seo tags injected into its own head', funct
     $response = $this->get('/i/'.$invitation->subdomain);
 
     $response->assertOk();
-    $response->assertSee('<title>Undangan Pernikahan Budi &amp; Sari | '.config('app.name', 'MyAkad').'</title>', false);
+    $response->assertSee('<title>Undangan Pernikahan Budi &amp; Sari | '.config('app.name', 'Akadnya.com').'</title>', false);
     $response->assertDontSee('<title>Custom Title Lama</title>', false);
     $response->assertSee('<meta name="description"', false);
     $response->assertSee('<link rel="canonical"', false);
@@ -147,5 +147,5 @@ test('seo falls back to generic title when couple names are missing', function (
     $response = $this->get('/i/'.$invitation->subdomain);
 
     $response->assertOk();
-    $response->assertSee('<title>Undangan Digital | '.config('app.name', 'MyAkad').'</title>', false);
+    $response->assertSee('<title>Undangan Digital | '.config('app.name', 'Akadnya.com').'</title>', false);
 });

@@ -137,7 +137,7 @@ const logout = () => {
                         href="/dashboard"
                         class="font-display text-3xl leading-none font-bold text-[var(--my-primary)]"
                     >
-                        MyAkad
+                        Akadnya.com
                     </Link>
 
                     <!-- Desktop Nav -->

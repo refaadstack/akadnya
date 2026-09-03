@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
     $this->service = new BladeRenderService;
-    $this->tempDir = sys_get_temp_dir().'/myakad_test_'.uniqid();
+    $this->tempDir = sys_get_temp_dir().'/akadnya_test_'.uniqid();
     mkdir($this->tempDir, 0777, true);
 });
 
@@ -289,7 +289,7 @@ test('shared rsvp section renders the list of doa and ucapan', function () {
                 'created_at' => now()->toISOString(),
             ],
             [
-                'name' => 'MyAkad',
+                'name' => 'Akadnya.com',
                 'message' => 'Bahagia selalu.',
                 'created_at' => now()->toISOString(),
             ],
@@ -302,7 +302,7 @@ test('shared rsvp section renders the list of doa and ucapan', function () {
     expect($result)->toContain('Ucapan untuk Kami');
     expect($result)->toContain('Pak Ucok');
     expect($result)->toContain('Selamat menempuh hidup baru!');
-    expect($result)->toContain('MyAkad');
+    expect($result)->toContain('Akadnya.com');
 });
 
 test('shared rsvp section hides wishes list when disabled', function () {

@@ -144,7 +144,7 @@ const structuredData = computed(() => {
                             Pertanyaan yang Sering Diajukan
                         </h1>
                         <p class="my-copy mb-8">
-                            Temukan jawaban untuk pertanyaan umum tentang MyAkad
+                            Temukan jawaban untuk pertanyaan umum tentang Akadnya.com
                         </p>
 
                         <!-- Search Box -->

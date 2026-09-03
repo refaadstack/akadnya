@@ -83,7 +83,7 @@ const submit = () => {
                 <!-- Flash Messages -->
                 <div
                     v-if="$page.props.flash?.success"
-                    class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800"
+                    class="mb-6 rounded-lg border border-[#AD7F35]/30 bg-[#AD7F35]/10 px-4 py-3 text-[#5A1B24]"
                 >
                     {{ $page.props.flash.success }}
                 </div>
@@ -99,7 +99,7 @@ const submit = () => {
                             <button
                                 type="button"
                                 @click="addStory"
-                                class="inline-flex items-center rounded-lg bg-green-600 px-3 py-1.5 text-sm text-white transition hover:bg-green-700"
+                                class="inline-flex items-center rounded-lg bg-[#AD7F35] px-3 py-1.5 text-sm text-white transition hover:bg-[#9f6b61]"
                             >
                                 <svg
                                     class="mr-1 h-4 w-4"
@@ -141,7 +141,7 @@ const submit = () => {
                                         type="button"
                                         @click="moveStory(index, -1)"
                                         :disabled="index === 0"
-                                        class="p-1 text-gray-500 hover:text-green-600 disabled:cursor-not-allowed disabled:opacity-30"
+                                        class="p-1 text-gray-500 hover:text-[#AD7F35] disabled:cursor-not-allowed disabled:opacity-30"
                                         :title="'Naikkan ke atas'"
                                     >
                                         <svg
@@ -164,7 +164,7 @@ const submit = () => {
                                         :disabled="
                                             index === form.stories.length - 1
                                         "
-                                        class="p-1 text-gray-500 hover:text-green-600 disabled:cursor-not-allowed disabled:opacity-30"
+                                        class="p-1 text-gray-500 hover:text-[#AD7F35] disabled:cursor-not-allowed disabled:opacity-30"
                                         :title="'Turunkan ke bawah'"
                                     >
                                         <svg
@@ -195,7 +195,7 @@ const submit = () => {
                                             <input
                                                 v-model="story.title"
                                                 type="text"
-                                                class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                                class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                                 placeholder="Contoh: Pertama Bertemu"
                                             />
                                         </div>
@@ -207,7 +207,7 @@ const submit = () => {
                                             <input
                                                 v-model="story.date_label"
                                                 type="text"
-                                                class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                                class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                                 placeholder="Contoh: Januari 2020"
                                             />
                                         </div>
@@ -220,7 +220,7 @@ const submit = () => {
                                         <textarea
                                             v-model="story.description"
                                             rows="3"
-                                            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="Ceritakan momen ini..."
                                         ></textarea>
                                     </div>
@@ -265,7 +265,7 @@ const submit = () => {
                         <textarea
                             v-model="form.love_story"
                             rows="5"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                             placeholder="Tuliskan kisah cinta kalian di sini..."
                         />
                         <p
@@ -290,7 +290,7 @@ const submit = () => {
                         <textarea
                             v-model="form.special_message"
                             rows="4"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                             placeholder="Tuliskan pesan khusus untuk tamu undangan..."
                         />
                         <p
@@ -306,7 +306,7 @@ const submit = () => {
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
+                            class="rounded-lg bg-[#AD7F35] px-6 py-3 font-semibold text-white transition hover:bg-[#9f6b61] disabled:opacity-50"
                         >
                             {{
                                 form.processing

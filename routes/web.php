@@ -27,6 +27,8 @@ use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class)->name('sitemap');
+
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 Route::get('/tutorial', [TutorialController::class, 'index'])->name('tutorial');

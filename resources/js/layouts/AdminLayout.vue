@@ -22,7 +22,7 @@ const logout = () => {
             </div>
             <div>
               <span class="font-display text-xl font-bold text-[var(--my-primary)]">Admin Panel</span>
-              <span class="block text-xs text-[var(--my-muted)]">MyAkad</span>
+              <span class="block text-xs text-[var(--my-muted)]">Akadnya.com</span>
             </div>
           </Link>
 
@@ -158,7 +158,7 @@ const logout = () => {
       <div class="container mx-auto px-4 py-6">
         <div class="flex items-center justify-between">
           <p class="text-sm text-gray-600">
-            © 2026 MyAkad Admin Panel. All rights reserved.
+            © 2026 Akadnya.com Admin Panel. All rights reserved.
           </p>
           <div class="flex items-center space-x-4 text-sm text-gray-600">
             <a href="#" class="hover:text-red-600 transition">Documentation</a>

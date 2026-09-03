@@ -26,7 +26,7 @@ function createdAutoWishInvitation(): Invitation
     return $invitation;
 }
 
-test('publish seeds a personalized welcome wish from MyAkad', function () {
+test('publish seeds a personalized welcome wish from Akadnya', function () {
     $invitation = createdAutoWishInvitation();
 
     $this->actingAs($invitation->user)->post('/dashboard/publish');
@@ -34,27 +34,27 @@ test('publish seeds a personalized welcome wish from MyAkad', function () {
 
     expect($invitation->status)->toBe('published');
 
-    $wish = $invitation->rsvps()->where('is_from_myakad', true)->first();
+    $wish = $invitation->rsvps()->where('is_from_akadnya', true)->first();
 
     expect($wish)->not->toBeNull()
-        ->and($wish->name)->toBe('MyAkad')
+        ->and($wish->name)->toBe('Akadnya')
         ->and($wish->attendance)->toBe('pending')
         ->and($wish->pax_count)->toBe(0)
         ->and($wish->message)->toContain('Raka & Nadia')
         ->and($wish->message)->toContain('sakinah, mawaddah, warahmah');
 });
 
-test('republishing does not duplicate the MyAkad wish', function () {
+test('republishing does not duplicate the Akadnya wish', function () {
     $invitation = createdAutoWishInvitation();
 
     $this->actingAs($invitation->user)->post('/dashboard/publish');
     $this->actingAs($invitation->user)->post('/dashboard/publish');
     $this->actingAs($invitation->user)->post('/dashboard/publish');
 
-    expect($invitation->rsvps()->where('is_from_myakad', true)->count())->toBe(1);
+    expect($invitation->rsvps()->where('is_from_akadnya', true)->count())->toBe(1);
 });
 
-test('MyAkad wish appears in the public data contract', function () {
+test('Akadnya wish appears in the public data contract', function () {
     $invitation = createdAutoWishInvitation();
 
     $this->actingAs($invitation->user)->post('/dashboard/publish');
@@ -62,13 +62,13 @@ test('MyAkad wish appears in the public data contract', function () {
     $contract = app(DataContractBuilder::class)->build($invitation->fresh());
 
     $names = collect($contract['wishes'])->pluck('name');
-    expect($names)->toContain('MyAkad');
+    expect($names)->toContain('Akadnya');
 
-    $wish = collect($contract['wishes'])->firstWhere('name', 'MyAkad');
+    $wish = collect($contract['wishes'])->firstWhere('name', 'Akadnya');
     expect($wish['message'])->toContain('Raka & Nadia');
 });
 
-test('the MyAkad wish is served by the public wishes endpoint', function () {
+test('the Akadnya wish is served by the public wishes endpoint', function () {
     $invitation = createdAutoWishInvitation();
 
     $this->actingAs($invitation->user)->post('/dashboard/publish');
@@ -76,7 +76,7 @@ test('the MyAkad wish is served by the public wishes endpoint', function () {
     $response = $this->getJson("/i/{$invitation->subdomain}/wishes");
 
     $response->assertOk();
-    expect(collect($response->json('data'))->where('name', 'MyAkad'))->not->toBeEmpty();
+    expect(collect($response->json('data'))->where('name', 'Akadnya'))->not->toBeEmpty();
 });
 
 test('auto wish is not created when wishes are hidden', function () {
@@ -85,7 +85,7 @@ test('auto wish is not created when wishes are hidden', function () {
 
     $this->actingAs($invitation->user)->post('/dashboard/publish');
 
-    expect($invitation->rsvps()->where('is_from_myakad', true)->count())->toBe(0);
+    expect($invitation->rsvps()->where('is_from_akadnya', true)->count())->toBe(0);
 });
 
 test('auto wish does not pollute rsvp analytics and roster', function () {
@@ -108,7 +108,7 @@ test('auto wish does not pollute rsvp analytics and roster', function () {
         ->assertInertia(fn ($page) => $page->where('stats.total', 0));
 });
 
-test('backfill seeds the MyAkad wish for published invitations that lack one', function () {
+test('backfill seeds the Akadnya wish for published invitations that lack one', function () {
     $published = createdAutoWishInvitation();
     $published->forceFill(['status' => 'published', 'published_at' => now()])->save();
 
@@ -116,16 +116,16 @@ test('backfill seeds the MyAkad wish for published invitations that lack one', f
 
     $this->artisan('invitations:backfill-auto-wishes')->assertSuccessful();
 
-    expect($published->rsvps()->where('is_from_myakad', true)->count())->toBe(1);
-    expect($draft->rsvps()->where('is_from_myakad', true)->count())->toBe(0);
+    expect($published->rsvps()->where('is_from_akadnya', true)->count())->toBe(1);
+    expect($draft->rsvps()->where('is_from_akadnya', true)->count())->toBe(0);
 });
 
-test('backfill is idempotent and never duplicates the MyAkad wish', function () {
+test('backfill is idempotent and never duplicates the Akadnya wish', function () {
     $published = createdAutoWishInvitation();
     $published->forceFill(['status' => 'published', 'published_at' => now()])->save();
 
     $this->artisan('invitations:backfill-auto-wishes')->assertSuccessful();
     $this->artisan('invitations:backfill-auto-wishes')->assertSuccessful();
 
-    expect($published->rsvps()->where('is_from_myakad', true)->count())->toBe(1);
+    expect($published->rsvps()->where('is_from_akadnya', true)->count())->toBe(1);
 });

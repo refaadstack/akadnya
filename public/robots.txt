@@ -1,4 +1,4 @@
-# MyAkad Robots.txt
+# Akadnya.com Robots.txt
 
 User-agent: *
 Allow: /
@@ -19,4 +19,4 @@ Disallow: /forgot-password
 Disallow: /reset-password
 
 # Sitemap
-Sitemap: https://myakad.com/sitemap.xml
+Sitemap: https://akadnya.com/sitemap.xml

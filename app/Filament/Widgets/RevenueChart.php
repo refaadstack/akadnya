@@ -30,14 +30,14 @@ class RevenueChart extends ChartWidget
                 [
                     'label' => 'Revenue (Rp)',
                     'data' => $data['revenue'],
-                    'backgroundColor' => 'rgba(59, 130, 246, 0.5)',
-                    'borderColor' => 'rgb(59, 130, 246)',
+                    'backgroundColor' => 'rgba(173, 127, 53, 0.5)',
+                    'borderColor' => 'rgb(173, 127, 53)',
                 ],
                 [
                     'label' => 'Orders',
                     'data' => $data['orders'],
-                    'backgroundColor' => 'rgba(16, 185, 129, 0.5)',
-                    'borderColor' => 'rgb(16, 185, 129)',
+                    'backgroundColor' => 'rgba(128, 0, 32, 0.5)',
+                    'borderColor' => 'rgb(128, 0, 32)',
                 ],
             ],
             'labels' => $data['labels'],

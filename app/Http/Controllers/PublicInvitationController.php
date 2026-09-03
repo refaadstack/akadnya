@@ -52,7 +52,7 @@ class PublicInvitationController extends Controller
         // Render invitation HTML
         $html = $this->bladeRenderer->renderInvitation($invitation, $data);
 
-        // Inject SEO meta tags (per-invitation, with MyAkad branding)
+        // Inject SEO meta tags (per-invitation, with Akadnya.com branding)
         $html = $this->seoMeta->inject($html, $this->seoMeta->forInvitation($invitation, $data));
 
         return response($html)->header('Content-Type', 'text/html');

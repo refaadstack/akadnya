@@ -41,7 +41,7 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'appDomain' => config('app.domain'),
             'support' => [
-                'email' => SiteSetting::get('support_email', 'support@refaadstack.com'),
+                'email' => SiteSetting::get('support_email', 'support@akadnya.com'),
                 'whatsapp' => SiteSetting::get('support_whatsapp', '6282374338273'),
             ],
             'auth' => [

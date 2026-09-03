@@ -32,7 +32,7 @@ test('verification email goes through cloudmail when enabled', function () {
         return str_contains($request->url(), '/email/send')
             && $request['accountId'] === 22
             && $request['receiveEmail'] === [$user->email]
-            && $request['subject'] === 'Verifikasi Email MyAkad';
+            && $request['subject'] === 'Verifikasi Email Akadnya.com';
     });
 });
 
@@ -78,7 +78,7 @@ test('payment notification builds a cloudmail payload with the payment sender', 
     $payload = (new PaymentSuccessfulNotification($order))->toCloudMailMail($user);
 
     expect($payload['sender'])->toBe('payment')
-        ->and($payload['subject'])->toBe('Pembayaran MyAkad Berhasil')
+        ->and($payload['subject'])->toBe('Pembayaran Akadnya.com Berhasil')
         ->and($payload['htmlContent'])->toContain($order->order_number)
         ->and($payload['textContent'])->toContain($order->order_number);
 });

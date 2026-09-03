@@ -26,7 +26,7 @@ class SeoMetaService
         $groom = trim((string) ($data['groom_name'] ?? ''));
         $couple = $bride !== '' && $groom !== '' ? "{$bride} & {$groom}" : ($bride ?: $groom);
 
-        $siteName = config('app.name', 'MyAkad');
+        $siteName = config('app.name', 'Akadnya.com');
         $title = $couple !== ''
             ? "Undangan Pernikahan {$couple} | {$siteName}"
             : "Undangan Digital | {$siteName}";

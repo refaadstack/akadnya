@@ -222,7 +222,7 @@ class DataContractBuilder
      */
     public function buildDemoGuestQrSvg(): ?string
     {
-        return $this->buildGuestQrSvg('MyAkad-DEMO-0001');
+        return $this->buildGuestQrSvg('Akadnya-DEMO-0001');
     }
 
     /**

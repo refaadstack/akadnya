@@ -14,8 +14,8 @@ class LegalController extends Controller
     {
         return Inertia::render('Legal/Terms', [
             'meta' => [
-                'title' => 'Syarat & Ketentuan | MyAkad',
-                'description' => 'Syarat & Ketentuan penggunaan layanan MyAkad - platform undangan digital. Bacalah sebelum membuat akun dan menggunakan layanan.',
+                'title' => 'Syarat & Ketentuan | Akadnya.com',
+                'description' => 'Syarat & Ketentuan penggunaan layanan Akadnya.com - platform undangan digital. Bacalah sebelum membuat akun dan menggunakan layanan.',
             ],
         ]);
     }
@@ -27,8 +27,8 @@ class LegalController extends Controller
     {
         return Inertia::render('Legal/Privacy', [
             'meta' => [
-                'title' => 'Kebijakan Privasi | MyAkad',
-                'description' => 'Kebijakan Privasi MyAkad - bagaimana kami mengumpulkan, menggunakan, dan melindungi data pribadi Anda.',
+                'title' => 'Kebijakan Privasi | Akadnya.com',
+                'description' => 'Kebijakan Privasi Akadnya.com - bagaimana kami mengumpulkan, menggunakan, dan melindungi data pribadi Anda.',
             ],
         ]);
     }

@@ -63,15 +63,15 @@ class PaymentSuccessfulNotification extends Notification
         $escapedDashboardUrl = e($dashboardUrl);
 
         return [
-            'subject' => 'Pembayaran MyAkad Berhasil',
+            'subject' => 'Pembayaran Akadnya.com Berhasil',
             'htmlContent' => <<<HTML
 <h1>Pembayaran Berhasil</h1>
 <p>Halo {$name},</p>
 <p>Pembayaran kamu sudah berhasil kami terima.</p>
 <p><strong>Nomor order:</strong> {$orderNumber}<br><strong>Total pembayaran:</strong> {$escapedAmount}</p>
-<p>Fitur dan undangan yang kamu beli sudah aktif di akun MyAkad.</p>
-<p><a href="{$escapedDashboardUrl}" style="display:inline-block;padding:12px 18px;background:#111827;color:#ffffff;text-decoration:none;border-radius:6px;">Buka Dashboard MyAkad</a></p>
-<p>Terima kasih sudah menggunakan MyAkad.</p>
+<p>Fitur dan undangan yang kamu beli sudah aktif di akun Akadnya.com.</p>
+<p><a href="{$escapedDashboardUrl}" style="display:inline-block;padding:12px 18px;background:#111827;color:#ffffff;text-decoration:none;border-radius:6px;">Buka Dashboard Akadnya.com</a></p>
+<p>Terima kasih sudah menggunakan Akadnya.com.</p>
 HTML,
             'textContent' => "Halo {$notifiable->name},\n\nPembayaran kamu berhasil.\nNomor order: {$order->order_number}\nTotal pembayaran: {$amount}\n\nBuka dashboard: {$dashboardUrl}\n",
         ];

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>{{ $cover_names ? $cover_names.' — ' : '' }}Undangan Pernikahan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Jost:wght@300;400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..500,0..1&display=swap" rel="stylesheet">
+<style>
+@if(!empty($cover_photo_url))
+  body { --rg-desktop-bg: url("{{ $cover_photo_url }}"); }
+@endif
+</style>
+@if($background_url ?? null)
+<style>
+  body {
+    background: url("{{ $background_url }}") center/cover no-repeat fixed;
+  }
+</style>
+@endif
+<style>
+  :root {
+    /* Background colors - Warm cream and light gold tones */
+    --rg-cream: #FCF9F2;         
+    --rg-cream-deep: #F3EBE1;    
+    --rg-paper: #FFFFFF;         
+    
+    /* Primary colors - Red and Maroon */
+    --rg-sage: #A52A2A;          
+    --rg-sage-deep: #8B0000;     
+    
+    /* Accent colors - Gold */
+    --rg-moss: #C5A059;          
+    --rg-terracotta: #D4AF37;    
+    --rg-terracotta-soft: #E8D399; 
+    
+    /* Text colors - Very dark red/brown */
+    --rg-ink: #2C0B0B;           
+    --rg-muted: #6B4C4C;         
+    
+    /* Shadows and lines */
+    --rg-line: rgba(212, 175, 55, 0.35); 
+    
+    /* Fonts */
+    --rg-heading: 'Cormorant Garamond', serif;
+    --rg-body: 'Jost', sans-serif;
+  }
+  
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  
+  /* Body set to Dark Burgundy to act as decorative left background on desktop */
+  body {
+    margin:0;
+    background:#4A0404;
+    background-image:linear-gradient(rgba(74,4,4,.5),rgba(74,4,4,.72)),var(--rg-desktop-bg,none);
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+    color:var(--rg-ink);
+    font-family:var(--rg-body);
+    font-weight:300;
+    overflow-x:hidden;
+  }
+  
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+  button,input,select,textarea{font:inherit;}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24;}
+
+  /* 
+   * MOBILE FIRST LAYOUT 
+   */
+  .rg-app {
+    min-height: 100vh;
+    background: var(--rg-paper);
+    width: 100%;
+    position: relative;
+    overflow: hidden; 
+  }
+
+  /* 
+   * DESKTOP LAYOUT (>= 1024px)
+   */
+  @media (min-width: 1024px) {
+    .rg-app {
+      width: 400px;
+      margin-left: auto;
+      margin-right: 0;
+      box-shadow: -10px 0 60px rgba(0,0,0,0.5); 
+    }
+  }
+
+  .rg-section{padding:80px 0;position:relative;opacity:0;transform:translateY(22px);transition:opacity .9s ease,transform .9s ease;}
+  .rg-section.rg-visible{opacity:1;transform:none;}
+  .rg-container{width:calc(100% - 44px);margin:0 auto;}
+  .rg-eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--rg-terracotta);font-size:12px;font-weight:500;letter-spacing:.32em;text-transform:uppercase;}
+  .rg-section-head{text-align:center;margin:0 auto 40px;}
+  .rg-section-head h2{margin:14px 0 14px;font:500 clamp(1.8rem,6vw,2.4rem)/1.15 var(--rg-heading);color:var(--rg-sage-deep);}
+  .rg-section-head p{margin:0;color:var(--rg-muted);line-height:1.7;font-size:14px;}
+  .rg-branch{width:64px;height:auto;color:var(--rg-moss);margin:0 auto;display:block;}
+  .rg-branch path{fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;}
+
+  .rg-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 30px;border:1px solid var(--rg-sage-deep);background:transparent;color:var(--rg-sage-deep);text-transform:uppercase;letter-spacing:.2em;font-size:11px;font-weight:500;cursor:pointer;transition:all .25s ease;border-radius:2px;}
+  .rg-btn:hover{background:var(--rg-sage-deep);color:var(--rg-paper);}
+  .rg-btn--solid{background:var(--rg-sage-deep);color:var(--rg-paper);}
+  .rg-btn--solid:hover{background:var(--rg-terracotta);border-color:var(--rg-terracotta);color:var(--rg-sage-deep);}
+  .rg-btn--block{width:100%;}
+
+  /* 
+   * INITIAL VIEW (HERO OVERLAY) 
+   */
+  .rg-opening {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 32px;
+    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), var(--rg-desktop-bg, none);
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    text-align: center;
+    transition: opacity .9s ease, visibility .9s ease;
+  }
+  body.rg-opened .rg-opening{opacity:0;visibility:hidden;pointer-events:none;}
+  .rg-opening__content{position:relative;z-index:1;display:grid;justify-items:center;max-width:420px; width: 100%;}
+  .rg-opening .rg-branch{color: var(--rg-terracotta); width:80px; margin-bottom:18px;}
+  .rg-opening span.rg-eyebrow{color: var(--rg-terracotta);}
+  .rg-opening h1{margin:16px 0 6px;font:500 italic clamp(2.4rem,10vw,4.4rem)/1.05 var(--rg-heading); color: #fff;}
+  .rg-opening p{margin:0 0 40px;opacity:.9;font-size:15px;letter-spacing:.05em; color: #fff;}
+  .rg-opening .rg-opening-guest{margin:-18px 0 36px;opacity:.95;font-size:15px;letter-spacing:.05em;color:#fff;}
+  .rg-opening .rg-btn { border-color: var(--rg-terracotta); color: var(--rg-terracotta); }
+  .rg-opening .rg-btn:hover { background: var(--rg-terracotta); color: var(--rg-sage-deep); }
+
+  body:not(.rg-opened) .rg-mobile-nav{opacity:0!important;pointer-events:none!important;}
+
+  /* 
+   * MOBILE NAV 
+   */
+  .rg-mobile-nav{display:grid; grid-template-columns:repeat(5,1fr); position:fixed; left:0; right:0; bottom:0; z-index:90; background:var(--rg-paper); border-top:1px solid var(--rg-line); padding:8px 6px 12px; transition:opacity .5s ease;}
+  .rg-mobile-nav a{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--rg-muted);font-size:10px;}
+  .rg-mobile-nav a span.material-symbols-outlined{font-size:20px;}
+  .rg-mobile-nav a.is-active{color:var(--rg-sage-deep);} 
+  
+  @media (min-width: 1024px) {
+    .rg-mobile-nav { width: 400px; left: auto; right: 0; }
+  }
+
+  /* INNER HERO */
+  .rg-hero{position:relative;min-height:100vh;display:flex;align-items:flex-end;}
+  .rg-hero__image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .rg-hero__shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(100,0,0,.85) 5%,rgba(100,0,0,.3) 55%,rgba(139,0,0,.45) 100%);}
+  .rg-hero__content{position:relative;z-index:1;width:100%;padding:0 32px 80px;color:var(--rg-paper);text-align:center;}
+  .rg-hero__content .rg-eyebrow{color:var(--rg-terracotta);}
+  .rg-hero__content h2{margin:16px auto 0;font:500 italic 1.5rem/1.4 var(--rg-heading);}
+  .rg-countdown{display:flex;gap:12px;justify-content:center;margin-top:32px;flex-wrap:wrap;}
+  .rg-countdown div{display:grid;justify-items:center;min-width:60px;padding:10px 6px;border:1px solid rgba(212,175,55,.4);}
+  .rg-countdown strong{font:500 24px/1 var(--rg-heading); color: var(--rg-terracotta);}
+  .rg-countdown span{margin-top:4px;font-size:9px;letter-spacing:.16em;text-transform:uppercase;opacity:.9; color: #fff;}
+
+  /* 
+   * INTRO / MUKADIMAH (NEW SECTION) 
+   * Fitur bingkai pesanan (Classic Scalloped Frame)
+   */
+  .rg-intro { text-align: center; background: var(--rg-cream-deep); }
+  .rg-intro-text { padding: 0 12px; }
+  .rg-intro-text .arabic { font-size: 26px; font-weight: 500; color: var(--rg-sage-deep); margin: 0 0 20px; line-height: 1.5; }
+  .rg-intro-text .arabic-verse { font-size: 16px; line-height: 2; color: var(--rg-ink); margin: 0 0 24px; font-weight: 400; }
+  .rg-intro-text .translation { font-size: 13px; line-height: 1.7; color: var(--rg-muted); margin: 0 0 16px; font-style: italic;}
+  .rg-intro-text span { font-size: 12px; color: var(--rg-terracotta); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;}
+  
+  .rg-framed-img-container {
+      width: 100%;
+      max-width: 300px;
+      aspect-ratio: 3 / 4;
+      margin: 0 auto 36px;
+      /* Inline SVG Mask untuk membentuk sudut bingkai klasik (Islamic/Moorish) */
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 400' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30,0 h240 q15,0 15,15 q0,15 15,15 v340 q-15,0 -15,15 q0,15 -15,15 h-240 q-15,0 -15,-15 q0,-15 -15,-15 v-340 q15,0 15,-15 q0,-15 15,-15 Z' fill='%23000'/%3E%3C/svg%3E");
+      -webkit-mask-size: 100% 100%;
+      -webkit-mask-repeat: no-repeat;
+      mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 400' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30,0 h240 q15,0 15,15 q0,15 15,15 v340 q-15,0 -15,15 q0,15 -15,15 h-240 q-15,0 -15,-15 q0,-15 -15,-15 v-340 q15,0 15,-15 q0,-15 15,-15 Z' fill='%23000'/%3E%3C/svg%3E");
+      mask-size: 100% 100%;
+      mask-repeat: no-repeat;
+      background-color: var(--rg-sage-deep);
+  }
+  .rg-framed-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+  }
+
+  /* couple */
+  .rg-couple-grid{display:grid;grid-template-columns:1fr;gap:40px;justify-items:center;}
+  .rg-couple-grid .rg-branch{display:none;}
+  .rg-person{text-align:center;}
+  .rg-person figure{width:180px;height:180px;margin:0 auto 22px;border-radius:50%;overflow:hidden;border:2px solid var(--rg-terracotta);padding:6px;} 
+  .rg-person figure img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+  .rg-person h3{margin:0 0 4px;font:500 italic 1.8rem/1.2 var(--rg-heading);color:var(--rg-sage-deep);}
+  .rg-person p{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--rg-moss);}
+  .rg-person strong{display:block;margin-top:6px;font-weight:400;color:var(--rg-muted);font-size:14px;}
+
+  /* story */
+  .rg-timeline{position:relative;padding-left:32px;}
+  .rg-timeline__line{position:absolute;left:6px;top:6px;bottom:6px;width:1px;background:var(--rg-line);}
+  .rg-timeline article{position:relative;padding-bottom:34px;}
+  .rg-timeline article:last-child{padding-bottom:0;}
+  .rg-timeline article::before{content:'';position:absolute;left:-32px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--rg-cream);border:2px solid var(--rg-terracotta);}
+  .rg-timeline span{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--rg-moss);margin-bottom:6px;}
+  .rg-timeline h3{margin:0 0 8px;font:500 20px/1.2 var(--rg-heading);color:var(--rg-sage-deep);}
+  .rg-timeline p{margin:0;color:var(--rg-muted);line-height:1.7;font-size:14px;}
+
+  /* events */
+  .rg-event-grid{display:grid;grid-template-columns:1fr;gap:24px;}
+  .rg-event-card{background:var(--rg-paper);border:1px solid var(--rg-line);padding:36px 24px;text-align:center;box-shadow:0 12px 30px rgba(139,0,0,.08);}
+  .rg-event-card--dark{background:var(--rg-sage-deep);color:var(--rg-paper);border-color:var(--rg-sage-deep);}
+  .rg-event-card .material-symbols-outlined{font-size:32px;color:var(--rg-terracotta);}
+  .rg-event-card--dark .material-symbols-outlined{color:var(--rg-terracotta);}
+  .rg-event-card h3{margin:12px 0 4px;font:500 italic 1.6rem/1.2 var(--rg-heading);}
+  .rg-event-date{margin:0 0 2px;font-weight:500;font-size:14px;}
+  .rg-event-card p{margin:0 0 4px;font-size:13px;opacity:.85;}
+  .rg-event-card strong{display:block;margin:12px 0 22px;font-weight:400;font-size:14px;line-height:1.6;}
+  .rg-event-card--dark .rg-btn--solid { background: var(--rg-terracotta); color: var(--rg-sage-deep); border-color: var(--rg-terracotta); }
+  .rg-event-card--dark .rg-btn--solid:hover { background: #fff; border-color: #fff; }
+
+  /* gallery */
+  .rg-gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .rg-gallery-item{overflow:hidden;aspect-ratio:3/4; border: 1px solid var(--rg-line);}
+  .rg-gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease;}
+  .rg-gallery-item:hover img{transform:scale(1.06);}
+  .rg-gallery-empty{grid-column:1/-1;display:grid;justify-items:center;gap:10px;padding:48px 20px;color:var(--rg-muted);text-align:center;border:1px dashed var(--rg-line);border-radius:12px;}
+  .rg-gallery-empty span{font-size:34px;opacity:.55;}
+  .rg-gallery-empty p{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;}
+  .rg-section-placeholder{grid-column:1/-1;display:grid;justify-items:center;gap:10px;padding:48px 20px;color:var(--rg-muted);text-align:center;border:1px dashed var(--rg-line);border-radius:12px;}
+  .rg-section-placeholder p{margin:0;font-size:12px;letter-spacing:.06em;}
+
+  /* rsvp */
+  .rg-form{display:grid;gap:18px;margin-bottom:44px;}
+  .rg-form label{display:grid;gap:8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--rg-muted);}
+  .rg-form input,.rg-form select,.rg-form textarea{border:1px solid var(--rg-line);background:var(--rg-paper);padding:12px 14px;color:var(--rg-ink);border-radius:2px;}
+  .rg-form input:focus,.rg-form select:focus,.rg-form textarea:focus{outline:2px solid var(--rg-terracotta);outline-offset:1px;}
+  .rg-radio-group{display:grid;gap:10px;}
+  .rg-radio-group>span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--rg-muted);}
+  .rg-radio-group label{display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:14px;color:var(--rg-ink);}
+  .rg-wishes{display:grid;gap:16px;}
+  .rg-wishes article{border-top:1px solid var(--rg-line);padding-top:16px;}
+  .rg-wishes strong{font-weight:500;color:var(--rg-sage-deep);}
+  .rg-wishes small{display:block;color:var(--rg-muted);font-size:11px;margin:2px 0 8px;}
+  .rg-wishes p{margin:0;font-size:13px;color:var(--rg-muted);line-height:1.6;}
+
+  /* gift */
+  .rg-gift{background:var(--rg-sage-deep);color:var(--rg-paper);}
+  .rg-gift .rg-section-head p{color:rgba(255,255,255,.8);}
+  .rg-gift .rg-section-head h2{color:var(--rg-terracotta);}
+  .rg-gift-grid{display:grid;grid-template-columns:1fr;gap:20px;}
+  .rg-gift-grid article{background:rgba(0,0,0,.15);border:1px solid rgba(212,175,55,.3);padding:28px 24px;text-align:center;}
+  .rg-gift-grid span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--rg-terracotta-soft);}
+  .rg-gift-grid h3{margin:10px 0 4px;font:500 italic 1.5rem/1.2 var(--rg-heading);}
+  .rg-gift-grid p{margin:0;font-size:16px;letter-spacing:.06em;}
+  .rg-gift-grid small{display:block;margin:6px 0 16px;opacity:.75;font-size:11px;}
+  .rg-qris{width:160px;margin:10px auto 14px;border:5px solid var(--rg-terracotta);}
+  
+  .rg-gift-grid .rg-btn { border-color: var(--rg-terracotta); color: var(--rg-terracotta); }
+  .rg-gift-grid .rg-btn:hover { background: var(--rg-terracotta); color: var(--rg-sage-deep); }
+  .rg-gift-grid .rg-section-placeholder .material-symbols-outlined{font-size:34px;color:var(--rg-terracotta);}
+  .rg-gift .rg-section-placeholder{color:rgba(253,251,247,.8);border-color:rgba(253,251,247,.35);}
+  .rg-gift .rg-section-placeholder small{opacity:.7;}
+
+  /* check-in card (buku tamu) */
+  .rg-checkin{margin-top:28px;padding:26px 22px;text-align:center;background:var(--rg-sage-deep);color:var(--rg-cream);border-radius:14px;}
+  .rg-checkin span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--rg-terracotta-soft);}
+  .rg-checkin h3{margin:10px 0 4px;font:500 italic 1.5rem/1.2 var(--rg-heading);}
+  .rg-checkin small{display:block;margin:6px 0 0;opacity:.75;font-size:11px;line-height:1.6;}
+  .rg-checkin .rg-qris{max-width:220px;width:100%;margin:14px auto;padding:8px;background:var(--rg-cream);}
+  .rg-checkin svg{width:100%;height:auto;display:block;}
+  .rg-checkin-code{margin:10px 0 0;font-family:monospace;font-size:11px;opacity:.8;word-break:break-all;}
+
+  /* closing */
+  .rg-closing{text-align:center; padding-bottom: 120px;}
+  .rg-closing .material-symbols-outlined{font-size:32px;color:var(--rg-terracotta);}
+  .rg-closing h2{margin:16px 0 18px;font:500 1.2rem/1.6 var(--rg-heading);color:var(--rg-sage-deep);font-style:italic;}
+  .rg-closing em{display:block;font-style:normal;color:var(--rg-muted);font-size:12px;letter-spacing:.05em;margin-bottom:6px;}
+  .rg-closing h3{margin:0 0 24px;font:500 italic 1.8rem/1.2 var(--rg-heading);color:var(--rg-sage-deep);}
+  .rg-closing h3 .material-symbols-outlined{font-size:18px;vertical-align:middle;color:var(--rg-terracotta);}
+  .rg-closing footer p{margin:2px 0;font-size:12px;color:var(--rg-muted);}
+
+  .rg-animate{opacity:0;transform:translateY(20px);transition:opacity .7s ease var(--rg-delay,0ms),transform .7s ease var(--rg-delay,0ms);}
+  .rg-animate.rg-visible{opacity:1;transform:none;}
+  @media (prefers-reduced-motion:reduce){.rg-animate{opacity:1!important;transform:none!important;transition:none!important;}}
+</style>
+</head>
+<body>
+
+  <!-- INITIAL VIEW (HERO OVERLAY) -->
+  <section class="rg-opening" id="invitation-overlay">
+    <div class="rg-opening__content">
+      <svg class="rg-branch" viewBox="0 0 60 90"><path d="M30 88 C28 60 32 40 30 4 M30 20 C22 16 16 18 12 12 M30 30 C38 26 44 28 48 20 M30 45 C21 42 15 46 10 40 M30 58 C39 55 45 58 50 51"/></svg>
+      <span class="rg-eyebrow">The Wedding Of</span>
+      <h1>{{ $cover_names ?? '' }}</h1>
+      <p>{{ $akad_datetime_formatted ?? '' }}</p>
+      <p class="rg-opening-guest">Kepada Yth. {{ $guest_name ?? 'Tamu Undangan' }}</p>
+      <button class="rg-btn" type="button" onclick="openInvitation()">Buka Undangan</button>
+    </div>
+  </section>
+
+  <!-- 400px DESKTOP WRAPPER / 100% MOBILE -->
+  <div class="rg-app template-rustic-garden">
+
+    <nav class="rg-mobile-nav">
+      <a href="#beranda" data-rg-nav><span class="material-symbols-outlined">home</span><small>Beranda</small></a>
+      <a href="#cerita" data-rg-nav><span class="material-symbols-outlined">auto_stories</span><small>Cerita</small></a>
+      <a href="#acara" data-rg-nav><span class="material-symbols-outlined">calendar_today</span><small>Acara</small></a>
+      <a href="#rsvp" data-rg-nav><span class="material-symbols-outlined">edit_notifications</span><small>RSVP</small></a>
+      <a href="#kado" data-rg-nav><span class="material-symbols-outlined">redeem</span><small>Kado</small></a>
+    </nav>
+
+    <!-- INNER HERO -->
+    <section class="rg-hero" id="beranda">
+      @if($cover_photo_url)
+      <img class="rg-hero__image" src="{{ $cover_photo_url }}" alt="Foto {{ $bride_name ?? 'Mempelai' }} dan {{ $groom_name ?? 'Mempelai' }}">
+      @endif
+      <div class="rg-hero__shade"></div>
+      <div class="rg-hero__content">
+        <span class="rg-eyebrow">Save The Date</span>
+        <h2>{{ $love_story ?? '' }}</h2>
+        @if($event_date)
+        <div class="rg-countdown" id="countdown" data-date="{{ $event_date }}">
+          <div><strong id="days">00</strong><span>Hari</span></div>
+          <div><strong id="hours">00</strong><span>Jam</span></div>
+          <div><strong id="minutes">00</strong><span>Menit</span></div>
+          <div><strong id="seconds">00</strong><span>Detik</span></div>
+        </div>
+        @endif
+      </div>
+    </section>
+
+    <!-- INTRO / MUKADIMAH (NEW SECTION DENGAN BINGKAI FOTO) -->
+    <section class="rg-section rg-intro">
+      <div class="rg-container">
+        <!-- Bingkai custom -->
+        <div class="rg-framed-img-container">
+          @if($couple_photo_url)
+          <img src="{{ $couple_photo_url }}" alt="Foto Mempelai">
+          @endif
+        </div>
+        
+        <!-- Teks Bismillah dan Ayat -->
+        <div class="rg-intro-text">
+          <h2 class="arabic">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</h2>
+          <p class="arabic-verse">وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةً ۗاِنَّ فِيْ ذٰلِكَ لَاٰيٰتٍ لِّقَوْمٍ يَّتَفَكَّرُوْنَ</p>
+          <p class="translation">"Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang. Sungguh, pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir."</p>
+          <span>(QS. Ar-Rum: 21)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- COUPLE -->
+    <section class="rg-section rg-couple" id="mempelai" style="background: var(--rg-paper);">
+      <div class="rg-container">
+        <div class="rg-section-head">
+          <svg class="rg-branch" viewBox="0 0 60 40"><path d="M2 20 C18 4 42 4 58 20 M18 12 C16 8 12 8 10 4 M30 8 C30 4 30 2 30 -2 M42 12 C44 8 48 8 50 4"/></svg>
+          <span class="rg-eyebrow">Dengan Penuh Syukur</span>
+          <h2>Kami Mengundang Anda</h2>
+          <p>Dengan penuh syukur kepada Tuhan Yang Maha Esa, kami bermaksud menyelenggarakan pernikahan dan mengundang Bapak/Ibu/Saudara/i untuk hadir memberi doa restu.</p>
+        </div>
+        <div class="rg-couple-grid">
+          <article class="rg-person">
+            <figure>@if($bride_photo_url)<img src="{{ $bride_photo_url }}" alt="{{ $bride_name }}">@endif</figure>
+            <h3>{{ $bride_name }}</h3>
+            <p>Putri dari</p>
+            <strong>@if($bride_father)Bpk. {{ $bride_father }}@endif @if($bride_mother)&amp; Ibu {{ $bride_mother }}@endif</strong>
+          </article>
+          <article class="rg-person">
+            <figure>@if($groom_photo_url)<img src="{{ $groom_photo_url }}" alt="{{ $groom_name }}">@endif</figure>
+            <h3>{{ $groom_name }}</h3>
+            <p>Putra dari</p>
+            <strong>@if($groom_father)Bpk. {{ $groom_father }}@endif @if($groom_mother)&amp; Ibu {{ $groom_mother }}@endif</strong>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- STORY -->
+    <section class="rg-section rg-story" id="cerita" style="background:var(--rg-cream-deep);">
+      <div class="rg-container">
+        <div class="rg-section-head">
+          <svg class="rg-branch" viewBox="0 0 60 40"><path d="M2 20 C18 4 42 4 58 20 M18 12 C16 8 12 8 10 4 M30 8 C30 4 30 2 30 -2 M42 12 C44 8 48 8 50 4"/></svg>
+          <span class="rg-eyebrow">Perjalanan Kami</span>
+          <h2>Kisah Kami</h2>
+        </div>
+        <div class="rg-timeline">
+          <div class="rg-timeline__line"></div>
+          @forelse($love_stories as $story)
+          <article>
+            <span>{{ $story['date'] }}</span>
+            <h3>{{ $story['title'] }}</h3>
+            <p>{{ $story['description'] }}</p>
+          </article>
+          @empty
+          <article class="rg-section-placeholder"><p>Kisah kami akan segera hadir.</p></article>
+          @endforelse
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENT -->
+    <section class="rg-section rg-events" id="acara">
+      <div class="rg-container">
+        <div class="rg-section-head">
+          <svg class="rg-branch" viewBox="0 0 60 40"><path d="M2 20 C18 4 42 4 58 20 M18 12 C16 8 12 8 10 4 M30 8 C30 4 30 2 30 -2 M42 12 C44 8 48 8 50 4"/></svg>
+          <span class="rg-eyebrow">Merayakan Cinta</span>
+          <h2>Detail Acara</h2>
+        </div>
+        <div class="rg-event-grid">
+          @if($akad_datetime_formatted || $akad_venue)
+          <article class="rg-event-card">
+            <span class="material-symbols-outlined">menu_book</span>
+            <h3>Akad Nikah</h3>
+            <p class="rg-event-date">{{ $akad_datetime_formatted }}</p>
+            <p>{{ $akad_time }}</p>
+            <strong>{{ $akad_venue }}</strong>
+            <a class="rg-btn" href="{{ $akad_maps_url ?? '#' }}" target="_blank" rel="noopener noreferrer">Lihat Lokasi</a>
+          </article>
+          @endif
+@if(($show_reception ?? true) && (($reception_datetime_formatted ?? null) || ($reception_venue ?? null)))
+          <article class="rg-event-card rg-event-card--dark">
+            <span class="material-symbols-outlined">celebration</span>
+            <h3>Resepsi</h3>
+            <p class="rg-event-date">{{ $reception_datetime_formatted }}</p>
+            <p>{{ $reception_time }}</p>
+            <strong>{{ $reception_venue }}</strong>
+            <a class="rg-btn rg-btn--solid" href="{{ $reception_maps_url ?? '#' }}" target="_blank" rel="noopener noreferrer">Petunjuk Arah</a>
+          </article>
+@endif
+          @if(!(($akad_datetime_formatted ?? null) || ($akad_venue ?? null) || ($reception_datetime_formatted ?? null) || ($reception_venue ?? null)))
+          <article class="rg-event-card rg-section-placeholder"><p>Detail acara akan segera diumumkan.</p></article>
+          @endif
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="rg-section rg-gallery" id="galeri" style="background:var(--rg-cream-deep);">
+      <div class="rg-container">
+        <div class="rg-section-head">
+          <svg class="rg-branch" viewBox="0 0 60 40"><path d="M2 20 C18 4 42 4 58 20 M18 12 C16 8 12 8 10 4 M30 8 C30 4 30 2 30 -2 M42 12 C44 8 48 8 50 4"/></svg>
+          <span class="rg-eyebrow">Sekilas Momen</span>
+          <h2>Galeri Foto</h2>
+        </div>
+        <div class="rg-gallery-grid">
+          @forelse($gallery as $photo)
+          <figure class="rg-gallery-item"><img src="{{ $photo['url'] ?? '' }}" alt="{{ $photo['caption'] ?? 'Momen' }}"></figure>
+          @empty
+          <div class="rg-gallery-empty"><span class="material-symbols-outlined">photo_library</span><p>Galeri foto akan ditampilkan di sini</p></div>
+          @endforelse
+        </div>
+      </div>
+    </section>
+
+    <!-- RSVP -->
+    <section class="rg-section rg-rsvp" id="rsvp">
+      <div class="rg-container">
+        <div class="rg-section-head">
+          <svg class="rg-branch" viewBox="0 0 60 40"><path d="M2 20 C18 4 42 4 58 20 M18 12 C16 8 12 8 10 4 M30 8 C30 4 30 2 30 -2 M42 12 C44 8 48 8 50 4"/></svg>
+          <span class="rg-eyebrow">Kabari Kami</span>
+          <h2>Konfirmasi Kehadiran</h2>
+          <p>Kehadiran serta doa restu Anda adalah hadiah yang paling berarti bagi kami.</p>
+        </div>
+        <form class="rg-form" action="{{ $rsvp_action ?? '#' }}" method="POST">
+          <input type="hidden" name="_token" value="{{ $csrf_token ?? '' }}">
+          <label>Nama Lengkap<input name="name" type="text" value="{{ $guest_name ?? '' }}" placeholder="Masukkan nama Anda"></label>
+          <label>Jumlah Tamu<select name="pax_count"><option value="1">1 Orang</option><option value="2">2 Orang</option><option value="3">3 Orang</option><option value="4">4 Orang</option><option value="5">5 Orang</option></select></label>
+          <div class="rg-radio-group">
+            <span>Konfirmasi Kehadiran</span>
+            <label><input name="attendance" type="radio" value="yes"> Hadir</label>
+            <label><input name="attendance" type="radio" value="no"> Tidak Hadir</label>
+          </div>
+          @if($show_wishes ?? true)
+          <label>Ucapan &amp; Doa Restu<textarea name="message" rows="4" placeholder="Tuliskan ucapan untuk mempelai"></textarea></label>
+          @endif
+          <button class="rg-btn rg-btn--solid rg-btn--block" type="submit">Kirim Konfirmasi</button>
+        </form>
+        @if($show_wishes ?? true)
+        <div class="rg-wishes">
+          @forelse($wishes as $wish)
+          <article><strong>{{ $wish['name'] }}</strong><small>@if($wish['created_at']){{\Carbon\Carbon::parse($wish['created_at'])->locale('id')->diffForHumans()}}@endif</small><p>{{ $wish['message'] }}</p></article>
+          @empty
+          <article class="rg-section-placeholder"><p>Belum ada ucapan, jadilah yang pertama.</p></article>
+          @endforelse
+        </div>
+        @endif
+        @if(($guest_book_enabled && $guest) || filled($guest_qr_demo ?? null))
+        <div class="rg-checkin">
+          <span>Kode Tamu</span>
+          <h3>Check-in Hari-H</h3>
+          <div class="rg-qris">{!! $guest_qr_svg ?? $guest_qr_demo !!}</div>
+          @if(filled($guest_qr_demo ?? null) && ! filled($guest_qr_svg ?? null))
+          <small>Contoh kode tamu — fitur paket Buku Tamu Digital</small>
+          @else
+          <small>Tunjukkan QR ini saat tiba di venue untuk check-in, souvenir, dan undian</small>
+          <p class="rg-checkin-code">{{ $guest['unique_code'] }}</p>
+          @endif
+        </div>
+        @endif
+      </div>
+    </section>
+
+    <!-- GIFT -->
+    <section class="rg-section rg-gift" id="kado">
+      <div class="rg-container">
+        <div class="rg-section-head">
+          <span class="rg-eyebrow">Tanda Kasih</span>
+          <h2>Kado Digital</h2>
+          <p>Bagi Anda yang ingin memberi tanda kasih dari jauh, kami sediakan opsi berikut.</p>
+        </div>
+        <div class="rg-gift-grid">
+          @if(($bank_name ?? null) && ($account_number ?? null))
+          <article>
+            <span>Bank Transfer</span>
+            <h3>{{ $bank_name }}</h3>
+            <p id="account-number">{{ $account_number }}</p>
+            <small>A/N {{ $account_name ?? '' }}</small>
+            <button class="rg-btn" type="button" data-copy="#account-number">Salin Rekening</button>
+          </article>
+          @endif
+          @if($qris_image_url ?? null)
+          <article>
+            <span>QRIS Payment</span>
+            <img class="rg-qris" src="{{ $qris_image_url }}" alt="QRIS {{ $account_name ?? 'Mempelai' }}">
+            <small>Pindai untuk memberi</small>
+          </article>
+          @endif
+          @if(!(($bank_name ?? null) || ($account_number ?? null) || ($qris_image_url ?? null) || ($gopay_number ?? null) || ($ovo_number ?? null) || ($dana_number ?? null) || ($gift_address ?? null)))
+          <article class="rg-section-placeholder">
+            <span class="material-symbols-outlined">card_giftcard</span>
+            <p>Doa restu Anda adalah hadiah terbaik bagi kami.</p>
+            <small>Informasi hadiah digital akan segera tersedia.</small>
+          </article>
+          @endif
+        </div>
+      </div>
+    </section>
+
+    <!-- CLOSING -->
+    <section class="rg-section rg-closing">
+      <div class="rg-container">
+        <span class="material-symbols-outlined">eco</span>
+        <h2>{{ $special_message ?? '' }}</h2>
+        <em>Kami yang berbahagia,</em>
+        <h3>{{ $bride_name ?? '' }} <span class="material-symbols-outlined">favorite</span> {{ $groom_name ?? '' }}</h3>
+        <footer>
+          @if(($groom_father ?? null) || ($groom_mother ?? null))<p>Keluarga Besar @if($groom_father)Bpk. {{ $groom_father }}@endif @if($groom_mother)&amp; Ibu {{ $groom_mother }}@endif</p>@endif
+          @if(($bride_father ?? null) || ($bride_mother ?? null))<p>Keluarga Besar @if($bride_father)Bpk. {{ $bride_father }}@endif @if($bride_mother)&amp; Ibu {{ $bride_mother }}@endif</p>@endif
+        </footer>
+      </div>
+    </section>
+
+  </div> <!-- END APP WRAPPER -->
+
+<script>
+(function () {
+  var openClass = 'rg-opened';
+  var visibleClass = 'rg-visible';
+  var animateSelector = '.template-rustic-garden > .rg-section, .rg-container, .rg-person, .rg-event-card, .rg-timeline article, .rg-gallery-item, .rg-form, .rg-gift-grid article, .rg-closing h2, .rg-closing footer';
+
+  function ready(cb){ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',cb,{once:true});return;} cb(); }
+  function qs(sel,root){ return (root||document).querySelector(sel); }
+  function qsa(sel,root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
+  function pad(v){ return String(Math.max(0,v)).padStart(2,'0'); }
+
+  window.openInvitation = window.openInvitation || function () {
+    document.body.classList.add(openClass);
+    var overlay = qs('#invitation-overlay');
+    if (overlay) { overlay.style.opacity = '0'; overlay.style.visibility = 'hidden'; overlay.style.pointerEvents = 'none'; window.setTimeout(function(){ overlay.style.display = 'none'; }, 900); }
+  };
+
+  function initCountdown() {
+    var el = qs('#countdown');
+    if (!el) return;
+    function tick() {
+      var targetVal = el.getAttribute('data-date');
+      var target = targetVal ? new Date(targetVal.replace(' ', 'T')).getTime() : NaN;
+      if (!target || Number.isNaN(target)) return;
+      var distance = target - Date.now();
+      if (distance <= 0) { el.innerHTML = '<strong style="font:italic 500 18px var(--rg-heading)">Hari bahagia telah tiba</strong>'; return; }
+      var d = Math.floor(distance/86400000), h = Math.floor((distance%86400000)/3600000), m = Math.floor((distance%3600000)/60000), s = Math.floor((distance%60000)/1000);
+      [['#days',d],['#hours',h],['#minutes',m],['#seconds',s]].forEach(function(i){ var e = qs(i[0]); if (e) e.textContent = pad(i[1]); });
+    }
+    tick(); window.setInterval(tick, 1000);
+  }
+
+  function initCopy() {
+    qsa('[data-copy]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var src = qs(btn.getAttribute('data-copy'));
+        if (!src) return;
+        var text = src.textContent.trim().replace(/\s+/g,'');
+        if (navigator.clipboard) navigator.clipboard.writeText(text);
+        var original = btn.textContent;
+        btn.textContent = 'Tersalin';
+        window.setTimeout(function(){ btn.textContent = original; }, 1400);
+      });
+    });
+  }
+
+  function initNav() {
+    var items = qsa('[data-rg-nav]');
+    if (!items.length) return;
+    var sections = ['beranda','mempelai','cerita','acara','rsvp','kado'];
+    function update() {
+      var current = 'beranda';
+      sections.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && window.scrollY >= el.offsetTop - 60) current = id;
+      });
+      items.forEach(function (a) { a.classList.toggle('is-active', a.getAttribute('href') === '#' + current); });
+    }
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+  }
+
+  function initScrollAnim() {
+    var items = qsa(animateSelector);
+    items.forEach(function (item, i) {
+      item.classList.add('rg-animate');
+      item.style.setProperty('--rg-delay', Math.min(i % 6, 5) * 80 + 'ms');
+    });
+    if (!('IntersectionObserver' in window)) { items.forEach(function(i){ i.classList.add(visibleClass); }); return; }
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add(visibleClass); obs.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -5% 0px', threshold: .1 });
+    items.forEach(function (i) { obs.observe(i); });
+  }
+
+  ready(function () { initCountdown(); initCopy(); initNav(); initScrollAnim(); });
+})();
+</script>
+</body>
+</html>

@@ -21,7 +21,7 @@ const logout = () => {
               <span class="text-white font-bold text-xl">M</span>
             </div>
             <span class="font-display text-2xl font-bold text-[var(--my-primary)]">
-              MyAkad
+              Akadnya.com
             </span>
           </Link>
 

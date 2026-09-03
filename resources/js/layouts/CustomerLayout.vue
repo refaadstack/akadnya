@@ -86,7 +86,7 @@ const logout = () => {
       <div class="my-container">
         <div class="flex min-h-16 items-center justify-between gap-4">
           <Link href="/dashboard" class="font-display text-2xl font-bold leading-none text-[var(--my-primary)]">
-            MyAkad
+            Akadnya.com
           </Link>
 
           <div class="hidden items-center gap-5 lg:flex">

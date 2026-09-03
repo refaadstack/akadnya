@@ -175,7 +175,7 @@ const getPositionLabel = (position: string) => {
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
           <div>
-            <Link href="/dashboard" class="text-sm text-gray-600 hover:text-green-600 mb-2 inline-flex items-center">
+            <Link href="/dashboard" class="text-sm text-gray-600 hover:text-[#AD7F35] mb-2 inline-flex items-center">
               <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
               </svg>
@@ -207,7 +207,7 @@ const getPositionLabel = (position: string) => {
                 @dragstart="handleDragStart(index)"
                 @dragover="handleDragOver"
                 @drop="handleDrop(index)"
-                class="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg cursor-move hover:border-green-300 transition"
+                class="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg cursor-move hover:border-[#AD7F35]/40 transition"
                 :class="{ 'opacity-50': !section.is_visible }"
               >
                 <div class="flex items-center space-x-3">
@@ -227,17 +227,17 @@ const getPositionLabel = (position: string) => {
                     @change="toggleSection(section.id)"
                     class="sr-only peer"
                   />
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#AD7F35]/40 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#AD7F35]"></div>
                 </label>
               </div>
             </div>
 
-            <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div class="mt-6 p-4 bg-[#5A1B24]/10 border border-[#5A1B24]/30 rounded-lg">
               <div class="flex items-start">
-                <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-5 h-5 text-[#5A1B24] mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                 </svg>
-                <div class="text-sm text-blue-800">
+                <div class="text-sm text-[#5A1B24]">
                   <p class="font-semibold">Tips:</p>
                   <p class="mt-1">Section yang wajib (hero, countdown, rsvp) tidak dapat disembunyikan.</p>
                 </div>
@@ -271,7 +271,7 @@ const getPositionLabel = (position: string) => {
                         @change="toggleOrnament(ornament.id)"
                         class="sr-only peer"
                       />
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#AD7F35]/40 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#AD7F35]"></div>
                     </label>
                   </div>
 
@@ -290,7 +290,7 @@ const getPositionLabel = (position: string) => {
             :href="`/templates/${invitation.template.slug}/render`"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition"
+            class="inline-flex items-center bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition"
           >
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

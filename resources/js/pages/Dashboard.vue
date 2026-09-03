@@ -186,7 +186,7 @@ const quickActions = [
     },
     {
         title: 'Bantuan & Support',
-        text: 'Butuh bantuan saat setup? Tim MyAkad siap membantu.',
+        text: 'Butuh bantuan saat setup? Tim Akadnya.com siap membantu.',
         icon: CircleHelp,
     },
     {
@@ -504,7 +504,7 @@ const selectTemplate = (template: AllTemplate) => {
                                 :class="
                                     isPublished
                                         ? 'bg-[var(--my-primary)]/12 text-[var(--my-primary)]'
-                                        : 'bg-[var(--my-secondary)]/20 text-[#8b5b52]'
+                                        : 'bg-[var(--my-secondary)]/20 text-[#5A1B24]'
                                 "
                             >
                                 {{ isPublished ? 'Published' : 'Draft' }}

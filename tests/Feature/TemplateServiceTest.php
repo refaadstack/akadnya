@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\File;
 beforeEach(function () {
     $this->validator = new TemplateZipValidator;
     $this->service = new TemplateService($this->validator);
-    $this->tempDir = sys_get_temp_dir().'/myakad_test_'.uniqid();
+    $this->tempDir = sys_get_temp_dir().'/akadnya_test_'.uniqid();
     mkdir($this->tempDir, 0777, true);
 });
 

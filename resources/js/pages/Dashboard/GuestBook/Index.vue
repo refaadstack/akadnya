@@ -55,7 +55,7 @@ const eventTypeLabels: Record<Entry['event_type'], string> = {
 };
 
 const eventTypeBadges: Record<Entry['event_type'], string> = {
-    check_in: 'bg-blue-100 text-blue-800 border-blue-200',
+    check_in: 'bg-[#5A1B24]/10 text-[#5A1B24] border-[#5A1B24]/30',
     souvenir: 'bg-amber-100 text-amber-800 border-amber-200',
     raffle: 'bg-purple-100 text-purple-800 border-purple-200',
 };
@@ -126,7 +126,7 @@ const drawRaffle = () => {
 
             <div
                 v-if="$page.props.flash?.success"
-                class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800"
+                class="mb-4 rounded-lg border border-[#AD7F35]/30 bg-[#AD7F35]/10 px-4 py-3 text-[#5A1B24]"
             >
                 {{ $page.props.flash.success }}
             </div>

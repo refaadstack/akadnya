@@ -98,7 +98,7 @@ const unpublish = () => {
             <!-- Flash Messages -->
             <div
                 v-if="$page.props.flash?.success"
-                class="mb-6 flex items-center rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800"
+                class="mb-6 flex items-center rounded-lg border border-[#AD7F35]/30 bg-[#AD7F35]/10 px-4 py-3 text-[#5A1B24]"
             >
                 <svg
                     class="mr-2 h-5 w-5"
@@ -147,7 +147,7 @@ const unpublish = () => {
                                 class="h-3 w-3 rounded-full"
                                 :class="
                                     invitation.is_published
-                                        ? 'bg-green-500'
+                                        ? 'bg-[#AD7F35]'
                                         : 'bg-gray-400'
                                 "
                             ></div>
@@ -172,7 +172,7 @@ const unpublish = () => {
                         <button
                             v-if="!invitation.is_published"
                             @click="publish"
-                            class="rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-2 font-semibold text-white transition hover:shadow-lg"
+                            class="rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-2 font-semibold text-white transition hover:shadow-lg"
                         >
                             Publikasikan
                         </button>
@@ -196,7 +196,7 @@ const unpublish = () => {
                             />
                             <button
                                 @click="copyUrl"
-                                class="flex items-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition hover:bg-blue-700"
+                                class="flex items-center rounded-lg bg-[#5A1B24] px-4 py-2 font-semibold text-white transition hover:bg-[#5A1B24]/80"
                             >
                                 <svg
                                     class="mr-1 h-5 w-5"
@@ -252,7 +252,7 @@ const unpublish = () => {
                         </h2>
                         <button
                             @click="showSubdomainGuide = !showSubdomainGuide"
-                            class="flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
+                            class="flex items-center text-sm font-medium text-[#5A1B24] hover:text-[#5A1B24]"
                         >
                             <svg
                                 class="mr-1 h-5 w-5"
@@ -274,10 +274,10 @@ const unpublish = () => {
                     <!-- Guide Section -->
                     <div
                         v-if="showSubdomainGuide"
-                        class="mb-6 rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-5"
+                        class="mb-6 rounded-lg border border-[#5A1B24]/30 bg-gradient-to-r from-[#5A1B24]/10 to-[#5A1B24]/10 p-5"
                     >
                         <h3
-                            class="mb-3 flex items-center font-bold text-blue-900"
+                            class="mb-3 flex items-center font-bold text-[#5A1B24]"
                         >
                             <svg
                                 class="mr-2 h-5 w-5"
@@ -295,16 +295,16 @@ const unpublish = () => {
                             Panduan Subdomain
                         </h3>
 
-                        <div class="space-y-3 text-sm text-blue-900">
+                        <div class="space-y-3 text-sm text-[#5A1B24]">
                             <div>
                                 <p class="mb-1 font-semibold">
                                     📌 Apa itu Subdomain?
                                 </p>
-                                <p class="text-blue-800">
+                                <p class="text-[#5A1B24]">
                                     Subdomain adalah alamat unik untuk undangan
                                     Anda. Contoh:
                                     <code
-                                        class="rounded bg-blue-100 px-2 py-0.5"
+                                        class="rounded bg-[#5A1B24]/10 px-2 py-0.5"
                                         >siti-budi-2024.{{ app_domain }}</code
                                     >
                                 </p>
@@ -314,7 +314,7 @@ const unpublish = () => {
                                 <p class="mb-1 font-semibold">
                                     🔄 Kenapa Auto-Generate?
                                 </p>
-                                <p class="text-blue-800">
+                                <p class="text-[#5A1B24]">
                                     Sistem otomatis membuat subdomain dari nama
                                     mempelai atau nama Anda untuk kemudahan.
                                     Tapi tenang, Anda bisa mengubahnya kapan
@@ -327,7 +327,7 @@ const unpublish = () => {
                                     ✅ Aturan Subdomain:
                                 </p>
                                 <ul
-                                    class="ml-2 list-inside list-disc space-y-1 text-blue-800"
+                                    class="ml-2 list-inside list-disc space-y-1 text-[#5A1B24]"
                                 >
                                     <li>
                                         Minimal 3 karakter, maksimal 50 karakter
@@ -351,23 +351,23 @@ const unpublish = () => {
                                     💡 Tips Memilih Subdomain:
                                 </p>
                                 <ul
-                                    class="ml-2 list-inside list-disc space-y-1 text-blue-800"
+                                    class="ml-2 list-inside list-disc space-y-1 text-[#5A1B24]"
                                 >
                                     <li>
                                         <strong>Mudah diingat:</strong>
-                                        <code class="rounded bg-blue-100 px-1"
+                                        <code class="rounded bg-[#5A1B24]/10 px-1"
                                             >siti-dan-budi</code
                                         >
                                     </li>
                                     <li>
                                         <strong>Tambah tahun:</strong>
-                                        <code class="rounded bg-blue-100 px-1"
+                                        <code class="rounded bg-[#5A1B24]/10 px-1"
                                             >pernikahan-kami-2024</code
                                         >
                                     </li>
                                     <li>
                                         <strong>Singkat & jelas:</strong>
-                                        <code class="rounded bg-blue-100 px-1"
+                                        <code class="rounded bg-[#5A1B24]/10 px-1"
                                             >wedding-jakarta</code
                                         >
                                     </li>
@@ -375,22 +375,22 @@ const unpublish = () => {
                             </div>
 
                             <div
-                                class="rounded-lg border border-blue-200 bg-white p-3"
+                                class="rounded-lg border border-[#5A1B24]/30 bg-white p-3"
                             >
-                                <p class="mb-1 font-semibold text-green-700">
+                                <p class="mb-1 font-semibold text-[#9f6b61]">
                                     ✅ Contoh Valid:
                                 </p>
                                 <div class="mb-2 flex flex-wrap gap-2">
                                     <code
-                                        class="rounded bg-green-50 px-2 py-1 text-xs text-green-700"
+                                        class="rounded bg-[#AD7F35]/10 px-2 py-1 text-xs text-[#9f6b61]"
                                         >siti-budi-2024</code
                                     >
                                     <code
-                                        class="rounded bg-green-50 px-2 py-1 text-xs text-green-700"
+                                        class="rounded bg-[#AD7F35]/10 px-2 py-1 text-xs text-[#9f6b61]"
                                         >pernikahan-kami</code
                                     >
                                     <code
-                                        class="rounded bg-green-50 px-2 py-1 text-xs text-green-700"
+                                        class="rounded bg-[#AD7F35]/10 px-2 py-1 text-xs text-[#9f6b61]"
                                         >wedding-jakarta</code
                                     >
                                 </div>
@@ -420,13 +420,13 @@ const unpublish = () => {
                             <div>
                                 <label
                                     class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Subdomain MyAkad</label
+                                    >Subdomain Akadnya.com</label
                                 >
                                 <div class="flex items-center space-x-2">
                                     <input
                                         v-model="subdomainForm.subdomain"
                                         type="text"
-                                        class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+                                        class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                         placeholder="nama-undangan"
                                         required
                                     />
@@ -450,7 +450,7 @@ const unpublish = () => {
                                 <button
                                     type="submit"
                                     :disabled="subdomainForm.processing"
-                                    class="rounded-lg bg-green-600 px-6 py-2 font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
+                                    class="rounded-lg bg-[#AD7F35] px-6 py-2 font-semibold text-white transition hover:bg-[#9f6b61] disabled:opacity-50"
                                 >
                                     {{
                                         subdomainForm.processing
@@ -484,7 +484,7 @@ const unpublish = () => {
                                 </p>
                             </div>
                             <span
-                                class="ml-3 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700"
+                                class="ml-3 rounded-full bg-[#AD7F35]/10 px-3 py-1 text-xs font-semibold text-[#9f6b61]"
                             >
                                 Premium
                             </span>
@@ -493,7 +493,7 @@ const unpublish = () => {
                             @click="
                                 showCustomDomainGuide = !showCustomDomainGuide
                             "
-                            class="flex items-center text-sm font-medium text-green-600 hover:text-green-700"
+                            class="flex items-center text-sm font-medium text-[#AD7F35] hover:text-[#AD7F35]"
                         >
                             <svg
                                 class="mr-1 h-5 w-5"
@@ -519,10 +519,10 @@ const unpublish = () => {
                     <!-- Guide Section -->
                     <div
                         v-if="showCustomDomainGuide"
-                        class="mb-6 rounded-lg border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 p-5"
+                        class="mb-6 rounded-lg border border-[#AD7F35]/30 bg-gradient-to-r from-[#AD7F35]/10 to-[#D8BA82]/10 p-5"
                     >
                         <h3
-                            class="mb-3 flex items-center font-bold text-green-900"
+                            class="mb-3 flex items-center font-bold text-[#5A1B24]"
                         >
                             <svg
                                 class="mr-2 h-5 w-5"
@@ -540,21 +540,21 @@ const unpublish = () => {
                             Panduan Custom Domain
                         </h3>
 
-                        <div class="space-y-3 text-sm text-green-900">
+                        <div class="space-y-3 text-sm text-[#5A1B24]">
                             <div>
                                 <p class="mb-1 font-semibold">
                                     🌐 Apa itu Custom Domain?
                                 </p>
-                                <p class="text-green-800">
+                                <p class="text-[#5A1B24]">
                                     Custom domain memungkinkan Anda menggunakan
                                     domain sendiri untuk undangan. Contoh:
                                     <code
-                                        class="rounded bg-green-100 px-2 py-0.5"
+                                        class="rounded bg-[#AD7F35]/10 px-2 py-0.5"
                                         >undangan.example.com</code
                                     >
                                     atau
                                     <code
-                                        class="rounded bg-green-100 px-2 py-0.5"
+                                        class="rounded bg-[#AD7F35]/10 px-2 py-0.5"
                                         >wedding.mydomain.id</code
                                     >
                                 </p>
@@ -565,7 +565,7 @@ const unpublish = () => {
                                     ⚙️ Cara Setup Custom Domain:
                                 </p>
                                 <ol
-                                    class="ml-2 list-inside list-decimal space-y-2 text-green-800"
+                                    class="ml-2 list-inside list-decimal space-y-2 text-[#5A1B24]"
                                 >
                                     <li>
                                         <strong>Beli domain</strong> dari
@@ -579,19 +579,19 @@ const unpublish = () => {
                                     <li>
                                         <strong>Buat CNAME record:</strong>
                                         <div
-                                            class="mt-1 rounded border border-green-200 bg-white p-2"
+                                            class="mt-1 rounded border border-[#AD7F35]/30 bg-white p-2"
                                         >
                                             <p class="text-xs">
                                                 Type:
                                                 <code
-                                                    class="rounded bg-green-100 px-1"
+                                                    class="rounded bg-[#AD7F35]/10 px-1"
                                                     >CNAME</code
                                                 >
                                             </p>
                                             <p class="text-xs">
                                                 Name:
                                                 <code
-                                                    class="rounded bg-green-100 px-1"
+                                                    class="rounded bg-[#AD7F35]/10 px-1"
                                                     >undangan</code
                                                 >
                                                 (atau subdomain lain)
@@ -599,7 +599,7 @@ const unpublish = () => {
                                             <p class="text-xs">
                                                 Value:
                                                 <code
-                                                    class="rounded bg-green-100 px-1"
+                                                    class="rounded bg-[#AD7F35]/10 px-1"
                                                     >{{ app_domain }}</code
                                                 >
                                             </p>
@@ -625,20 +625,20 @@ const unpublish = () => {
                                     📋 Format Domain yang Valid:
                                 </p>
                                 <ul
-                                    class="ml-2 list-inside list-disc space-y-1 text-green-800"
+                                    class="ml-2 list-inside list-disc space-y-1 text-[#5A1B24]"
                                 >
                                     <li>
-                                        <code class="rounded bg-green-100 px-1"
+                                        <code class="rounded bg-[#AD7F35]/10 px-1"
                                             >undangan.example.com</code
                                         >
                                     </li>
                                     <li>
-                                        <code class="rounded bg-green-100 px-1"
+                                        <code class="rounded bg-[#AD7F35]/10 px-1"
                                             >wedding.mydomain.id</code
                                         >
                                     </li>
                                     <li>
-                                        <code class="rounded bg-green-100 px-1"
+                                        <code class="rounded bg-[#AD7F35]/10 px-1"
                                             >pernikahan.sitibudi.com</code
                                         >
                                     </li>
@@ -671,9 +671,9 @@ const unpublish = () => {
                                 <p class="mb-1 font-semibold">
                                     🔍 Troubleshooting:
                                 </p>
-                                <div class="space-y-2 text-green-800">
+                                <div class="space-y-2 text-[#5A1B24]">
                                     <div
-                                        class="rounded border border-green-200 bg-white p-2"
+                                        class="rounded border border-[#AD7F35]/30 bg-white p-2"
                                     >
                                         <p class="text-xs font-medium">
                                             ❓ Domain tidak bisa diakses?
@@ -684,7 +684,7 @@ const unpublish = () => {
                                         </p>
                                     </div>
                                     <div
-                                        class="rounded border border-green-200 bg-white p-2"
+                                        class="rounded border border-[#AD7F35]/30 bg-white p-2"
                                     >
                                         <p class="text-xs font-medium">
                                             ❓ Error "Domain sudah digunakan"?
@@ -695,13 +695,13 @@ const unpublish = () => {
                                         </p>
                                     </div>
                                     <div
-                                        class="rounded border border-green-200 bg-white p-2"
+                                        class="rounded border border-[#AD7F35]/30 bg-white p-2"
                                     >
                                         <p class="text-xs font-medium">
                                             ❓ Tidak punya domain?
                                         </p>
                                         <p class="text-xs">
-                                            → Gunakan subdomain gratis MyAkad
+                                            → Gunakan subdomain gratis Akadnya.com
                                             saja, sudah cukup!
                                         </p>
                                     </div>
@@ -724,7 +724,7 @@ const unpublish = () => {
                                         !props.has_custom_domain &&
                                         !props.invitation.custom_domain
                                     "
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500 disabled:bg-gray-100 disabled:text-gray-400"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35] disabled:bg-gray-100 disabled:text-gray-400"
                                     placeholder="undangan.example.com"
                                 />
                                 <p
@@ -744,13 +744,13 @@ const unpublish = () => {
                                     props.has_custom_domain ||
                                     props.invitation.custom_domain
                                 "
-                                class="rounded-lg border border-blue-200 bg-blue-50 p-4"
+                                class="rounded-lg border border-[#5A1B24]/30 bg-[#5A1B24]/10 p-4"
                             >
-                                <h4 class="mb-2 font-semibold text-blue-900">
+                                <h4 class="mb-2 font-semibold text-[#5A1B24]">
                                     Cara Setup Custom Domain:
                                 </h4>
                                 <ol
-                                    class="list-inside list-decimal space-y-1 text-sm text-blue-800"
+                                    class="list-inside list-decimal space-y-1 text-sm text-[#5A1B24]"
                                 >
                                     <li>
                                         Buat CNAME record di DNS provider Anda
@@ -758,7 +758,7 @@ const unpublish = () => {
                                     <li>
                                         Arahkan ke:
                                         <code
-                                            class="rounded bg-blue-100 px-2 py-0.5"
+                                            class="rounded bg-[#5A1B24]/10 px-2 py-0.5"
                                             >{{ app_domain }}</code
                                         >
                                     </li>
@@ -780,7 +780,7 @@ const unpublish = () => {
                                 </p>
                                 <Link
                                     href="/produk"
-                                    class="inline-block rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700"
+                                    class="inline-block rounded-lg bg-[#AD7F35] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#9f6b61]"
                                 >
                                     Beli Add-on Custom Domain
                                 </Link>
@@ -793,7 +793,7 @@ const unpublish = () => {
                                     (!props.has_custom_domain &&
                                         !props.invitation.custom_domain)
                                 "
-                                class="rounded-lg bg-green-600 px-6 py-2 font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
+                                class="rounded-lg bg-[#AD7F35] px-6 py-2 font-semibold text-white transition hover:bg-[#9f6b61] disabled:opacity-50"
                             >
                                 {{
                                     customDomainForm.processing

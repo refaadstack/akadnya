@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'domain' => env('APP_DOMAIN', 'myakad.id'),
+    'domain' => env('APP_DOMAIN', 'akadnya.com'),
 
     /*
     |--------------------------------------------------------------------------

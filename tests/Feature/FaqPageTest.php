@@ -10,12 +10,12 @@ beforeEach(function () {
 test('faq page renders with default support contact', function () {
     $this->get('/faq')
         ->assertOk()
-        ->assertSee('support@refaadstack.com', false)
+        ->assertSee('support@akadnya.com', false)
         ->assertSee('+62 8237-4338-273', false)
         ->assertInertia(fn (Assert $page) => $page
             ->component('Faq')
             ->has('faqs')
-            ->where('support.email', 'support@refaadstack.com')
+            ->where('support.email', 'support@akadnya.com')
             ->where('support.whatsapp', '6282374338273'));
 });
 

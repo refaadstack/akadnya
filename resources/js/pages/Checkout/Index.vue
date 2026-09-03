@@ -146,7 +146,7 @@ const submitOrder = async () => {
                             <span
                                 class="font-display text-2xl font-bold text-[var(--my-primary)]"
                             >
-                                MyAkad
+                                Akadnya.com
                             </span>
                         </Link>
 

@@ -4,7 +4,7 @@ use App\Services\TemplateZipValidator;
 
 beforeEach(function () {
     $this->validator = new TemplateZipValidator;
-    $this->tempDir = sys_get_temp_dir().'/myakad_test_'.uniqid();
+    $this->tempDir = sys_get_temp_dir().'/akadnya_test_'.uniqid();
     mkdir($this->tempDir, 0777, true);
 });
 

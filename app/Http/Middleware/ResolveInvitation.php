@@ -22,7 +22,7 @@ class ResolveInvitation
         $appDomain = config('app.domain');
         $testDomain = str_replace('.id', '.test', $appDomain);
 
-        // Check if it's a subdomain (e.g., john-jane.myakad.id)
+        // Check if it's a subdomain (e.g., john-jane.akadnya.com)
         if (str_ends_with($host, '.'.$appDomain) || str_ends_with($host, '.'.$testDomain)) {
             $subdomain = explode('.', $host)[0];
 

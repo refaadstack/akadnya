@@ -36,12 +36,12 @@ class TemplatePopularityChart extends ChartWidget
         $labels = [];
         $data = [];
         $colors = [
-            'rgba(59, 130, 246, 0.8)',
-            'rgba(16, 185, 129, 0.8)',
-            'rgba(245, 158, 11, 0.8)',
-            'rgba(239, 68, 68, 0.8)',
-            'rgba(139, 92, 246, 0.8)',
-            'rgba(236, 72, 153, 0.8)',
+            'rgba(173, 127, 53, 0.8)',
+            'rgba(128, 0, 32, 0.8)',
+            'rgba(181, 136, 62, 0.8)',
+            'rgba(153, 10, 40, 0.8)',
+            'rgba(200, 160, 80, 0.8)',
+            'rgba(100, 0, 26, 0.8)',
         ];
 
         foreach ($templates as $template) {

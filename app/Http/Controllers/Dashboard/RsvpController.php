@@ -26,13 +26,13 @@ class RsvpController extends Controller
         }
 
         $rsvps = Rsvp::where('invitation_id', $invitation->id)
-            ->where('is_from_myakad', false)
+            ->where('is_from_akadnya', false)
             ->with('guest')
             ->latest()
             ->paginate(20);
 
         $stats = [
-            'total' => Rsvp::where('invitation_id', $invitation->id)->where('is_from_myakad', false)->count(),
+            'total' => Rsvp::where('invitation_id', $invitation->id)->where('is_from_akadnya', false)->count(),
             'hadir' => Rsvp::where('invitation_id', $invitation->id)->where('attendance', 'yes')->count(),
             'tidak_hadir' => Rsvp::where('invitation_id', $invitation->id)->where('attendance', 'no')->count(),
         ];

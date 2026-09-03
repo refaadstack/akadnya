@@ -124,7 +124,7 @@ onBeforeUnmount(() => {
                         </h1>
                         <p class="my-copy mb-8">
                             Panduan langkah demi langkah untuk setiap menu di
-                            MyAkad — dari menjelajah template hingga
+                            Akadnya.com — dari menjelajah template hingga
                             mempublikasikan undangan.
                         </p>
 

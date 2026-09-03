@@ -64,7 +64,7 @@ const getStatusBadge = (order: Order) => {
     switch (status) {
         case 'paid':
             return {
-                class: 'bg-green-100 text-green-800 border-green-200',
+                class: 'bg-[#AD7F35]/10 text-[#5A1B24] border-[#AD7F35]/30',
                 label: 'Settlement',
             };
         case 'pending':

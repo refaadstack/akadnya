@@ -1,19 +1,19 @@
 /**
- * MyAkad Template Base JavaScript
+ * Akadnya Template Base JavaScript
  * Global scripts untuk semua template undangan
- * Template menggunakan fungsi-fungsi yang tersedia di window.MyAkad
+ * Template menggunakan fungsi-fungsi yang tersedia di window.Akadnya
  */
 
 (function() {
   'use strict';
 
   // Global namespace
-  window.MyAkad = window.MyAkad || {};
+  window.Akadnya = window.Akadnya || {};
 
   /**
    * Get template configuration from meta tag or window.TEMPLATE_CONFIG
    */
-  MyAkad.getConfig = function(key, defaultValue = null) {
+  Akadnya.getConfig = function(key, defaultValue = null) {
     // Try to load from meta tag first (CSP-safe)
     if (!window.TEMPLATE_CONFIG) {
       const metaTag = document.querySelector('meta[name="template-config"]');
@@ -68,9 +68,9 @@
 
   /**
    * Countdown Timer
-   * Usage: MyAkad.countdown('#countdown', '2025-06-14T09:00:00')
+   * Usage: Akadnya.countdown('#countdown', '2025-06-14T09:00:00')
    */
-  MyAkad.countdown = function(selector, targetDate) {
+  Akadnya.countdown = function(selector, targetDate) {
     const element = document.querySelector(selector);
     
     if (!element) {
@@ -129,9 +129,9 @@
 
   /**
    * Music Player
-   * Usage: MyAkad.musicPlayer('#audio-element', '#toggle-button')
+   * Usage: Akadnya.musicPlayer('#audio-element', '#toggle-button')
    */
-  MyAkad.musicPlayer = function(audioSelector, buttonSelector) {
+  Akadnya.musicPlayer = function(audioSelector, buttonSelector) {
     const audio = document.querySelector(audioSelector);
     const button = document.querySelector(buttonSelector);
     
@@ -153,7 +153,7 @@
     });
     
     // Auto-play on user interaction (if configured)
-    const autoPlay = MyAkad.getConfig('music.autoPlay', false);
+    const autoPlay = Akadnya.getConfig('music.autoPlay', false);
     if (autoPlay) {
       document.addEventListener('click', function() {
         if (!isPlaying) {
@@ -168,9 +168,9 @@
 
   /**
    * Opening Screen
-   * Usage: MyAkad.openingScreen('#opening', '#open-button')
+   * Usage: Akadnya.openingScreen('#opening', '#open-button')
    */
-  MyAkad.openingScreen = function(screenSelector, buttonSelector) {
+  Akadnya.openingScreen = function(screenSelector, buttonSelector) {
     const screen = document.querySelector(screenSelector);
     const button = document.querySelector(buttonSelector);
     
@@ -197,7 +197,7 @@
       }, 500);
       
       // Start music if configured
-      const musicSelector = MyAkad.getConfig('music.audioSelector', '#background-music');
+      const musicSelector = Akadnya.getConfig('music.audioSelector', '#background-music');
       const audio = document.querySelector(musicSelector);
       if (audio) {
         audio.play().catch(e => console.log('Audio autoplay prevented:', e));
@@ -209,9 +209,9 @@
 
   /**
    * Smooth Scroll to Section
-   * Usage: MyAkad.scrollTo('#section-id')
+   * Usage: Akadnya.scrollTo('#section-id')
    */
-  MyAkad.scrollTo = function(selector, offset = 0) {
+  Akadnya.scrollTo = function(selector, offset = 0) {
     const element = document.querySelector(selector);
     if (!element) return;
     
@@ -221,9 +221,9 @@
 
   /**
    * Gallery Lightbox
-   * Usage: MyAkad.gallery('.gallery-item')
+   * Usage: Akadnya.gallery('.gallery-item')
    */
-  MyAkad.gallery = function(itemSelector) {
+  Akadnya.gallery = function(itemSelector) {
     const items = document.querySelectorAll(itemSelector);
     if (items.length === 0) return;
     
@@ -264,9 +264,9 @@
 
   /**
    * RSVP Form Handler
-   * Usage: MyAkad.rsvpForm('#rsvp-form', '/api/rsvp')
+   * Usage: Akadnya.rsvpForm('#rsvp-form', '/api/rsvp')
    */
-  MyAkad.rsvpForm = function(formSelector, endpoint) {
+  Akadnya.rsvpForm = function(formSelector, endpoint) {
     const form = document.querySelector(formSelector);
     if (!form) return;
     
@@ -301,9 +301,9 @@
 
   /**
    * Wishes/Comments Handler
-   * Usage: MyAkad.wishesForm('#wishes-form', '/api/wishes', '#wishes-list')
+   * Usage: Akadnya.wishesForm('#wishes-form', '/api/wishes', '#wishes-list')
    */
-  MyAkad.wishesForm = function(formSelector, endpoint, listSelector) {
+  Akadnya.wishesForm = function(formSelector, endpoint, listSelector) {
     const form = document.querySelector(formSelector);
     const list = document.querySelector(listSelector);
     
@@ -354,9 +354,9 @@
 
   /**
    * Copy to Clipboard
-   * Usage: MyAkad.copyToClipboard('#copy-button', 'text-to-copy')
+   * Usage: Akadnya.copyToClipboard('#copy-button', 'text-to-copy')
    */
-  MyAkad.copyToClipboard = function(buttonSelector, text) {
+  Akadnya.copyToClipboard = function(buttonSelector, text) {
     const button = document.querySelector(buttonSelector);
     if (!button) return;
     
@@ -377,9 +377,9 @@
 
   /**
    * Animate on Scroll
-   * Usage: MyAkad.animateOnScroll('.animate-fade-in')
+   * Usage: Akadnya.animateOnScroll('.animate-fade-in')
    */
-  MyAkad.animateOnScroll = function(selector) {
+  Akadnya.animateOnScroll = function(selector) {
     const elements = document.querySelectorAll(selector);
     if (elements.length === 0) return;
     
@@ -403,11 +403,11 @@
   /**
    * Initialize all features based on template config
    */
-  MyAkad.init = function() {
-    console.log('MyAkad Template System initialized');
+  Akadnya.init = function() {
+    console.log('Akadnya Template System initialized');
     
     // Load config from meta tag
-    const config = MyAkad.getConfig();
+    const config = Akadnya.getConfig();
     console.log('TEMPLATE_CONFIG:', config);
     
     // Debug: Check if elements exist
@@ -425,7 +425,7 @@
     // Music Player
     if (features.music?.enabled && features.music?.audioSelector && features.music?.buttonSelector) {
       console.log('Initializing music player');
-      MyAkad.musicPlayer(features.music.audioSelector, features.music.buttonSelector);
+      Akadnya.musicPlayer(features.music.audioSelector, features.music.buttonSelector);
     }
     
     // Opening Screen
@@ -439,7 +439,7 @@
     
     if (features.opening?.enabled && features.opening?.screenSelector && features.opening?.buttonSelector) {
       console.log('Initializing opening screen with:', features.opening);
-      MyAkad.openingScreen(features.opening.screenSelector, features.opening.buttonSelector);
+      Akadnya.openingScreen(features.opening.screenSelector, features.opening.buttonSelector);
     } else {
       console.log('Opening screen NOT initialized. Reason:', {
         enabled: features.opening?.enabled,
@@ -451,30 +451,30 @@
     // Gallery
     if (features.gallery?.enabled && features.gallery?.itemSelector) {
       console.log('Initializing gallery');
-      MyAkad.gallery(features.gallery.itemSelector);
+      Akadnya.gallery(features.gallery.itemSelector);
     }
     
     // Animate on Scroll
     if (features.animations?.enabled) {
       console.log('Initializing animations');
-      MyAkad.animateOnScroll('.animate-fade-in');
-      MyAkad.animateOnScroll('.animate-slide-left');
-      MyAkad.animateOnScroll('.animate-slide-right');
-      MyAkad.animateOnScroll('.animate-scale');
+      Akadnya.animateOnScroll('.animate-fade-in');
+      Akadnya.animateOnScroll('.animate-slide-left');
+      Akadnya.animateOnScroll('.animate-slide-right');
+      Akadnya.animateOnScroll('.animate-scale');
     }
   };
 
   // Auto-initialize when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded, initializing MyAkad...');
-      MyAkad.init();
+      console.log('DOM loaded, initializing Akadnya...');
+      Akadnya.init();
     });
   } else {
-    console.log('DOM already loaded, initializing MyAkad immediately...');
+    console.log('DOM already loaded, initializing Akadnya immediately...');
     // Add small delay to ensure all elements are rendered
     setTimeout(function() {
-      MyAkad.init();
+      Akadnya.init();
     }, 100);
   }
 

@@ -355,19 +355,22 @@ const unpublish = () => {
                                 >
                                     <li>
                                         <strong>Mudah diingat:</strong>
-                                        <code class="rounded bg-[#5A1B24]/10 px-1"
+                                        <code
+                                            class="rounded bg-[#5A1B24]/10 px-1"
                                             >siti-dan-budi</code
                                         >
                                     </li>
                                     <li>
                                         <strong>Tambah tahun:</strong>
-                                        <code class="rounded bg-[#5A1B24]/10 px-1"
+                                        <code
+                                            class="rounded bg-[#5A1B24]/10 px-1"
                                             >pernikahan-kami-2024</code
                                         >
                                     </li>
                                     <li>
                                         <strong>Singkat & jelas:</strong>
-                                        <code class="rounded bg-[#5A1B24]/10 px-1"
+                                        <code
+                                            class="rounded bg-[#5A1B24]/10 px-1"
                                             >wedding-jakarta</code
                                         >
                                     </li>
@@ -628,17 +631,20 @@ const unpublish = () => {
                                     class="ml-2 list-inside list-disc space-y-1 text-[#5A1B24]"
                                 >
                                     <li>
-                                        <code class="rounded bg-[#AD7F35]/10 px-1"
+                                        <code
+                                            class="rounded bg-[#AD7F35]/10 px-1"
                                             >undangan.example.com</code
                                         >
                                     </li>
                                     <li>
-                                        <code class="rounded bg-[#AD7F35]/10 px-1"
+                                        <code
+                                            class="rounded bg-[#AD7F35]/10 px-1"
                                             >wedding.mydomain.id</code
                                         >
                                     </li>
                                     <li>
-                                        <code class="rounded bg-[#AD7F35]/10 px-1"
+                                        <code
+                                            class="rounded bg-[#AD7F35]/10 px-1"
                                             >pernikahan.sitibudi.com</code
                                         >
                                     </li>
@@ -701,8 +707,8 @@ const unpublish = () => {
                                             ❓ Tidak punya domain?
                                         </p>
                                         <p class="text-xs">
-                                            → Gunakan subdomain gratis Akadnya.com
-                                            saja, sudah cukup!
+                                            → Gunakan subdomain gratis
+                                            Akadnya.com saja, sudah cukup!
                                         </p>
                                     </div>
                                 </div>

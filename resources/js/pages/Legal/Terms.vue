@@ -44,11 +44,11 @@ const updatedDate = 'Agustus 2026';
 
                     <div class="my-card grid gap-8 p-7 md:p-10">
                         <p class="my-copy">
-                            Dengan mengakses atau menggunakan Layanan Akadnya.com
-                            (selanjutnya disebut "Layanan") di
-                            akadnya.com, Anda menyetujui syarat dan
-                            ketentuan berikut. Jika Anda tidak setuju, mohon
-                            berhenti menggunakan Layanan.
+                            Dengan mengakses atau menggunakan Layanan
+                            Akadnya.com (selanjutnya disebut "Layanan") di
+                            akadnya.com, Anda menyetujui syarat dan ketentuan
+                            berikut. Jika Anda tidak setuju, mohon berhenti
+                            menggunakan Layanan.
                         </p>
 
                         <section class="grid gap-3">
@@ -150,8 +150,8 @@ const updatedDate = 'Agustus 2026';
                                 </li>
                                 <li>
                                     Pembayaran diproses melalui payment gateway
-                                    yang aman; Akadnya.com tidak menyimpan data kartu
-                                    kredit/debit secara utuh.
+                                    yang aman; Akadnya.com tidak menyimpan data
+                                    kartu kredit/debit secara utuh.
                                 </li>
                             </ol>
                         </section>
@@ -170,8 +170,8 @@ const updatedDate = 'Agustus 2026';
                                 </li>
                                 <li>
                                     Konten yang Anda unggah tetap milik Anda;
-                                    Anda memberi Akadnya.com lisensi terbatas untuk
-                                    menyimpan dan menampilkan Konten agar
+                                    Anda memberi Akadnya.com lisensi terbatas
+                                    untuk menyimpan dan menampilkan Konten agar
                                     Layanan berfungsi.
                                 </li>
                                 <li>
@@ -246,9 +246,10 @@ const updatedDate = 'Agustus 2026';
                                 <li>
                                     Pengembalian dana hanya dapat dilakukan
                                     dalam kondisi yang wajar dan disetujui oleh
-                                    Akadnya.com, misalnya karena kesalahan dari pihak
-                                    Akadnya.com (produk tidak dapat digunakan) atau
-                                    kondisi khusus lainnya yang memang layak.
+                                    Akadnya.com, misalnya karena kesalahan dari
+                                    pihak Akadnya.com (produk tidak dapat
+                                    digunakan) atau kondisi khusus lainnya yang
+                                    memang layak.
                                 </li>
                                 <li>
                                     Refund diproses melalui payment gateway dan
@@ -265,10 +266,11 @@ const updatedDate = 'Agustus 2026';
                             </h2>
                             <p class="my-copy">
                                 Layanan dapat mengalami pemeliharaan
-                                (maintenance) atau downtime sementara. Akadnya.com
-                                berhak menonaktifkan atau menahan akses akun
-                                yang melanggar ketentuan. Layanan infrastruktur
-                                pihak ketiga berada di luar kendali Akadnya.com.
+                                (maintenance) atau downtime sementara.
+                                Akadnya.com berhak menonaktifkan atau menahan
+                                akses akun yang melanggar ketentuan. Layanan
+                                infrastruktur pihak ketiga berada di luar
+                                kendali Akadnya.com.
                             </p>
                         </section>
 
@@ -281,8 +283,8 @@ const updatedDate = 'Agustus 2026';
                             >
                                 <li>
                                     Layanan diberikan "sebagaimana ada" (as-is).
-                                    Akadnya.com tidak menjamin Layanan bebas gangguan
-                                    atau bebas dari kesalahan.
+                                    Akadnya.com tidak menjamin Layanan bebas
+                                    gangguan atau bebas dari kesalahan.
                                 </li>
                                 <li>
                                     Akadnya.com tidak bertanggung jawab atas
@@ -290,9 +292,9 @@ const updatedDate = 'Agustus 2026';
                                     link, atau kerugian tidak langsung.
                                 </li>
                                 <li>
-                                    Sejauh diizinkan hukum, kewajiban Akadnya.com
-                                    dibatasi pada jumlah yang Anda bayarkan
-                                    untuk Layanan.
+                                    Sejauh diizinkan hukum, kewajiban
+                                    Akadnya.com dibatasi pada jumlah yang Anda
+                                    bayarkan untuk Layanan.
                                 </li>
                             </ol>
                         </section>
@@ -302,10 +304,11 @@ const updatedDate = 'Agustus 2026';
                                 11. Perubahan Syarat &amp; Ketentuan
                             </h2>
                             <p class="my-copy">
-                                Akadnya.com dapat mengubah syarat &amp; ketentuan
-                                sewaktu-waktu. Perubahan berlaku sejak diumumkan
-                                di halaman ini. Kelanjutan penggunaan Layanan
-                                berarti Anda menerima perubahan tersebut.
+                                Akadnya.com dapat mengubah syarat &amp;
+                                ketentuan sewaktu-waktu. Perubahan berlaku sejak
+                                diumumkan di halaman ini. Kelanjutan penggunaan
+                                Layanan berarti Anda menerima perubahan
+                                tersebut.
                             </p>
                         </section>
 

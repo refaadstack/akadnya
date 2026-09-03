@@ -47,9 +47,9 @@ const submit = () => {
                     Buat akun, pilih template, lalu publish undanganmu.
                 </h1>
                 <p class="my-copy mt-5 max-w-lg">
-                    Akadnya.com dibuat agar proses undangan digital terasa tenang:
-                    preview dulu, isi data pelan-pelan, lalu bagikan satu link
-                    saat sudah siap.
+                    Akadnya.com dibuat agar proses undangan digital terasa
+                    tenang: preview dulu, isi data pelan-pelan, lalu bagikan
+                    satu link saat sudah siap.
                 </p>
 
                 <div class="mt-8 grid max-w-md gap-4">

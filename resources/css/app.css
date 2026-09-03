@@ -127,21 +127,21 @@
     --sidebar-border: hsl(36 14% 82%);
     --sidebar-ring: hsl(36 43% 44%);
     --sidebar: hsl(36 35% 93%);
-    --my-primary: #AD7F35;
-    --my-secondary: #5A1B24;
+    --my-primary: #ad7f35;
+    --my-secondary: #5a1b24;
     --my-tertiary: #d9c5b2;
     --my-neutral: #333333;
-    --my-background: #F6F0E2;
+    --my-background: #f6f0e2;
     --my-surface: #ffffff;
-    --my-surface-soft: #EFE5CC;
+    --my-surface-soft: #efe5cc;
     --my-muted: #655f57;
     --my-border: #d8d1c8;
     --my-shadow: 0 24px 70px rgb(51 51 51 / 10%);
-    --gold-light: #D8BA82;
-    --ink: #141F1A;
-    --ink-2: #1B2A22;
-    --text-light: #F1EAD8;
-    --text-light-muted: #AFA58D;
+    --gold-light: #d8ba82;
+    --ink: #141f1a;
+    --ink-2: #1b2a22;
+    --text-light: #f1ead8;
+    --text-light-muted: #afa58d;
 }
 
 .dark {
@@ -233,7 +233,7 @@
                 rgb(216 186 130 / 0.24),
                 transparent 30%
             ),
-            linear-gradient(180deg, var(--my-background), #EFE5CC);
+            linear-gradient(180deg, var(--my-background), #efe5cc);
         color: var(--my-neutral);
     }
 
@@ -365,11 +365,11 @@
         min-height: 3rem;
         align-items: center;
         justify-content: center;
-        border: 1px solid #5A1B24;
+        border: 1px solid #5a1b24;
         border-radius: 0.5rem;
         background: rgb(255 255 255 / 0.42);
         padding-inline: 1.5rem;
-        color: #5A1B24;
+        color: #5a1b24;
         font-weight: 700;
         transition:
             transform 180ms ease,
@@ -410,7 +410,7 @@
     .my-page .to-indigo-600,
     .my-page .to-orange-600,
     .my-page .to-red-600 {
-        --tw-gradient-to: #D8BA82 var(--tw-gradient-to-position);
+        --tw-gradient-to: #d8ba82 var(--tw-gradient-to-position);
     }
 
     .my-page .text-pink-600,

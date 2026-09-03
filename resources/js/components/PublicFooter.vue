@@ -5,9 +5,7 @@ const support = usePage().props.support;
 </script>
 
 <template>
-    <footer
-        class="border-t border-white/10 bg-[var(--ink)] py-12"
-    >
+    <footer class="border-t border-white/10 bg-[var(--ink)] py-12">
         <div class="my-container">
             <div class="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
                 <div>
@@ -32,7 +30,9 @@ const support = usePage().props.support;
                     >
                         Produk
                     </h4>
-                    <ul class="grid gap-2 text-sm text-[var(--text-light-muted)]">
+                    <ul
+                        class="grid gap-2 text-sm text-[var(--text-light-muted)]"
+                    >
                         <li>
                             <Link
                                 href="/templates"
@@ -63,7 +63,9 @@ const support = usePage().props.support;
                     >
                         Bantuan
                     </h4>
-                    <ul class="grid gap-2 text-sm text-[var(--text-light-muted)]">
+                    <ul
+                        class="grid gap-2 text-sm text-[var(--text-light-muted)]"
+                    >
                         <li>
                             <Link
                                 href="/tutorial"
@@ -102,7 +104,9 @@ const support = usePage().props.support;
                     >
                         Legal
                     </h4>
-                    <ul class="grid gap-2 text-sm text-[var(--text-light-muted)]">
+                    <ul
+                        class="grid gap-2 text-sm text-[var(--text-light-muted)]"
+                    >
                         <li>
                             <Link
                                 href="/privacy"

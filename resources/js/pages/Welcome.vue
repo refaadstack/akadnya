@@ -169,7 +169,9 @@ onBeforeUnmount(() => {
                     class="my-container grid min-h-[720px] items-center gap-14 py-16 lg:grid-cols-[1.05fr_0.95fr]"
                 >
                     <div class="my-reveal">
-                        <p class="mb-5 text-[0.78rem] font-bold tracking-[0.18em] text-[var(--gold-light)] uppercase">
+                        <p
+                            class="mb-5 text-[0.78rem] font-bold tracking-[0.18em] text-[var(--gold-light)] uppercase"
+                        >
                             Undangan Digital Premium
                         </p>
                         <h1
@@ -180,7 +182,9 @@ onBeforeUnmount(() => {
                                 >bukan template pasaran.</span
                             >
                         </h1>
-                        <p class="my-copy mt-7 max-w-lg text-[var(--text-light)]">
+                        <p
+                            class="my-copy mt-7 max-w-lg text-[var(--text-light)]"
+                        >
                             Pilih template dengan karakter budaya yang kamu
                             suka, isi detail acara, bagikan linknya ke semua
                             tamu.
@@ -188,7 +192,7 @@ onBeforeUnmount(() => {
                         <div class="mt-10 flex flex-wrap gap-4">
                             <Link
                                 href="/templates"
-                                class="px-9 py-3 inline-flex items-center justify-center rounded-lg bg-[var(--gold-light)] text-sm font-bold text-[var(--ink)] transition hover:bg-[var(--ink-2)] hover:text-[var(--text-light)]"
+                                class="inline-flex items-center justify-center rounded-lg bg-[var(--gold-light)] px-9 py-3 text-sm font-bold text-[var(--ink)] transition hover:bg-[var(--ink-2)] hover:text-[var(--text-light)]"
                             >
                                 Pilih Template Undanganku
                             </Link>
@@ -220,7 +224,9 @@ onBeforeUnmount(() => {
                             <div
                                 class="absolute top-6 -left-4 rounded-lg border border-white/15 bg-[var(--ink)]/90 px-4 py-3 shadow-lg backdrop-blur-md md:-left-8"
                             >
-                                <p class="my-label text-[0.66rem] text-[var(--gold-light)]">
+                                <p
+                                    class="my-label text-[0.66rem] text-[var(--gold-light)]"
+                                >
                                     Mulai dari
                                 </p>
                                 <p
@@ -241,7 +247,9 @@ onBeforeUnmount(() => {
                                     class="size-6 shrink-0 text-[var(--gold-light)]"
                                 />
                                 <div>
-                                    <p class="my-label text-[0.66rem] text-[var(--gold-light)]">
+                                    <p
+                                        class="my-label text-[0.66rem] text-[var(--gold-light)]"
+                                    >
                                         Check-in Tamu
                                     </p>
                                     <p
@@ -634,7 +642,8 @@ onBeforeUnmount(() => {
                         <div class="flex items-baseline justify-between gap-4">
                             <h3 class="my-heading text-2xl">
                                 {{
-                                    startingTemplate?.name ?? 'Template Akadnya.com'
+                                    startingTemplate?.name ??
+                                    'Template Akadnya.com'
                                 }}
                             </h3>
                             <span

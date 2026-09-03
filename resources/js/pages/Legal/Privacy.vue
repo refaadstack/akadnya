@@ -44,10 +44,10 @@ const updatedDate = 'Agustus 2026';
 
                     <div class="my-card grid gap-8 p-7 md:p-10">
                         <p class="my-copy">
-                            Akadnya.com menghormati kerahasiaan informasi pribadi
-                            Anda. Kebijakan ini menjelaskan data yang kami
-                            kumpulkan, cara penggunaannya, penyimpanannya, dan
-                            pilihan yang Anda miliki atas data Anda.
+                            Akadnya.com menghormati kerahasiaan informasi
+                            pribadi Anda. Kebijakan ini menjelaskan data yang
+                            kami kumpulkan, cara penggunaannya, penyimpanannya,
+                            dan pilihan yang Anda miliki atas data Anda.
                         </p>
 
                         <section class="grid gap-3">
@@ -172,8 +172,8 @@ const updatedDate = 'Agustus 2026';
                             <p class="my-copy">
                                 Jika Anda memasukkan data tamu ke dalam Layanan,
                                 Anda wajib memastikan data tersebut diperoleh
-                                secara sah. Akadnya.com memproses data tamu hanya
-                                untuk menjalankan Layanan atas nama Anda.
+                                secara sah. Akadnya.com memproses data tamu
+                                hanya untuk menjalankan Layanan atas nama Anda.
                             </p>
                         </section>
 
@@ -309,9 +309,9 @@ const updatedDate = 'Agustus 2026';
                             </h2>
                             <p class="my-copy">
                                 Detail transaksi diproses dan disimpan sesuai
-                                kebijakan penyedia payment gateway. Akadnya.com tidak
-                                menyimpan data kartu kredit atau debit Anda
-                                secara utuh.
+                                kebijakan penyedia payment gateway. Akadnya.com
+                                tidak menyimpan data kartu kredit atau debit
+                                Anda secara utuh.
                             </p>
                         </section>
 

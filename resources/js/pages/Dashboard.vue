@@ -359,8 +359,9 @@ const selectTemplate = (template: AllTemplate) => {
                     <div>
                         <h2 class="my-heading text-2xl">Semua Template</h2>
                         <p class="mt-1 text-[var(--my-muted)]">
-                            Pilih dan pakai template apapun untuk membuat undangan
-                            baru, lalu kustomisasi section-nya sesukamu.
+                            Pilih dan pakai template apapun untuk membuat
+                            undangan baru, lalu kustomisasi section-nya
+                            sesukamu.
                         </p>
                     </div>
                     <span class="text-sm font-bold text-[var(--my-primary)]"
@@ -418,7 +419,10 @@ const selectTemplate = (template: AllTemplate) => {
                                 class="my-btn-primary w-full gap-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 @click="selectTemplate(template)"
                             >
-                                <Check v-if="template.is_owned" class="size-4" />
+                                <Check
+                                    v-if="template.is_owned"
+                                    class="size-4"
+                                />
                                 <Edit3 v-else class="size-4" />
                                 {{
                                     template.is_owned

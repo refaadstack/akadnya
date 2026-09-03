@@ -144,7 +144,8 @@ const structuredData = computed(() => {
                             Pertanyaan yang Sering Diajukan
                         </h1>
                         <p class="my-copy mb-8">
-                            Temukan jawaban untuk pertanyaan umum tentang Akadnya.com
+                            Temukan jawaban untuk pertanyaan umum tentang
+                            Akadnya.com
                         </p>
 
                         <!-- Search Box -->
@@ -222,9 +223,7 @@ const structuredData = computed(() => {
                                         {{ category.category }}
                                     </h2>
                                     <p class="text-[var(--my-muted)]">
-                                        {{
-                                            category.questions.length
-                                        }}
+                                        {{ category.questions.length }}
                                         pertanyaan
                                     </p>
                                 </div>

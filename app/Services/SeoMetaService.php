@@ -10,6 +10,10 @@ use App\Models\SiteSetting;
  */
 class SeoMetaService
 {
+    public function __construct(
+        private OgImageService $ogImages
+    ) {}
+
     /**
      * Build SEO data for a public invitation page.
      *
@@ -45,15 +49,22 @@ class SeoMetaService
 
         $description = implode(' — ', $descriptionParts);
 
-        $image = $data['cover_photo_url']
-            ?? $data['couple_photo_url']
-            ?? $data['bride_photo_url']
-            ?? $data['groom_photo_url']
-            ?? SiteSetting::get('qr_logo_url')
-            ?? url('/favicon.svg');
+        $ogImage = $this->ogImages->forInvitation($invitation);
 
-        if ($image !== null && ! str_starts_with((string) $image, 'http')) {
-            $image = url($image);
+        $image = $ogImage;
+        $imageWidth = $ogImage !== null ? OgImageService::WIDTH : null;
+        $imageHeight = $ogImage !== null ? OgImageService::HEIGHT : null;
+        $imageType = $ogImage !== null ? 'image/jpeg' : null;
+
+        if ($image === null) {
+            $appUrl = rtrim((string) config('app.url'), '/');
+            $logo = SiteSetting::get('qr_logo_url');
+
+            $image = $logo ?: $appUrl.'/images/placeholder-template.png';
+
+            if (! str_starts_with((string) $image, 'http')) {
+                $image = $appUrl.'/'.ltrim((string) $image, '/');
+            }
         }
 
         $url = $invitation->getPublicUrl();
@@ -93,6 +104,9 @@ class SeoMetaService
             'description' => $description,
             'url' => $url,
             'image' => $image,
+            'image_width' => $imageWidth,
+            'image_height' => $imageHeight,
+            'image_type' => $imageType,
             'site_name' => $siteName,
             'json_ld' => $jsonLd,
         ];
@@ -111,6 +125,25 @@ class SeoMetaService
         $image = e($seo['image']);
         $siteName = e($seo['site_name']);
 
+        $imageWidth = $seo['image_width'] ?? null;
+        $imageHeight = $seo['image_height'] ?? null;
+        $imageType = $seo['image_type'] ?? null;
+
+        $imageTags = ["<meta property=\"og:image\" content=\"{$image}\">"];
+
+        if ($imageWidth !== null && $imageHeight !== null) {
+            $imageTags[] = "<meta property=\"og:image:width\" content=\"{$imageWidth}\">";
+            $imageTags[] = "<meta property=\"og:image:height\" content=\"{$imageHeight}\">";
+        }
+
+        if ($imageType !== null) {
+            $imageTags[] = "<meta property=\"og:image:type\" content=\"{$imageType}\">";
+        }
+
+        $imageTags[] = "<meta property=\"og:image:alt\" content=\"{$title}\">";
+
+        $notes = implode("\n", $imageTags);
+
         $tags = [
             "<title>{$title}</title>",
             "<meta name=\"description\" content=\"{$description}\">",
@@ -121,7 +154,7 @@ class SeoMetaService
             "<meta property=\"og:url\" content=\"{$url}\">",
             "<meta property=\"og:title\" content=\"{$title}\">",
             "<meta property=\"og:description\" content=\"{$description}\">",
-            "<meta property=\"og:image\" content=\"{$image}\">",
+            $notes,
             '<meta name="twitter:card" content="summary_large_image">',
             "<meta name=\"twitter:url\" content=\"{$url}\">",
             "<meta name=\"twitter:title\" content=\"{$title}\">",

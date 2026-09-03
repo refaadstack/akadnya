@@ -64,7 +64,10 @@ test('published invitation page includes seo meta tags with couple names and mya
     $response->assertSee('<meta property="og:url"', false);
     $response->assertSee('<meta property="og:title"', false);
     $response->assertSee('<meta property="og:site_name" content="'.$siteName.'"', false);
-    $response->assertSee('<meta property="og:image" content="https://example.com/storage/invitations/covers/cover.jpg"', false);
+    // No usable local photo file in this test, so OG falls back to a MyAkad
+    // branded placeholder hosted at the configured app URL (never localhost/favicon).
+    $response->assertSee('<meta property="og:image" content="'.rtrim(config('app.url'), '/').'/images/placeholder-template.png"', false);
+    $response->assertDontSee('favicon', false);
     $response->assertSee('<meta name="twitter:card" content="summary_large_image"', false);
     $response->assertSee('<meta name="robots" content="index, follow"', false);
 

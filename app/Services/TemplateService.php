@@ -300,7 +300,7 @@ class TemplateService
         }
 
         // Folders to exclude from sync (not templates)
-        $excludedFolders = ['thumbnails', '.git', '.gitkeep', 'assets', 'shared'];
+        $excludedFolders = ['thumbnails', 'shots', '.git', '.gitkeep', 'assets', 'shared', '_shared'];
 
         $folders = File::directories($templatesPath);
 
@@ -380,15 +380,25 @@ class TemplateService
 
         // Check sections directory
         $sectionsPath = $folderPath.'/sections';
-        if (! File::exists($sectionsPath)) {
+        $usesSharedSections = (bool) ($templateData['shared']['sections'] ?? false);
+        $sectionsDirExists = File::exists($sectionsPath);
+        if (! $sectionsDirExists && ! $usesSharedSections) {
             $errors[] = 'sections directory not found';
         } else {
-            // Check each section file
+            // Check each section file (fall back to shared sections when enabled)
             foreach ($templateData['sections'] ?? [] as $section) {
                 $sectionFile = is_array($section) ? $section['file'] : $section.'.html';
-                if (! File::exists($sectionsPath.'/'.$sectionFile)) {
-                    $errors[] = "Section file not found: {$sectionFile}";
+                $sectionPath = $sectionsPath.'/'.$sectionFile;
+
+                if ($sectionsDirExists && File::exists($sectionPath)) {
+                    continue;
                 }
+
+                if ($usesSharedSections && File::exists(storage_path('app/public/templates/_shared/sections/'.$sectionFile))) {
+                    continue;
+                }
+
+                $errors[] = "Section file not found: {$sectionFile}";
             }
         }
 

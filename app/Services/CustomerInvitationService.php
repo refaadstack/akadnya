@@ -44,6 +44,27 @@ class CustomerInvitationService
         $user->forceFill(['active_invitation_id' => $invitation->id])->save();
     }
 
+    /**
+     * Adopt any active template: create an invitation from it if the user does
+     * not already own one, then set it as the active invitation.
+     */
+    public function adoptTemplate(User $user, Template $template, ?array $previewData = null): Invitation
+    {
+        $existing = $user->invitations()->where('template_id', $template->id)->first();
+
+        if ($existing) {
+            $user->forceFill(['active_invitation_id' => $existing->id])->save();
+
+            return $existing;
+        }
+
+        $invitation = $this->orderService->createInvitationFromOrder($user, $template, $previewData);
+
+        $user->forceFill(['active_invitation_id' => $invitation->id])->save();
+
+        return $invitation;
+    }
+
     private function ensurePaidTemplateInvitations(User $user): void
     {
         $templateItems = OrderItem::query()

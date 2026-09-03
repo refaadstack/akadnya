@@ -77,3 +77,63 @@ test('dashboard analytics include attendance rate, check-ins and rsvp trend', fu
             ->where('analytics.rsvp_trend.13.attending', 1)
         );
 });
+
+test('dashboard exposes all active templates with ownership flags', function () {
+    $user = User::factory()->create();
+    $owned = Template::factory()->create(['name' => 'Owned Template']);
+    $other = Template::factory()->create(['name' => 'Another Template']);
+    Template::factory()->inactive()->create(['name' => 'Hidden Template']);
+
+    Invitation::factory()->for($user)->for($owned)->create([
+        'subdomain' => 'owned-'.strtolower(str()->random(6)),
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('allTemplates.0.name', 'Another Template')
+            ->where('allTemplates.0.is_owned', false)
+            ->where('allTemplates.1.name', 'Owned Template')
+            ->where('allTemplates.1.is_owned', true)
+            ->has('allTemplates', 2)
+        );
+});
+
+test('user can select an active template they do not own yet', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+
+    $this->actingAs($user)
+        ->post(route('dashboard.templates.select', $template))
+        ->assertRedirect(route('dashboard.editor'));
+
+    $invitation = Invitation::where('template_id', $template->id)->first();
+    expect($invitation)->not->toBeNull()
+        ->and($invitation->user_id)->toBe($user->id)
+        ->and($user->fresh()->active_invitation_id)->toBe($invitation->id);
+});
+
+test('selecting an inactive template is forbidden', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->inactive()->create();
+
+    $this->actingAs($user)
+        ->post(route('dashboard.templates.select', $template))
+        ->assertNotFound();
+});
+
+test('selecting an already-owned template just switches to it without duplicating', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->for($user)->for($template)->create([
+        'subdomain' => 'already-'.strtolower(str()->random(6)),
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('dashboard.templates.select', $template))
+        ->assertRedirect(route('dashboard.editor'));
+
+    expect(Invitation::where('template_id', $template->id)->count())->toBe(1)
+        ->and($user->fresh()->active_invitation_id)->toBe($invitation->id);
+});

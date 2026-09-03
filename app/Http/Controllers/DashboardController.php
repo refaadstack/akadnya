@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\GuestBookEntry;
 use App\Models\Invitation;
+use App\Models\Template;
 use App\Services\CustomerInvitationService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -53,6 +56,7 @@ class DashboardController extends Controller
                 'recentRsvps' => [],
                 'recentWishes' => [],
                 'invitationOptions' => $invitationOptions,
+                'allTemplates' => $this->allTemplates($user, $ownedInvitations),
             ]);
         }
 
@@ -137,7 +141,47 @@ class DashboardController extends Controller
             'recentRsvps' => $recentRsvps,
             'recentWishes' => $recentWishes,
             'invitationOptions' => $invitationOptions,
+            'allTemplates' => $this->allTemplates($user, $ownedInvitations),
         ]);
+    }
+
+    /**
+     * Build the list of all active templates, flagging which the user already owns.
+     *
+     * @param  Collection<int, Invitation>  $ownedInvitations
+     * @return Collection<int, array<string, mixed>>
+     */
+    protected function allTemplates($user, $ownedInvitations): Collection
+    {
+        $ownedTemplateIds = $ownedInvitations
+            ->pluck('template_id')
+            ->filter()
+            ->all();
+
+        return Template::active()
+            ->orderBy('name')
+            ->get()
+            ->map(fn (Template $template) => [
+                'id' => $template->id,
+                'slug' => $template->slug,
+                'name' => $template->name,
+                'thumbnail_url' => $template->thumbnail_url,
+                'is_owned' => in_array($template->id, $ownedTemplateIds, true),
+            ]);
+    }
+
+    /**
+     * Adopt (or select) an active template as the user's active invitation.
+     */
+    public function selectTemplate(Request $request, Template $template): RedirectResponse
+    {
+        if (! $template->is_active) {
+            abort(404);
+        }
+
+        $this->customerInvitations->adoptTemplate($request->user(), $template);
+
+        return redirect()->route('dashboard.editor')->with('success', 'Template berhasil dipilih.');
     }
 
     public function selectInvitation(Request $request, Invitation $invitation)

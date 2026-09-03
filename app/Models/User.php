@@ -138,6 +138,25 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->hasGrant(UserGrant::TYPE_TEMPLATE, $template->slug);
     }
 
+    /**
+     * Determine whether the user owns the given template and may
+     * adopt it as an editable invitation. A template is owned when
+     * the user has a paid order for it or an active grant covers it.
+     */
+    public function ownsTemplate(Template $template): bool
+    {
+        if ($this->hasTemplateAccess($template)) {
+            return true;
+        }
+
+        return $this->orders()
+            ->where('status', 'paid')
+            ->whereHas('items', fn ($query) => $query
+                ->where('item_type', 'template')
+                ->where('item_id', $template->id))
+            ->exists();
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

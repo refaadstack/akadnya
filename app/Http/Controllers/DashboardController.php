@@ -179,7 +179,15 @@ class DashboardController extends Controller
             abort(404);
         }
 
-        $this->customerInvitations->adoptTemplate($request->user(), $template);
+        $user = $request->user();
+
+        if (! $user->ownsTemplate($template)) {
+            return redirect()
+                ->route('templates.show', ['slug' => $template->slug])
+                ->with('error', 'Anda belum memiliki template ini. Silakan beli atau aktifkan terlebih dahulu.');
+        }
+
+        $this->customerInvitations->adoptTemplate($user, $template);
 
         return redirect()->route('dashboard.editor')->with('success', 'Template berhasil dipilih.');
     }

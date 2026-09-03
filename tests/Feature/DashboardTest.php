@@ -100,9 +100,38 @@ test('dashboard exposes all active templates with ownership flags', function () 
         );
 });
 
-test('user can select an active template they do not own yet', function () {
+test('user cannot adopt a template they do not own', function () {
     $user = User::factory()->create();
     $template = Template::factory()->create();
+
+    $this->actingAs($user)
+        ->post(route('dashboard.templates.select', $template))
+        ->assertRedirect(route('templates.show', ['slug' => $template->slug]));
+
+    expect(Invitation::where('template_id', $template->id)->exists())->toBeFalse();
+    expect($user->fresh()->active_invitation_id)->toBeNull();
+});
+
+test('user can adopt a template they own via a paid order', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+
+    $order = \App\Models\Order::create([
+        'user_id' => $user->id,
+        'order_number' => 'ORD-TEST-'.strtoupper(str()->random(6)),
+        'status' => 'paid',
+        'total_amount' => $template->price,
+        'subtotal_amount' => $template->price,
+        'payment_gateway_fee' => 0,
+        'tax_amount' => 0,
+        'paid_at' => now(),
+    ]);
+    $order->items()->create([
+        'item_type' => 'template',
+        'item_id' => $template->id,
+        'name' => $template->name,
+        'price' => $template->price,
+    ]);
 
     $this->actingAs($user)
         ->post(route('dashboard.templates.select', $template))
@@ -126,6 +155,22 @@ test('selecting an inactive template is forbidden', function () {
 test('selecting an already-owned template just switches to it without duplicating', function () {
     $user = User::factory()->create();
     $template = Template::factory()->create();
+    $order = \App\Models\Order::create([
+        'user_id' => $user->id,
+        'order_number' => 'ORD-TEST-'.strtoupper(str()->random(6)),
+        'status' => 'paid',
+        'total_amount' => $template->price,
+        'subtotal_amount' => $template->price,
+        'payment_gateway_fee' => 0,
+        'tax_amount' => 0,
+        'paid_at' => now(),
+    ]);
+    $order->items()->create([
+        'item_type' => 'template',
+        'item_id' => $template->id,
+        'name' => $template->name,
+        'price' => $template->price,
+    ]);
     $invitation = Invitation::factory()->for($user)->for($template)->create([
         'subdomain' => 'already-'.strtolower(str()->random(6)),
     ]);

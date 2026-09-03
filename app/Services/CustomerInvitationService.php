@@ -47,9 +47,16 @@ class CustomerInvitationService
     /**
      * Adopt any active template: create an invitation from it if the user does
      * not already own one, then set it as the active invitation.
+     *
+     * Ownership is enforced at the controller boundary, but this method also
+     * refuses to adopt un-owned templates as a defense-in-depth check.
      */
     public function adoptTemplate(User $user, Template $template, ?array $previewData = null): Invitation
     {
+        if (! $user->ownsTemplate($template) && ! $user->isAdmin()) {
+            abort(403, 'Anda belum memiliki template ini. Silakan beli atau aktifkan terlebih dahulu.');
+        }
+
         $existing = $user->invitations()->where('template_id', $template->id)->first();
 
         if ($existing) {

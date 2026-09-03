@@ -413,22 +413,22 @@ const selectTemplate = (template: AllTemplate) => {
                             </div>
                         </div>
                         <div class="mt-4">
+                            <a
+                                v-if="!template.is_owned"
+                                :href="`/templates/${template.slug}`"
+                                class="my-btn-primary w-full gap-2"
+                            >
+                                <Eye class="size-4" />
+                                Lihat & Beli
+                            </a>
                             <button
+                                v-else
                                 type="button"
-                                :disabled="template.is_owned"
-                                class="my-btn-primary w-full gap-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="my-btn-primary w-full gap-2"
                                 @click="selectTemplate(template)"
                             >
-                                <Check
-                                    v-if="template.is_owned"
-                                    class="size-4"
-                                />
-                                <Edit3 v-else class="size-4" />
-                                {{
-                                    template.is_owned
-                                        ? 'Sudah Dimiliki'
-                                        : 'Pakai Template Ini'
-                                }}
+                                <Edit3 class="size-4" />
+                                Pakai Template Ini
                             </button>
                         </div>
                     </div>

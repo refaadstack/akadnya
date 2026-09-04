@@ -62,17 +62,40 @@ class PaymentSuccessfulNotification extends Notification
         $escapedAmount = e($amount);
         $escapedDashboardUrl = e($dashboardUrl);
 
+        $body = <<<HTML
+            <h1 style="margin:0 0 16px 0;font-size:22px;line-height:30px;color:#141F1A;font-weight:bold;">Pembayaran Berhasil</h1>
+
+            <p style="margin:0 0 12px 0;font-size:15px;line-height:24px;color:#141F1A;">Halo {$name},</p>
+
+            <p style="margin:0 0 16px 0;font-size:15px;line-height:24px;color:#141F1A;">
+                Pembayaran kamu sudah berhasil kami terima. Fitur dan undangan
+                yang kamu beli sudah aktif di akun Akadnya.com kamu.
+            </p>
+
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0;border:1px solid #E8DFC8;border-radius:8px;background-color:#FBF6E8;">
+                <tr>
+                    <td style="padding:16px 20px;">
+                        <p style="margin:0 0 6px 0;font-size:13px;line-height:18px;color:#7A6B4A;">Nomor order</p>
+                        <p style="margin:0 0 12px 0;font-size:15px;line-height:22px;color:#141F1A;font-weight:bold;font-family:monospace;">{$orderNumber}</p>
+                        <p style="margin:0 0 6px 0;font-size:13px;line-height:18px;color:#7A6B4A;">Total pembayaran</p>
+                        <p style="margin:0;font-size:18px;line-height:24px;color:#AD7F35;font-weight:bold;">{$escapedAmount}</p>
+                    </td>
+                </tr>
+            </table>
+
+        HTML;
+
+        $body .= \App\Services\EmailTemplate::button($dashboardUrl, 'Buka Dashboard');
+
+        $body .= <<<HTML
+            <p style="margin:24px 0 0 0;font-size:14px;line-height:22px;color:#7A6B4A;">
+                Terima kasih sudah menggunakan Akadnya.com untuk momen spesial kamu.
+            </p>
+        HTML;
+
         return [
             'subject' => 'Pembayaran Akadnya.com Berhasil',
-            'htmlContent' => <<<HTML
-<h1>Pembayaran Berhasil</h1>
-<p>Halo {$name},</p>
-<p>Pembayaran kamu sudah berhasil kami terima.</p>
-<p><strong>Nomor order:</strong> {$orderNumber}<br><strong>Total pembayaran:</strong> {$escapedAmount}</p>
-<p>Fitur dan undangan yang kamu beli sudah aktif di akun Akadnya.com.</p>
-<p><a href="{$escapedDashboardUrl}" style="display:inline-block;padding:12px 18px;background:#111827;color:#ffffff;text-decoration:none;border-radius:6px;">Buka Dashboard Akadnya.com</a></p>
-<p>Terima kasih sudah menggunakan Akadnya.com.</p>
-HTML,
+            'htmlContent' => \App\Services\EmailTemplate::wrap('Pembayaran Berhasil', $body),
             'textContent' => "Halo {$notifiable->name},\n\nPembayaran kamu berhasil.\nNomor order: {$order->order_number}\nTotal pembayaran: {$amount}\n\nBuka dashboard: {$dashboardUrl}\n",
         ];
     }

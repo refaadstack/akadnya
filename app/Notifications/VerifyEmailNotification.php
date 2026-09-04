@@ -62,39 +62,36 @@ class VerifyEmailNotification extends VerifyEmail
         $name = e($notifiable->name ?? 'User');
         $escapedUrl = e($url);
 
-        return [
-            'subject' => 'Verifikasi Email Akadnya.com',
+        $body = <<<HTML
+            <h1 style="margin:0 0 16px 0;font-size:22px;line-height:30px;color:#141F1A;font-weight:bold;">Verifikasi Email Akadnya.com</h1>
 
-            'htmlContent' => <<<HTML
-                <h1>Verifikasi Email Akadnya.com</h1>
+            <p style="margin:0 0 12px 0;font-size:15px;line-height:24px;color:#141F1A;">Halo {$name},</p>
 
-                <p>Halo {$name},</p>
-
-                <p>
+            <p style="margin:0 0 24px 0;font-size:15px;line-height:24px;color:#141F1A;">
                 Terima kasih sudah membuat akun Akadnya.com.
                 Klik tombol di bawah ini untuk mengaktifkan akun kamu.
-                </p>
+            </p>
 
-                <p>
-                    <a href="{$escapedUrl}" style="display:inline-block;padding:12px 18px;background:#111827;color:#ffffff;text-decoration:none;border-radius:6px;">
-                        Verifikasi Email
-                    </a>
-                </p>
+            HTML;
 
-                <p>Kalau tombol tidak bisa dibuka, gunakan link berikut:</p>
+        $body .= \App\Services\EmailTemplate::button($url, 'Verifikasi Email');
 
-                <p>
-                    <a href="{$escapedUrl}">
-                        {$escapedUrl}
-                    </a>
-                </p>
+        $body .= <<<HTML
+            <p style="margin:0 0 8px 0;font-size:14px;line-height:22px;color:#7A6B4A;">Atau salin link ini ke browser:</p>
+            <p style="margin:0 0 24px 0;word-break:break-all;font-size:13px;line-height:20px;color:#AD7F35;">
+                <a href="{$escapedUrl}" style="color:#AD7F35;text-decoration:underline;">{$escapedUrl}</a>
+            </p>
 
-                <p style="color:#6b7280;font-size:13px;">
-                    Email tidak muncul di inbox? Coba periksa folder
-                    <strong>Spam</strong> atau <strong>Promosi</strong>.
-                </p>
-                HTML,
+            <p style="margin:0;font-size:13px;line-height:20px;color:#7A6B4A;">
+                Email tidak muncul di inbox? Coba periksa folder
+                <strong>Spam</strong> atau <strong>Promosi</strong>.
+                Batas waktu verifikasi: 60 menit.
+            </p>
+        HTML;
 
+        return [
+            'subject' => 'Verifikasi Email Akadnya.com',
+            'htmlContent' => \App\Services\EmailTemplate::wrap('Verifikasi Email Akadnya.com', $body),
             'textContent' => <<<TEXT
                 Halo {$notifiable->name},
 
@@ -105,6 +102,7 @@ class VerifyEmailNotification extends VerifyEmail
                 {$url}
 
                 Email tidak muncul? Periksa folder Spam atau Promosi.
+                Batas waktu verifikasi: 60 menit.
                 TEXT,
         ];
     }

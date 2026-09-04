@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { welcome as home } from '@/routes';
 
 const page = usePage();
@@ -24,8 +23,12 @@ defineProps<{
                 :href="home()"
                 class="relative z-20 flex items-center text-lg font-medium"
             >
-                <AppLogoIcon class="mr-2 size-8 fill-current text-white" />
-                {{ name }}
+                <img
+                    src="/images/logo.svg"
+                    alt="Akadnya.com"
+                    class="mr-2 h-9 w-auto"
+                />
+                <span class="text-white">{{ name }}</span>
             </Link>
         </div>
         <div class="lg:p-8">

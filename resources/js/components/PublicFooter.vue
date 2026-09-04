@@ -11,9 +11,14 @@ const support = usePage().props.support;
                 <div>
                     <Link
                         href="/"
-                        class="font-display text-3xl font-bold text-[var(--gold-light)]"
+                        class="inline-block"
+                        aria-label="Akadnya.com - Beranda"
                     >
-                        Akadnya.com
+                        <img
+                            src="/images/logo.svg"
+                            alt="Akadnya.com"
+                            class="h-10 w-auto"
+                        />
                     </Link>
                     <p
                         class="mt-4 max-w-sm text-sm leading-6 text-[var(--text-light-muted)]"

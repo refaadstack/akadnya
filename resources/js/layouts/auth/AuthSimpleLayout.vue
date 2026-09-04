@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { welcome } from '@/routes';
 
 defineProps<{
@@ -20,11 +19,11 @@ defineProps<{
                         :href="welcome()"
                         class="flex flex-col items-center gap-2 font-medium"
                     >
-                        <div
-                            class="mb-1 flex h-10 w-10 items-center justify-center rounded-md bg-[var(--my-primary)] text-white"
-                        >
-                            <AppLogoIcon class="size-6 fill-current" />
-                        </div>
+                        <img
+                            src="/images/logo.png"
+                            alt="Akadnya.com"
+                            class="mb-1 h-10 w-auto"
+                        />
                         <span class="sr-only">{{ title }}</span>
                     </Link>
                     <div class="space-y-2 text-center">

@@ -40,14 +40,21 @@ onBeforeUnmount(() => {
             <div class="flex min-h-16 items-center justify-between">
                 <Link
                     href="/"
-                    class="font-display text-3xl leading-none font-bold"
-                    :class="
-                        scrolled
-                            ? 'text-[var(--my-primary)]'
-                            : 'text-[var(--gold-light)]'
-                    "
+                    class="flex items-center"
+                    aria-label="Akadnya.com - Beranda"
                 >
-                    Akadnya.com
+                    <img
+                        v-if="!scrolled"
+                        src="/images/logo.svg"
+                        alt="Akadnya.com"
+                        class="h-9 w-auto"
+                    />
+                    <span
+                        v-else
+                        class="font-display text-2xl leading-none font-bold text-[var(--my-primary)]"
+                    >
+                        Akadnya<span class="text-[var(--my-secondary)]">.com</span>
+                    </span>
                 </Link>
 
                 <div class="hidden items-center gap-8 md:flex">

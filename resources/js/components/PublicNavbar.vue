@@ -18,7 +18,7 @@ const mobileMenuOpen = ref(false);
 <template>
     <nav class="fixed top-3 right-3 left-3 z-50 md:top-5 md:right-5 md:left-5">
         <div
-            class="mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-full border border-white/15 bg-[var(--ink)]/40 px-3 py-2 shadow-lg shadow-black/20 backdrop-blur-md md:px-5 md:py-2.5"
+            class="mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-full border border-white/10 bg-[var(--ink)] px-3 py-2 shadow-lg shadow-black/20 md:px-5 md:py-2.5"
         >
             <Link
                 href="/"

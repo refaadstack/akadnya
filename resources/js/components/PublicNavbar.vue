@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { Menu, ShoppingCart, X } from 'lucide-vue-next';
-import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
+import { computed, ref } from 'vue';
 
 defineProps<{
     canRegister?: boolean;
@@ -13,29 +13,12 @@ const user = computed(() => page.props.auth?.user ?? null);
 const cartCount = computed(() => (page.props.cartCount as number) || 0);
 
 const mobileMenuOpen = ref(false);
-
-const scrolled = ref(false);
-const onScroll = () => {
-    scrolled.value = window.scrollY > 40;
-};
-onMounted(() => {
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-});
-onBeforeUnmount(() => {
-    window.removeEventListener('scroll', onScroll);
-});
 </script>
 
 <template>
     <nav class="fixed top-3 right-3 left-3 z-50 md:top-5 md:right-5 md:left-5">
         <div
-            class="mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-full border px-3 py-2 shadow-lg backdrop-blur-md transition-all duration-300 md:px-5 md:py-2.5"
-            :class="
-                scrolled
-                    ? 'border-[var(--my-border)]/60 bg-[var(--my-background)]/95 shadow-black/5'
-                    : 'border-white/15 bg-[var(--ink)]/30 shadow-black/20'
-            "
+            class="mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-full border border-white/15 bg-[var(--ink)]/40 px-3 py-2 shadow-lg shadow-black/20 backdrop-blur-md md:px-5 md:py-2.5"
         >
             <Link
                 href="/"
@@ -43,17 +26,10 @@ onBeforeUnmount(() => {
                 aria-label="Akadnya.com - Beranda"
             >
                 <img
-                    v-if="!scrolled"
                     src="/images/logo.svg"
                     alt="Akadnya.com"
                     class="h-8 w-auto md:h-9"
                 />
-                <span
-                    v-else
-                    class="font-display text-xl leading-none font-bold text-[var(--my-primary)] md:text-2xl"
-                >
-                    Akadnya<span class="text-[var(--my-secondary)]">.com</span>
-                </span>
             </Link>
 
             <div class="hidden items-center gap-6 md:flex">
@@ -63,9 +39,7 @@ onBeforeUnmount(() => {
                     :class="
                         currentPage === 'templates'
                             ? 'text-[var(--gold-light)]'
-                            : scrolled
-                              ? 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
-                              : 'text-white/85 hover:text-[var(--gold-light)]'
+                            : 'text-white/85 hover:text-[var(--gold-light)]'
                     "
                 >
                     Koleksi
@@ -76,21 +50,14 @@ onBeforeUnmount(() => {
                     :class="
                         currentPage === 'products'
                             ? 'text-[var(--gold-light)]'
-                            : scrolled
-                              ? 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
-                              : 'text-white/85 hover:text-[var(--gold-light)]'
+                            : 'text-white/85 hover:text-[var(--gold-light)]'
                     "
                 >
                     Produk
                 </Link>
                 <Link
                     href="/#how-it-works"
-                    class="text-sm font-semibold transition"
-                    :class="
-                        scrolled
-                            ? 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
-                            : 'text-white/85 hover:text-[var(--gold-light)]'
-                    "
+                    class="text-sm font-semibold text-white/85 transition hover:text-[var(--gold-light)]"
                 >
                     Cara Pesan
                 </Link>
@@ -100,9 +67,7 @@ onBeforeUnmount(() => {
                     :class="
                         currentPage === 'tutorial'
                             ? 'text-[var(--gold-light)]'
-                            : scrolled
-                              ? 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
-                              : 'text-white/85 hover:text-[var(--gold-light)]'
+                            : 'text-white/85 hover:text-[var(--gold-light)]'
                     "
                 >
                     Tutorial
@@ -113,9 +78,7 @@ onBeforeUnmount(() => {
                     :class="
                         currentPage === 'faq'
                             ? 'text-[var(--gold-light)]'
-                            : scrolled
-                              ? 'text-[var(--my-neutral)] hover:text-[var(--my-primary)]'
-                              : 'text-white/85 hover:text-[var(--gold-light)]'
+                            : 'text-white/85 hover:text-[var(--gold-light)]'
                     "
                 >
                     FAQ
@@ -125,12 +88,7 @@ onBeforeUnmount(() => {
             <div class="hidden items-center gap-2 md:flex">
                 <Link
                     href="/keranjang"
-                    class="relative inline-flex size-9 items-center justify-center rounded-full transition"
-                    :class="
-                        scrolled
-                            ? 'text-[var(--my-neutral)] hover:bg-[var(--my-primary)]/10 hover:text-[var(--my-primary)]'
-                            : 'text-white/85 hover:bg-white/10 hover:text-[var(--gold-light)]'
-                    "
+                    class="relative inline-flex size-9 items-center justify-center rounded-full text-white/85 transition hover:bg-white/10 hover:text-[var(--gold-light)]"
                     aria-label="Keranjang"
                 >
                     <ShoppingCart class="size-5" />
@@ -144,60 +102,35 @@ onBeforeUnmount(() => {
                 <Link
                     v-if="user"
                     href="/dashboard"
-                    class="rounded-full px-4 py-1.5 text-sm font-semibold transition"
-                    :class="
-                        scrolled
-                            ? 'text-[var(--my-neutral)] hover:bg-[var(--my-primary)]/10 hover:text-[var(--my-primary)]'
-                            : 'text-white/85 hover:bg-white/10 hover:text-[var(--gold-light)]'
-                    "
+                    class="rounded-full px-4 py-1.5 text-sm font-semibold text-white/85 transition hover:bg-white/10 hover:text-[var(--gold-light)]"
                 >
                     Dashboard
                 </Link>
                 <Link
                     v-else
                     href="/login"
-                    class="rounded-full px-4 py-1.5 text-sm font-semibold transition"
-                    :class="
-                        scrolled
-                            ? 'text-[var(--my-neutral)] hover:bg-[var(--my-primary)]/10 hover:text-[var(--my-primary)]'
-                            : 'text-white/85 hover:bg-white/10 hover:text-[var(--gold-light)]'
-                    "
+                    class="rounded-full px-4 py-1.5 text-sm font-semibold text-white/85 transition hover:bg-white/10 hover:text-[var(--gold-light)]"
                 >
                     Masuk
                 </Link>
                 <Link
                     v-if="canRegister"
                     href="/register"
-                    class="rounded-full px-4 py-1.5 text-sm font-bold transition"
-                    :class="
-                        scrolled
-                            ? 'bg-[var(--my-primary)] text-white hover:bg-[var(--my-secondary)]'
-                            : 'bg-[var(--gold-light)] text-[var(--ink)] hover:bg-white'
-                    "
+                    class="rounded-full bg-[var(--gold-light)] px-4 py-1.5 text-sm font-bold text-[var(--ink)] transition hover:bg-white"
                 >
                     Mulai Desain
                 </Link>
                 <Link
                     v-else
                     href="/templates"
-                    class="rounded-full px-4 py-1.5 text-sm font-bold transition"
-                    :class="
-                        scrolled
-                            ? 'bg-[var(--my-primary)] text-white hover:bg-[var(--my-secondary)]'
-                            : 'bg-[var(--gold-light)] text-[var(--ink)] hover:bg-white'
-                    "
+                    class="rounded-full bg-[var(--gold-light)] px-4 py-1.5 text-sm font-bold text-[var(--ink)] transition hover:bg-white"
                 >
                     Mulai Desain
                 </Link>
             </div>
 
             <button
-                class="inline-flex size-9 items-center justify-center rounded-full transition md:hidden"
-                :class="
-                    scrolled
-                        ? 'text-[var(--my-neutral)] hover:bg-[var(--my-primary)]/10'
-                        : 'text-white/85 hover:bg-white/10'
-                "
+                class="inline-flex size-9 items-center justify-center rounded-full text-white/85 transition hover:bg-white/10 md:hidden"
                 type="button"
                 aria-label="Buka menu"
                 @click="mobileMenuOpen = !mobileMenuOpen"
@@ -209,7 +142,7 @@ onBeforeUnmount(() => {
 
         <div
             v-if="mobileMenuOpen"
-            class="mx-auto mt-2 max-w-6xl rounded-2xl border border-[var(--my-border)]/60 bg-[var(--my-background)]/95 p-4 shadow-lg backdrop-blur-md md:hidden"
+            class="mx-auto mt-2 max-w-6xl rounded-2xl border border-[var(--my-border)]/60 bg-[var(--my-background)]/95 p-4 shadow-lg shadow-black/20 backdrop-blur-md md:hidden"
         >
             <div class="grid gap-1">
                 <Link

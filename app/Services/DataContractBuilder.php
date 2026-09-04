@@ -490,11 +490,12 @@ class DataContractBuilder
 
             $svg = str_replace('</svg>', $logoBlock.'</svg>', $svg);
 
-            return str_replace(
-                '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="300" height="300"',
-                '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="180" height="180"',
-                $svg
-            );
+            // Strip the XML declaration and hard-coded width/height so the QR
+            // renders cleanly when inlined in HTML and scales with CSS.
+            $svg = preg_replace('/<\?xml[^>]*\?>\s*/', '', $svg);
+            $svg = preg_replace('/\swidth="\d+"\s+height="\d+"/', '', $svg, 1);
+
+            return $svg;
         } catch (\Throwable $e) {
             report($e);
 

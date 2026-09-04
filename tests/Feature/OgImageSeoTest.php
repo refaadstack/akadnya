@@ -50,7 +50,7 @@ function ogTestTemplate(string $slug): Template
 
 test('public invitation renders a landscape og:image generated from a portrait cover', function () {
     if (! extension_loaded('gd')) {
-        test()->skip('GD extension is required to render the OG image');
+        $this->markTestSkipped('GD extension is required to render the OG image');
     }
 
     $user = User::factory()->create();

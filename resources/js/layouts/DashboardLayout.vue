@@ -125,185 +125,117 @@ const logout = () => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-[var(--my-background)]">
-        <!-- Navigation -->
-        <nav
-            class="sticky top-0 z-40 border-b border-[var(--my-border)]/70 bg-[var(--my-background)]/88 backdrop-blur-md"
-        >
-            <div class="my-container">
-                <div class="flex min-h-16 items-center justify-between gap-5">
-                    <!-- Logo -->
+    <div class="min-h-screen bg-[var(--my-background)] pt-16 md:pt-20">
+        <!-- Floating Navigation -->
+        <nav class="fixed top-3 right-3 left-3 z-40 md:top-5 md:right-5 md:left-5">
+            <div
+                class="mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-full border border-[var(--my-border)]/60 bg-[var(--my-background)]/95 px-3 py-2 shadow-lg shadow-black/5 md:px-5 md:py-2.5"
+            >
+                <!-- Logo -->
+                <Link
+                    href="/dashboard"
+                    class="flex shrink-0 items-center"
+                    aria-label="Akadnya.com - Dashboard"
+                >
+                    <span
+                        class="font-display text-xl leading-none font-bold text-[var(--my-primary)] md:text-2xl"
+                    >
+                        Akadnya<span class="text-[var(--my-secondary)]"
+                            >.com</span
+                        >
+                    </span>
+                </Link>
+
+                <!-- Desktop Nav -->
+                <div class="hidden items-center gap-1 lg:flex">
                     <Link
-                        href="/dashboard"
-                        class="font-display text-3xl leading-none font-bold text-[var(--my-primary)]"
+                        v-for="item in navItems"
+                        :key="item.href"
+                        :href="item.href"
+                        class="relative rounded-full px-4 py-1.5 text-sm font-semibold transition"
+                        :class="
+                            isActive(item.href)
+                                ? 'bg-[var(--my-primary)]/10 text-[var(--my-primary)]'
+                                : 'text-[var(--my-muted)] hover:text-[var(--my-primary)]'
+                        "
                     >
-                        Akadnya.com
+                        {{ item.label }}
                     </Link>
-
-                    <!-- Desktop Nav -->
-                    <div class="hidden items-center gap-1 lg:flex">
-                        <Link
-                            v-for="item in navItems"
-                            :key="item.href"
-                            :href="item.href"
-                            class="relative px-4 py-2 text-sm font-semibold transition"
-                            :class="
-                                isActive(item.href)
-                                    ? 'text-[var(--my-primary)]'
-                                    : 'text-[var(--my-muted)] hover:text-[var(--my-primary)]'
-                            "
-                        >
-                            {{ item.label }}
-                            <span
-                                v-if="isActive(item.href)"
-                                class="absolute right-0 bottom-0 left-0 h-0.5 bg-[var(--my-primary)]"
-                            />
-                        </Link>
-                    </div>
-
-                    <!-- Mobile Menu Button -->
-                    <button
-                        type="button"
-                        class="lg:hidden"
-                        @click="showMobileMenu = !showMobileMenu"
-                    >
-                        <svg
-                            class="size-6 text-[var(--my-neutral)]"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                v-if="!showMobileMenu"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M4 6h16M4 12h16M4 18h16"
-                            />
-                            <path
-                                v-else
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </button>
-
-                    <!-- User Menu (Desktop) -->
-                    <div class="relative hidden lg:block">
-                        <button
-                            type="button"
-                            class="flex items-center gap-3"
-                            @click="showUserMenu = !showUserMenu"
-                        >
-                            <span
-                                class="grid size-10 place-items-center rounded-lg bg-[var(--my-primary)] text-sm font-bold text-white"
-                            >
-                                {{
-                                    $page.props.auth?.user?.name
-                                        ?.charAt(0)
-                                        .toUpperCase() || 'U'
-                                }}
-                            </span>
-                            <ChevronDown
-                                class="size-4 text-[var(--my-muted)]"
-                            />
-                        </button>
-
-                        <div
-                            v-show="showUserMenu"
-                            class="my-card absolute right-0 mt-3 w-56 overflow-hidden py-2"
-                            @click="showUserMenu = false"
-                        >
-                            <div
-                                class="border-b border-[var(--my-border)] px-4 py-3"
-                            >
-                                <p
-                                    class="truncate text-sm font-bold text-[var(--my-neutral)]"
-                                >
-                                    {{ $page.props.auth?.user?.name }}
-                                </p>
-                                <p
-                                    class="truncate text-xs text-[var(--my-muted)]"
-                                >
-                                    {{ $page.props.auth?.user?.email }}
-                                </p>
-                            </div>
-                            <Link
-                                href="/settings/profile"
-                                class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:bg-[var(--my-surface-soft)]"
-                            >
-                                <svg
-                                    class="size-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                    />
-                                </svg>
-                                Profil
-                            </Link>
-                            <Link
-                                href="/settings/security"
-                                class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:bg-[var(--my-surface-soft)]"
-                            >
-                                <LockKeyhole class="size-4" />
-                                Keamanan
-                            </Link>
-                            <button
-                                type="button"
-                                class="flex w-full items-center gap-2 border-t border-[var(--my-border)] px-4 py-2 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50"
-                                @click="logout"
-                            >
-                                <LogOut class="size-4" />
-                                Keluar
-                            </button>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Mobile Nav -->
-                <div
-                    v-if="showMobileMenu"
-                    class="border-t border-[var(--my-border)] py-4 lg:hidden"
+                <!-- Mobile Menu Button -->
+                <button
+                    type="button"
+                    class="inline-flex size-9 items-center justify-center rounded-full text-[var(--my-neutral)] transition hover:bg-[var(--my-primary)]/10 lg:hidden"
+                    aria-label="Buka menu"
+                    @click="showMobileMenu = !showMobileMenu"
                 >
-                    <div class="flex flex-col gap-1">
-                        <Link
-                            v-for="item in navItems"
-                            :key="item.href"
-                            :href="item.href"
-                            class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold transition"
-                            :class="
-                                isActive(item.href)
-                                    ? 'bg-[var(--my-primary)]/10 text-[var(--my-primary)]'
-                                    : 'text-[var(--my-muted)] hover:bg-[var(--my-surface-soft)] hover:text-[var(--my-primary)]'
-                            "
-                            @click="showMobileMenu = false"
+                    <svg
+                        class="size-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            v-if="!showMobileMenu"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"
+                        />
+                        <path
+                            v-else
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
+
+                <!-- User Menu (Desktop) -->
+                <div class="relative hidden lg:block">
+                    <button
+                        type="button"
+                        class="flex items-center gap-2 rounded-full py-1 pr-2 pl-1 transition hover:bg-[var(--my-primary)]/10"
+                        @click="showUserMenu = !showUserMenu"
+                    >
+                        <span
+                            class="grid size-8 place-items-center rounded-full bg-[var(--my-primary)] text-sm font-bold text-white"
                         >
-                            <component :is="item.icon" class="size-5" />
-                            {{ item.label }}
-                        </Link>
-                    </div>
-                    <div class="mt-4 border-t border-[var(--my-border)] pt-4">
-                        <div class="mb-3 px-4">
+                            {{
+                                $page.props.auth?.user?.name
+                                    ?.charAt(0)
+                                    .toUpperCase() || 'U'
+                            }}
+                        </span>
+                        <ChevronDown
+                            class="size-4 text-[var(--my-muted)]"
+                        />
+                    </button>
+
+                    <div
+                        v-show="showUserMenu"
+                        class="my-card absolute right-0 mt-3 w-56 overflow-hidden rounded-2xl py-2"
+                        @click="showUserMenu = false"
+                    >
+                        <div
+                            class="border-b border-[var(--my-border)] px-4 py-3"
+                        >
                             <p
-                                class="text-sm font-bold text-[var(--my-neutral)]"
+                                class="truncate text-sm font-bold text-[var(--my-neutral)]"
                             >
                                 {{ $page.props.auth?.user?.name }}
                             </p>
-                            <p class="text-xs text-[var(--my-muted)]">
+                            <p
+                                class="truncate text-xs text-[var(--my-muted)]"
+                            >
                                 {{ $page.props.auth?.user?.email }}
                             </p>
                         </div>
                         <Link
                             href="/settings/profile"
-                            class="flex items-center gap-3 px-4 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:text-[var(--my-primary)]"
+                            class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:bg-[var(--my-surface-soft)]"
                         >
                             <svg
                                 class="size-4"
@@ -322,20 +254,92 @@ const logout = () => {
                         </Link>
                         <Link
                             href="/settings/security"
-                            class="flex items-center gap-3 px-4 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:text-[var(--my-primary)]"
+                            class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:bg-[var(--my-surface-soft)]"
                         >
                             <LockKeyhole class="size-4" />
                             Keamanan
                         </Link>
                         <button
                             type="button"
-                            class="flex w-full items-center gap-3 px-4 py-2 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                            class="flex w-full items-center gap-2 border-t border-[var(--my-border)] px-4 py-2 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50"
                             @click="logout"
                         >
                             <LogOut class="size-4" />
                             Keluar
                         </button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Mobile Nav -->
+            <div
+                v-if="showMobileMenu"
+                class="mx-auto mt-2 max-w-6xl rounded-2xl border border-[var(--my-border)]/60 bg-[var(--my-background)]/95 p-4 shadow-lg shadow-black/5 lg:hidden"
+            >
+                <div class="grid gap-1">
+                    <Link
+                        v-for="item in navItems"
+                        :key="item.href"
+                        :href="item.href"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition"
+                        :class="
+                            isActive(item.href)
+                                ? 'bg-[var(--my-primary)]/10 text-[var(--my-primary)]'
+                                : 'text-[var(--my-muted)] hover:bg-[var(--my-surface-soft)] hover:text-[var(--my-primary)]'
+                        "
+                        @click="showMobileMenu = false"
+                    >
+                        <component :is="item.icon" class="size-5" />
+                        {{ item.label }}
+                    </Link>
+                </div>
+                <div class="mt-4 border-t border-[var(--my-border)] pt-4">
+                    <div class="mb-3 px-3">
+                        <p
+                            class="text-sm font-bold text-[var(--my-neutral)]"
+                        >
+                            {{ $page.props.auth?.user?.name }}
+                        </p>
+                        <p class="text-xs text-[var(--my-muted)]">
+                            {{ $page.props.auth?.user?.email }}
+                        </p>
+                    </div>
+                    <Link
+                        href="/settings/profile"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:text-[var(--my-primary)]"
+                        @click="showMobileMenu = false"
+                    >
+                        <svg
+                            class="size-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
+                        </svg>
+                        Profil
+                    </Link>
+                    <Link
+                        href="/settings/security"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-[var(--my-muted)] transition hover:text-[var(--my-primary)]"
+                        @click="showMobileMenu = false"
+                    >
+                        <LockKeyhole class="size-4" />
+                        Keamanan
+                    </Link>
+                    <button
+                        type="button"
+                        class="mt-1 flex w-full items-center gap-3 rounded-lg bg-red-50 px-3 py-2 text-left text-sm font-semibold text-red-600 transition hover:bg-red-100"
+                        @click="logout"
+                    >
+                        <LogOut class="size-4" />
+                        Keluar
+                    </button>
                 </div>
             </div>
         </nav>

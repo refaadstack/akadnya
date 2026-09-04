@@ -67,18 +67,18 @@ const getDefaultData = (): PreviewData => ({
     special_message:
         'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.',
     cover_photo_url:
-        'https://via.placeholder.com/800x600/FFB6C1/FFFFFF?text=Cover+Photo',
+        'https://placehold.co/800x600/FFB6C1/FFFFFF?text=Cover+Photo',
     gallery_urls: [
         {
-            url: 'https://via.placeholder.com/400x300/FFB6C1/FFFFFF?text=Foto+1',
+            url: 'https://placehold.co/400x300/FFB6C1/FFFFFF?text=Foto+1',
             caption: 'Foto 1',
         },
         {
-            url: 'https://via.placeholder.com/400x300/FFB6C1/FFFFFF?text=Foto+2',
+            url: 'https://placehold.co/400x300/FFB6C1/FFFFFF?text=Foto+2',
             caption: 'Foto 2',
         },
         {
-            url: 'https://via.placeholder.com/400x300/FFB6C1/FFFFFF?text=Foto+3',
+            url: 'https://placehold.co/400x300/FFB6C1/FFFFFF?text=Foto+3',
             caption: 'Foto 3',
         },
     ],

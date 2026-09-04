@@ -1,15 +1,15 @@
-# Filament Admin Panel - MyAkad
+# Filament Admin Panel - Akadnya
 
 ## Overview
 
-Admin panel untuk MyAkad menggunakan **Filament v5.6** - framework admin panel modern untuk Laravel.
+Admin panel untuk Akadnya menggunakan **Filament v5.6** - framework admin panel modern untuk Laravel.
 
 ## Akses Admin Panel
 
 - **URL**: `http://localhost:8000/admin` (atau domain Anda + `/admin`)
 - **Login**: Hanya user dengan `role = 'admin'` yang bisa akses
 - **Credentials Default**:
-  - Email: `admin@myakad.com`
+  - Email: `admin@akadnya.com`
   - Password: (yang Anda set saat `php artisan make:filament-user`)
 
 ## Resources yang Tersedia
@@ -245,7 +245,7 @@ protected static ?string $pollingInterval = '10s'; // Auto refresh every 10s
 ### Branding
 Edit `app/Providers/Filament/AdminPanelProvider.php`:
 ```php
-->brandName('MyAkad Admin')
+->brandName('Akadnya.com Admin')
 ->brandLogo(asset('images/logo.png'))
 ->favicon(asset('images/favicon.png'))
 ```

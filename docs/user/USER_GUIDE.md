@@ -1,6 +1,6 @@
-# 📖 Panduan Pengguna MyAkad
+# 📖 Panduan Pengguna Akadnya
 
-Selamat datang di MyAkad! Panduan ini akan membantu Anda membuat undangan digital yang sempurna.
+Selamat datang di Akadnya! Panduan ini akan membantu Anda membuat undangan digital yang sempurna.
 
 ---
 
@@ -63,7 +63,7 @@ Buka **Dashboard** → **Editor** untuk mengisi:
 
 ### Apa itu Subdomain?
 Subdomain adalah alamat unik untuk undangan Anda.  
-Contoh: `siti-budi-2024.myakad.com`
+Contoh: `siti-budi-2024.akadnya.com`
 
 ### Cara Mengubah Subdomain
 
@@ -165,7 +165,7 @@ Beli domain dari provider seperti:
 2. Buat **CNAME record**:
    - **Type**: CNAME
    - **Name**: undangan (atau subdomain lain)
-   - **Value**: myakad.com
+   - **Value**: akadnya.com
 3. Simpan perubahan
 
 #### 3. Tunggu Propagasi
@@ -173,7 +173,7 @@ Beli domain dari provider seperti:
 - Kadang bisa sampai 24 jam
 - Cek status di [whatsmydns.net](https://www.whatsmydns.net/)
 
-#### 4. Masukkan di MyAkad
+#### 4. Masukkan di Akadnya
 1. Buka **Dashboard** → **Settings**
 2. Di bagian **Custom Domain**, masukkan domain Anda
 3. Klik **Simpan Custom Domain**
@@ -188,7 +188,7 @@ Beli domain dari provider seperti:
 → Domain sudah dipakai user lain, gunakan subdomain berbeda
 
 **❓ Tidak punya domain?**  
-→ Gunakan subdomain gratis MyAkad saja, sudah cukup!
+→ Gunakan subdomain gratis Akadnya saja, sudah cukup!
 
 ---
 
@@ -330,7 +330,7 @@ A: Lihat di Dashboard, ada counter views.
 ## 📞 Bantuan & Support
 
 ### Butuh Bantuan?
-- **Email**: support@myakad.com
+- **Email**: support@akadnya.com
 - **WhatsApp**: +62 812-3456-7890
 - **Jam Operasional**: Senin-Jumat, 09:00-17:00 WIB
 
@@ -338,10 +338,10 @@ A: Lihat di Dashboard, ada counter views.
 Jika menemukan bug atau error:
 1. Screenshot error
 2. Jelaskan langkah yang dilakukan
-3. Kirim ke support@myakad.com
+3. Kirim ke support@akadnya.com
 
 ### Request Fitur
-Punya ide fitur baru? Kirim ke support@myakad.com
+Punya ide fitur baru? Kirim ke support@akadnya.com
 
 ---
 

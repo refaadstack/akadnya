@@ -1,4 +1,4 @@
-# MyAkad - Documentation Index
+# Akadnya - Documentation Index
 
 Semua dokumentasi project telah dipindahkan ke folder `/docs/` untuk organisasi yang lebih baik.
 
@@ -30,7 +30,7 @@ Lihat [docs/README.md](docs/README.md) untuk navigasi lengkap dan quick links.
 ## 📁 Struktur Project
 
 ```
-myakad/
+akadnya/
 ├── docs/                    # 📚 Semua dokumentasi
 │   ├── templates/          # Template development docs
 │   ├── admin/              # Admin panel docs

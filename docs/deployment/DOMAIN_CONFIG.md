@@ -11,13 +11,13 @@ Domain aplikasi sekarang dikonfigurasi melalui environment variable `APP_DOMAIN`
 Buka file `.env` Anda dan tambahkan baris berikut:
 
 ```env
-APP_DOMAIN=myakad.id
+APP_DOMAIN=akadnya.com
 ```
 
 Untuk development lokal, gunakan:
 
 ```env
-APP_DOMAIN=myakad.test
+APP_DOMAIN=akadnya.test
 ```
 
 ### 2. Clear Config Cache
@@ -85,18 +85,18 @@ Domain tersedia di semua komponen Vue melalui `$page.props.appDomain`:
 
 ### Development (Laragon)
 ```env
-APP_URL=http://myakad.test
-APP_DOMAIN=myakad.test
+APP_URL=http://akadnya.test
+APP_DOMAIN=akadnya.test
 ```
 
 ### Production
 ```env
-APP_URL=https://myakad.id
-APP_DOMAIN=myakad.id
+APP_URL=https://akadnya.com
+APP_DOMAIN=akadnya.com
 ```
 
 ### Staging
 ```env
-APP_URL=https://staging.myakad.id
-APP_DOMAIN=staging.myakad.id
+APP_URL=https://staging.akadnya.com
+APP_DOMAIN=staging.akadnya.com
 ```

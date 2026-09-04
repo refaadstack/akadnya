@@ -23,7 +23,7 @@ composer run dev
 
 ### 2. Login ke Aplikasi
 - URL: http://localhost:8000/login
-- Email: `user@myakad.test`
+- Email: `user@akadnya.test`
 - Password: `password`
 
 ### 3. Preview Template

@@ -1,6 +1,6 @@
-# MyAkad Documentation
+# Akadnya Documentation
 
-Dokumentasi lengkap untuk project MyAkad.
+Dokumentasi lengkap untuk project Akadnya.
 
 ## Struktur Folder
 
@@ -77,4 +77,4 @@ npm run dev
 
 ## Support
 
-Untuk pertanyaan atau issue, hubungi tim development MyAkad.
+Untuk pertanyaan atau issue, hubungi tim development Akadnya.

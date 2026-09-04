@@ -4,43 +4,15 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Rsvp;
-use App\Services\CustomerInvitationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class RsvpController extends Controller
 {
-    public function __construct(
-        private CustomerInvitationService $customerInvitations
-    ) {}
-
-    public function index(Request $request): Response
+    public function index(Request $request): RedirectResponse
     {
-        $user = $request->user();
-        $invitation = $this->customerInvitations->activeInvitation($user);
-
-        if (! $invitation) {
-            abort(404, 'Tidak ada undangan aktif');
-        }
-
-        $rsvps = Rsvp::where('invitation_id', $invitation->id)
-            ->where('is_from_akadnya', false)
-            ->with('guest')
-            ->latest()
-            ->paginate(20);
-
-        $stats = [
-            'total' => Rsvp::where('invitation_id', $invitation->id)->where('is_from_akadnya', false)->count(),
-            'hadir' => Rsvp::where('invitation_id', $invitation->id)->where('attendance', 'yes')->count(),
-            'tidak_hadir' => Rsvp::where('invitation_id', $invitation->id)->where('attendance', 'no')->count(),
-        ];
-
-        return Inertia::render('Dashboard/Rsvp/Index', [
-            'rsvps' => $rsvps,
-            'stats' => $stats,
-        ]);
+        // The RSVP list now lives as a tab on the Guests page.
+        return redirect()->route('dashboard.guests', ['tab' => 'rsvp']);
     }
 
     /**
@@ -65,6 +37,31 @@ class RsvpController extends Controller
         $rsvp->update(['is_hidden' => false]);
 
         return back()->with('success', 'Ucapan ditampilkan kembali di undangan');
+    }
+
+    /**
+     * Link a legacy orphan RSVP (no guest_id) to a guest on the list.
+     */
+    public function link(Request $request, Rsvp $rsvp): RedirectResponse
+    {
+        $this->authorizeOwner($request, $rsvp);
+
+        $validated = $request->validate([
+            'guest_id' => 'required|integer',
+        ]);
+
+        $guest = $rsvp->invitation->guests()->whereKey($validated['guest_id'])->firstOrFail();
+
+        if ($guest->rsvp()->whereKeyNot($rsvp->id)->exists()) {
+            abort(422, 'Tamu tersebut sudah memiliki konfirmasi lain.');
+        }
+
+        $rsvp->update([
+            'guest_id' => $guest->id,
+            'name' => $guest->name,
+        ]);
+
+        return back()->with('success', "RSVP dihubungkan ke {$guest->name}");
     }
 
     private function authorizeOwner(Request $request, Rsvp $rsvp): void

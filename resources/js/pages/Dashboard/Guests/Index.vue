@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import DashboardLayout from '@/layouts/DashboardLayout.vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
+import DashboardLayout from '@/layouts/DashboardLayout.vue';
 
 interface Guest {
     id: number;
@@ -31,11 +31,49 @@ interface Stats {
     pending: number;
 }
 
+interface RsvpItem {
+    id: number;
+    name: string;
+    attendance: string;
+    pax_count: number;
+    message: string | null;
+    is_hidden: boolean;
+    is_orphan: boolean;
+    created_at: string;
+    guest: {
+        id: number;
+        name: string;
+        phone: string | null;
+        category: string;
+    } | null;
+}
+
+interface RsvpStats {
+    total: number;
+    hadir: number;
+    tidak_hadir: number;
+    tanpa_kode: number;
+}
+
+interface Paginated<T> {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+}
+
+interface UnlinkedGuest {
+    id: number;
+    name: string;
+}
+
 const props = defineProps<{
     invitation: {
         id: number;
         status: string;
     };
+    activeTab: string;
     guests: {
         data: Guest[];
         current_page: number;
@@ -44,11 +82,27 @@ const props = defineProps<{
         total: number;
     };
     stats: Stats;
+    rsvps: Paginated<RsvpItem>;
+    rsvpStats: RsvpStats;
+    unlinkedGuests: UnlinkedGuest[];
     filters: {
         search: string | null;
         category: string;
     };
 }>();
+
+const activeTab = ref(props.activeTab === 'rsvp' ? 'rsvp' : 'daftar');
+
+watch(
+    () => props.activeTab,
+    (tab) => {
+        activeTab.value = tab === 'rsvp' ? 'rsvp' : 'daftar';
+    },
+);
+
+const switchTab = (tab: 'daftar' | 'rsvp') => {
+    activeTab.value = tab;
+};
 
 const isPublished = computed(() => props.invitation?.status === 'published');
 
@@ -129,7 +183,9 @@ const closeEditModal = () => {
 };
 
 const submitEdit = () => {
-    if (!editingGuest.value) return;
+    if (!editingGuest.value) {
+return;
+}
 
     editForm.put(`/dashboard/guests/${editingGuest.value.id}`, {
         onSuccess: () => {
@@ -166,6 +222,7 @@ const filterByCategory = (category: string) => {
     router.get(
         '/dashboard/guests',
         {
+            tab: 'daftar',
             category,
             search: searchQuery.value,
         },
@@ -179,6 +236,7 @@ const search = () => {
     router.get(
         '/dashboard/guests',
         {
+            tab: 'daftar',
             category: selectedCategory.value,
             search: searchQuery.value,
         },
@@ -200,6 +258,7 @@ const closeImportModal = () => {
 
 const handleFileChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
+
     if (target.files && target.files[0]) {
         importForm.file = target.files[0];
     }
@@ -229,25 +288,79 @@ const downloadTemplate = () => {
     a.click();
     window.URL.revokeObjectURL(url);
 };
+
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+
+    return date.toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+};
+
+const getAttendanceBadge = (attendance: string) => {
+    if (attendance === 'yes') {
+        return {
+            class: 'bg-[#AD7F35]/10 text-[#5A1B24] border-[#AD7F35]/30',
+            label: 'Hadir',
+        };
+    }
+
+    return {
+        class: 'bg-red-100 text-red-800 border-red-200',
+        label: 'Tidak Hadir',
+    };
+};
+
+const toggleWishVisibility = (rsvp: RsvpItem) => {
+    const hide = !rsvp.is_hidden;
+    const message = hide
+        ? `Sembunyikan ucapan dari ${rsvp.name} dari undangan publik?`
+        : `Tampilkan kembali ucapan dari ${rsvp.name} di undangan?`;
+
+    if (confirm(message)) {
+        router.post(`/dashboard/rsvp/${rsvp.id}/${hide ? 'hide' : 'show'}`);
+    }
+};
+
+const linkSelections = ref<Record<number, number | ''>>({});
+
+const linkOrphan = (rsvp: RsvpItem) => {
+    const guestId = linkSelections.value[rsvp.id];
+
+    if (!guestId) {
+        alert('Pilih tamu dari daftar terlebih dahulu.');
+
+        return;
+    }
+
+    if (confirm(`Hubungkan konfirmasi "${rsvp.name}" ke tamu yang dipilih?`)) {
+        router.post(`/dashboard/rsvp/${rsvp.id}/link`, {
+            guest_id: guestId,
+        });
+    }
+};
 </script>
 
 <template>
     <DashboardLayout>
-        <Head title="Manajemen Tamu" />
+        <Head title="Tamu" />
 
         <div class="py-8">
             <div class="container mx-auto px-4">
                 <!-- Page Header -->
                 <div class="mb-8 flex items-center justify-between">
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900">
-                            Manajemen Tamu
-                        </h1>
+                        <h1 class="text-3xl font-bold text-gray-900">Tamu</h1>
                         <p class="mt-1 text-gray-600">
-                            Kelola daftar tamu undangan Anda
+                            Daftar tamu, konfirmasi kehadiran, dan ucapan dalam
+                            satu tempat
                         </p>
                     </div>
-                    <div class="flex gap-3">
+                    <div v-if="activeTab === 'daftar'" class="flex gap-3">
                         <button
                             @click="openImportModal"
                             class="rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition hover:border-gray-400"
@@ -296,274 +409,537 @@ const downloadTemplate = () => {
                     </p>
                 </div>
 
-                <!-- Stats Cards -->
-                <div class="mb-8 grid gap-6 md:grid-cols-4">
-                    <div class="rounded-xl bg-white p-6 shadow-md">
-                        <div class="mb-1 text-3xl font-bold text-gray-900">
-                            {{ stats.total }}
-                        </div>
-                        <div class="text-sm text-gray-600">Total Tamu</div>
-                    </div>
-                    <div class="rounded-xl bg-white p-6 shadow-md">
-                        <div class="mb-1 text-3xl font-bold text-[#AD7F35]">
-                            {{ stats.confirmed }}
-                        </div>
-                        <div class="text-sm text-gray-600">
-                            Konfirmasi Hadir
-                        </div>
-                    </div>
-                    <div class="rounded-xl bg-white p-6 shadow-md">
-                        <div class="mb-1 text-3xl font-bold text-red-600">
-                            {{ stats.declined }}
-                        </div>
-                        <div class="text-sm text-gray-600">Tidak Hadir</div>
-                    </div>
-                    <div class="rounded-xl bg-white p-6 shadow-md">
-                        <div class="mb-1 text-3xl font-bold text-yellow-600">
-                            {{ stats.pending }}
-                        </div>
-                        <div class="text-sm text-gray-600">
-                            Belum Konfirmasi
-                        </div>
-                    </div>
+                <!-- Tabs -->
+                <div class="mb-6 flex gap-2">
+                    <button
+                        type="button"
+                        @click="switchTab('daftar')"
+                        class="rounded-lg px-5 py-2.5 font-semibold transition"
+                        :class="
+                            activeTab === 'daftar'
+                                ? 'bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] text-white'
+                                : 'bg-white text-gray-700 shadow-md hover:bg-gray-100'
+                        "
+                    >
+                        Daftar Tamu ({{ stats.total }})
+                    </button>
+                    <button
+                        type="button"
+                        @click="switchTab('rsvp')"
+                        class="rounded-lg px-5 py-2.5 font-semibold transition"
+                        :class="
+                            activeTab === 'rsvp'
+                                ? 'bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] text-white'
+                                : 'bg-white text-gray-700 shadow-md hover:bg-gray-100'
+                        "
+                    >
+                        Konfirmasi & Ucapan ({{ rsvpStats.total }})
+                    </button>
                 </div>
 
-                <!-- Filters -->
-                <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
-                    <div class="flex flex-wrap items-center gap-4">
-                        <!-- Search -->
-                        <div class="min-w-[300px] flex-1">
-                            <input
-                                v-model="searchQuery"
-                                @keyup.enter="search"
-                                type="text"
-                                placeholder="Cari nama atau telepon..."
-                                class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
-                            />
+                <div v-if="activeTab === 'daftar'">
+                    <!-- Stats Cards -->
+                    <div class="mb-8 grid gap-6 md:grid-cols-4">
+                        <div class="rounded-xl bg-white p-6 shadow-md">
+                            <div class="mb-1 text-3xl font-bold text-gray-900">
+                                {{ stats.total }}
+                            </div>
+                            <div class="text-sm text-gray-600">Total Tamu</div>
                         </div>
-
-                        <!-- Category Filter -->
-                        <div class="flex gap-2">
-                            <button
-                                v-for="(label, key) in categoryLabels"
-                                :key="key"
-                                @click="filterByCategory(key)"
-                                class="rounded-lg px-4 py-2 font-medium transition"
-                                :class="
-                                    selectedCategory === key
-                                        ? 'bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] text-white'
-                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                "
+                        <div class="rounded-xl bg-white p-6 shadow-md">
+                            <div class="mb-1 text-3xl font-bold text-[#AD7F35]">
+                                {{ stats.confirmed }}
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                Konfirmasi Hadir
+                            </div>
+                        </div>
+                        <div class="rounded-xl bg-white p-6 shadow-md">
+                            <div class="mb-1 text-3xl font-bold text-red-600">
+                                {{ stats.declined }}
+                            </div>
+                            <div class="text-sm text-gray-600">Tidak Hadir</div>
+                        </div>
+                        <div class="rounded-xl bg-white p-6 shadow-md">
+                            <div
+                                class="mb-1 text-3xl font-bold text-yellow-600"
                             >
-                                {{ label }}
-                                <span v-if="key !== 'all'" class="ml-1">
-                                    ({{ stats[key as keyof Stats] }})
-                                </span>
+                                {{ stats.pending }}
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                Belum Konfirmasi
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
+                        <div class="flex flex-wrap items-center gap-4">
+                            <!-- Search -->
+                            <div class="min-w-[300px] flex-1">
+                                <input
+                                    v-model="searchQuery"
+                                    @keyup.enter="search"
+                                    type="text"
+                                    placeholder="Cari nama atau telepon..."
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
+                                />
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div class="flex gap-2">
+                                <button
+                                    v-for="(label, key) in categoryLabels"
+                                    :key="key"
+                                    @click="filterByCategory(key)"
+                                    class="rounded-lg px-4 py-2 font-medium transition"
+                                    :class="
+                                        selectedCategory === key
+                                            ? 'bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    "
+                                >
+                                    {{ label }}
+                                    <span v-if="key !== 'all'" class="ml-1">
+                                        ({{ stats[key as keyof Stats] }})
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guest List -->
+                    <div class="overflow-hidden rounded-xl bg-white shadow-md">
+                        <div
+                            v-if="guests.data.length === 0"
+                            class="p-12 text-center"
+                        >
+                            <svg
+                                class="mx-auto mb-4 h-16 w-16 text-gray-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                                />
+                            </svg>
+                            <h3
+                                class="mb-2 text-lg font-semibold text-gray-900"
+                            >
+                                Belum ada tamu
+                            </h3>
+                            <p class="mb-4 text-gray-600">
+                                Mulai tambahkan tamu undangan Anda
+                            </p>
+                            <button
+                                @click="openAddModal"
+                                class="rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-3 font-semibold text-white transition hover:shadow-lg"
+                            >
+                                + Tambah Tamu Pertama
                             </button>
                         </div>
+
+                        <table v-else class="w-full">
+                            <thead class="border-b border-gray-200 bg-gray-50">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
+                                        Nama
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
+                                        Telepon
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
+                                        Kategori
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
+                                        Max Pax
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
+                                        Status RSVP
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    >
+                                        Aksi
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white">
+                                <tr
+                                    v-for="guest in guests.data"
+                                    :key="guest.id"
+                                    class="hover:bg-gray-50"
+                                >
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="font-medium text-gray-900">
+                                            {{ guest.name }}
+                                        </div>
+                                        <div
+                                            v-if="guest.notes"
+                                            class="text-sm text-gray-500"
+                                        >
+                                            {{ guest.notes }}
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
+                                    >
+                                        {{ guest.phone || '-' }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span
+                                            class="rounded-full px-2 py-1 text-xs font-medium"
+                                            :class="
+                                                categoryColors[guest.category]
+                                            "
+                                        >
+                                            {{ categoryLabels[guest.category] }}
+                                        </span>
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
+                                    >
+                                        {{ guest.max_pax }} orang
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span
+                                            v-if="guest.has_rsvp"
+                                            class="rounded-full px-2 py-1 text-xs font-medium"
+                                            :class="
+                                                guest.rsvp?.attendance === 'yes'
+                                                    ? 'bg-[#AD7F35]/10 text-[#5A1B24]'
+                                                    : 'bg-red-100 text-red-800'
+                                            "
+                                        >
+                                            {{
+                                                guest.rsvp?.attendance === 'yes'
+                                                    ? `Hadir (${guest.rsvp.pax_count})`
+                                                    : 'Tidak Hadir'
+                                            }}
+                                        </span>
+                                        <span
+                                            v-else
+                                            class="rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800"
+                                        >
+                                            Belum Konfirmasi
+                                        </span>
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm whitespace-nowrap"
+                                    >
+                                        <div class="flex gap-2">
+                                            <button
+                                                @click="
+                                                    copyLink(
+                                                        guest.personal_link,
+                                                    )
+                                                "
+                                                class="text-[#5A1B24] hover:text-[#5A1B24] disabled:cursor-not-allowed disabled:opacity-30"
+                                                title="Copy Link"
+                                                :disabled="!isPublished"
+                                            >
+                                                🔗
+                                            </button>
+                                            <button
+                                                v-if="guest.phone"
+                                                @click="sendWhatsApp(guest.id)"
+                                                class="text-[#AD7F35] hover:text-[#5A1B24] disabled:cursor-not-allowed disabled:opacity-30"
+                                                title="Kirim WhatsApp"
+                                                :disabled="!isPublished"
+                                            >
+                                                📱
+                                            </button>
+                                            <button
+                                                @click="openEditModal(guest)"
+                                                class="text-gray-600 hover:text-gray-800"
+                                                title="Edit"
+                                            >
+                                                ✏️
+                                            </button>
+                                            <button
+                                                @click="deleteGuest(guest)"
+                                                class="text-red-600 hover:text-red-800"
+                                                title="Hapus"
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination -->
+                        <div
+                            v-if="guests.last_page > 1"
+                            class="flex items-center justify-between border-t border-gray-200 px-6 py-4"
+                        >
+                            <div class="text-sm text-gray-700">
+                                Menampilkan
+                                {{
+                                    (guests.current_page - 1) *
+                                        guests.per_page +
+                                    1
+                                }}
+                                -
+                                {{
+                                    Math.min(
+                                        guests.current_page * guests.per_page,
+                                        guests.total,
+                                    )
+                                }}
+                                dari {{ guests.total }} tamu
+                            </div>
+                            <div class="flex gap-2">
+                                <Link
+                                    v-for="page in guests.last_page"
+                                    :key="page"
+                                    :href="`/dashboard/guests?tab=${activeTab}&page=${page}&category=${selectedCategory}&search=${searchQuery}`"
+                                    class="rounded px-3 py-1"
+                                    :class="
+                                        page === guests.current_page
+                                            ? 'bg-[#AD7F35] text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    "
+                                >
+                                    {{ page }}
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Guest List -->
-                <div class="overflow-hidden rounded-xl bg-white shadow-md">
-                    <div
-                        v-if="guests.data.length === 0"
-                        class="p-12 text-center"
-                    >
-                        <svg
-                            class="mx-auto mb-4 h-16 w-16 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                            />
-                        </svg>
-                        <h3 class="mb-2 text-lg font-semibold text-gray-900">
-                            Belum ada tamu
-                        </h3>
-                        <p class="mb-4 text-gray-600">
-                            Mulai tambahkan tamu undangan Anda
-                        </p>
-                        <button
-                            @click="openAddModal"
-                            class="rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-3 font-semibold text-white transition hover:shadow-lg"
-                        >
-                            + Tambah Tamu Pertama
-                        </button>
+                <div v-else>
+                    <!-- RSVP Stats Cards -->
+                    <div class="mb-8 grid gap-6 md:grid-cols-4">
+                        <div class="rounded-xl bg-white p-6 shadow-md">
+                            <div class="mb-1 text-3xl font-bold text-gray-900">
+                                {{ rsvpStats.total }}
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                Total Konfirmasi
+                            </div>
+                        </div>
+                        <div class="rounded-xl bg-white p-6 shadow-md">
+                            <div class="mb-1 text-3xl font-bold text-[#AD7F35]">
+                                {{ rsvpStats.hadir }}
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                Konfirmasi Hadir
+                            </div>
+                        </div>
+                        <div class="rounded-xl bg-white p-6 shadow-md">
+                            <div class="mb-1 text-3xl font-bold text-red-600">
+                                {{ rsvpStats.tidak_hadir }}
+                            </div>
+                            <div class="text-sm text-gray-600">Tidak Hadir</div>
+                        </div>
+                        <div class="rounded-xl bg-white p-6 shadow-md">
+                            <div
+                                class="mb-1 text-3xl font-bold text-yellow-600"
+                            >
+                                {{ rsvpStats.tanpa_kode }}
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                Tanpa Kode Tamu
+                            </div>
+                        </div>
                     </div>
 
-                    <table v-else class="w-full">
-                        <thead class="border-b border-gray-200 bg-gray-50">
-                            <tr>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                >
-                                    Nama
-                                </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                >
-                                    Telepon
-                                </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                >
-                                    Kategori
-                                </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                >
-                                    Max Pax
-                                </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                >
-                                    Status RSVP
-                                </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                >
-                                    Aksi
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200 bg-white">
-                            <tr
-                                v-for="guest in guests.data"
-                                :key="guest.id"
-                                class="hover:bg-gray-50"
+                    <!-- RSVP List -->
+                    <div class="overflow-hidden rounded-xl bg-white shadow-md">
+                        <div
+                            v-if="rsvps.data.length === 0"
+                            class="p-12 text-center"
+                        >
+                            <h3
+                                class="mb-2 text-lg font-semibold text-gray-900"
                             >
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="font-medium text-gray-900">
-                                        {{ guest.name }}
-                                    </div>
-                                    <div
-                                        v-if="guest.notes"
-                                        class="text-sm text-gray-500"
-                                    >
-                                        {{ guest.notes }}
-                                    </div>
-                                </td>
-                                <td
-                                    class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
+                                Belum ada konfirmasi
+                            </h3>
+                            <p class="text-gray-600">
+                                Bagikan link personal dari tab Daftar Tamu agar
+                                setiap konfirmasi tercatat atas nama tamu yang
+                                tepat.
+                            </p>
+                        </div>
+
+                        <div v-else class="divide-y divide-gray-200">
+                            <div
+                                v-for="rsvp in rsvps.data"
+                                :key="rsvp.id"
+                                class="p-6 transition hover:bg-gray-50"
+                            >
+                                <div
+                                    class="mb-2 flex flex-wrap items-center gap-3"
                                 >
-                                    {{ guest.phone || '-' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        class="rounded-full px-2 py-1 text-xs font-medium"
-                                        :class="categoryColors[guest.category]"
+                                    <h3
+                                        class="text-lg font-semibold text-gray-900"
                                     >
-                                        {{ categoryLabels[guest.category] }}
-                                    </span>
-                                </td>
-                                <td
-                                    class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                                >
-                                    {{ guest.max_pax }} orang
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                        {{ rsvp.name }}
+                                    </h3>
                                     <span
-                                        v-if="guest.has_rsvp"
-                                        class="rounded-full px-2 py-1 text-xs font-medium"
+                                        class="rounded-full border px-3 py-1 text-xs font-medium"
                                         :class="
-                                            guest.rsvp?.attendance === 'yes'
-                                                ? 'bg-[#AD7F35]/10 text-[#5A1B24]'
-                                                : 'bg-red-100 text-red-800'
+                                            getAttendanceBadge(rsvp.attendance)
+                                                .class
                                         "
                                     >
                                         {{
-                                            guest.rsvp?.attendance === 'yes'
-                                                ? `Hadir (${guest.rsvp.pax_count})`
-                                                : 'Tidak Hadir'
+                                            getAttendanceBadge(rsvp.attendance)
+                                                .label
                                         }}
+                                        <span v-if="rsvp.attendance === 'yes'">
+                                            ({{ rsvp.pax_count }})
+                                        </span>
                                     </span>
                                     <span
-                                        v-else
-                                        class="rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800"
+                                        v-if="rsvp.is_orphan"
+                                        class="rounded-full border border-yellow-200 bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800"
                                     >
-                                        Belum Konfirmasi
+                                        Tanpa kode tamu
                                     </span>
-                                </td>
-                                <td class="px-6 py-4 text-sm whitespace-nowrap">
-                                    <div class="flex gap-2">
+                                    <span
+                                        v-else-if="rsvp.guest"
+                                        class="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700"
+                                    >
+                                        {{ rsvp.guest.name }}
+                                        <span v-if="rsvp.guest.phone">
+                                            · {{ rsvp.guest.phone }}
+                                        </span>
+                                    </span>
+                                </div>
+
+                                <p class="text-sm text-gray-500">
+                                    {{ formatDate(rsvp.created_at) }}
+                                </p>
+
+                                <div
+                                    v-if="rsvp.is_orphan"
+                                    class="mt-3 flex flex-wrap items-center gap-2 rounded-lg bg-yellow-50 p-3 ring-1 ring-yellow-200"
+                                >
+                                    <span class="text-sm text-yellow-800">
+                                        Konfirmasi lama yang belum terhubung ke
+                                        daftar tamu:
+                                    </span>
+                                    <select
+                                        v-model="linkSelections[rsvp.id]"
+                                        class="rounded-lg border border-yellow-300 bg-white px-3 py-1.5 text-sm"
+                                    >
+                                        <option value="" disabled selected>
+                                            Pilih tamu…
+                                        </option>
+                                        <option
+                                            v-for="guest in unlinkedGuests"
+                                            :key="guest.id"
+                                            :value="guest.id"
+                                        >
+                                            {{ guest.name }}
+                                        </option>
+                                    </select>
+                                    <button
+                                        type="button"
+                                        @click="linkOrphan(rsvp)"
+                                        class="rounded-lg bg-[#AD7F35] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#5A1B24]"
+                                    >
+                                        Hubungkan
+                                    </button>
+                                </div>
+
+                                <div
+                                    v-if="rsvp.message"
+                                    class="mt-3 rounded-lg p-3 transition"
+                                    :class="
+                                        rsvp.is_hidden
+                                            ? 'bg-yellow-50 ring-1 ring-yellow-200'
+                                            : 'bg-gray-50'
+                                    "
+                                >
+                                    <p
+                                        class="text-sm text-gray-700 italic"
+                                        :class="{
+                                            'opacity-60': rsvp.is_hidden,
+                                        }"
+                                    >
+                                        "{{ rsvp.message }}"
+                                    </p>
+                                    <div class="mt-2 flex items-center gap-3">
+                                        <span
+                                            v-if="rsvp.is_hidden"
+                                            class="rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800"
+                                        >
+                                            Disembunyikan dari undangan
+                                        </span>
                                         <button
-                                            @click="
-                                                copyLink(guest.personal_link)
+                                            type="button"
+                                            class="text-xs font-medium hover:underline"
+                                            :class="
+                                                rsvp.is_hidden
+                                                    ? 'text-[#AD7F35] hover:text-[#5A1B24]'
+                                                    : 'text-red-600 hover:text-red-700'
                                             "
-                                            class="text-[#5A1B24] hover:text-[#5A1B24] disabled:cursor-not-allowed disabled:opacity-30"
-                                            title="Copy Link"
-                                            :disabled="!isPublished"
+                                            @click="toggleWishVisibility(rsvp)"
                                         >
-                                            🔗
-                                        </button>
-                                        <button
-                                            v-if="guest.phone"
-                                            @click="sendWhatsApp(guest.id)"
-                                            class="text-[#AD7F35] hover:text-[#5A1B24] disabled:cursor-not-allowed disabled:opacity-30"
-                                            title="Kirim WhatsApp"
-                                            :disabled="!isPublished"
-                                        >
-                                            📱
-                                        </button>
-                                        <button
-                                            @click="openEditModal(guest)"
-                                            class="text-gray-600 hover:text-gray-800"
-                                            title="Edit"
-                                        >
-                                            ✏️
-                                        </button>
-                                        <button
-                                            @click="deleteGuest(guest)"
-                                            class="text-red-600 hover:text-red-800"
-                                            title="Hapus"
-                                        >
-                                            🗑️
+                                            {{
+                                                rsvp.is_hidden
+                                                    ? 'Tampilkan di undangan'
+                                                    : 'Sembunyikan dari undangan'
+                                            }}
                                         </button>
                                     </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <!-- Pagination -->
-                    <div
-                        v-if="guests.last_page > 1"
-                        class="flex items-center justify-between border-t border-gray-200 px-6 py-4"
-                    >
-                        <div class="text-sm text-gray-700">
-                            Menampilkan
-                            {{
-                                (guests.current_page - 1) * guests.per_page + 1
-                            }}
-                            -
-                            {{
-                                Math.min(
-                                    guests.current_page * guests.per_page,
-                                    guests.total,
-                                )
-                            }}
-                            dari {{ guests.total }} tamu
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex gap-2">
-                            <Link
-                                v-for="page in guests.last_page"
-                                :key="page"
-                                :href="`/dashboard/guests?page=${page}&category=${selectedCategory}&search=${searchQuery}`"
-                                class="rounded px-3 py-1"
-                                :class="
-                                    page === guests.current_page
-                                        ? 'bg-[#AD7F35] text-white'
-                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                "
-                            >
-                                {{ page }}
-                            </Link>
+
+                        <!-- RSVP Pagination -->
+                        <div
+                            v-if="rsvps.last_page > 1"
+                            class="flex items-center justify-between border-t border-gray-200 px-6 py-4"
+                        >
+                            <div class="text-sm text-gray-700">
+                                Menampilkan
+                                {{
+                                    (rsvps.current_page - 1) * rsvps.per_page +
+                                    1
+                                }}
+                                -
+                                {{
+                                    Math.min(
+                                        rsvps.current_page * rsvps.per_page,
+                                        rsvps.total,
+                                    )
+                                }}
+                                dari {{ rsvps.total }} konfirmasi
+                            </div>
+                            <div class="flex gap-2">
+                                <Link
+                                    v-for="page in rsvps.last_page"
+                                    :key="page"
+                                    :href="`/dashboard/guests?tab=rsvp&rsvp_page=${page}`"
+                                    class="rounded px-3 py-1"
+                                    :class="
+                                        page === rsvps.current_page
+                                            ? 'bg-[#AD7F35] text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    "
+                                >
+                                    {{ page }}
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>

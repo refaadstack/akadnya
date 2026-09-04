@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guest;
+use App\Models\Rsvp;
 use App\Services\CustomerInvitationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -54,11 +55,35 @@ class GuestController extends Controller
             'pending' => $invitation->guests()->count() - $invitation->guests()->whereHas('rsvp')->count(),
         ];
 
+        // Confirmation & wishes tab: every RSVP is a guest confirmation
+        // (attendance) optionally carrying a wish message.
+        $activeTab = $request->query('tab') === 'rsvp' ? 'rsvp' : 'daftar';
+
+        $rsvps = Rsvp::where('invitation_id', $invitation->id)
+            ->where('is_from_akadnya', false)
+            ->with('guest')
+            ->latest()
+            ->paginate(20, ['*'], 'rsvp_page');
+
+        $rsvpStats = [
+            'total' => Rsvp::where('invitation_id', $invitation->id)->where('is_from_akadnya', false)->count(),
+            'hadir' => Rsvp::where('invitation_id', $invitation->id)->where('attendance', 'yes')->count(),
+            'tidak_hadir' => Rsvp::where('invitation_id', $invitation->id)->where('attendance', 'no')->count(),
+            'tanpa_kode' => Rsvp::where('invitation_id', $invitation->id)->whereNull('guest_id')->count(),
+        ];
+
+        $unlinkedGuests = $invitation->guests()
+            ->whereDoesntHave('rsvp')
+            ->orderBy('name')
+            ->limit(200)
+            ->get(['id', 'name']);
+
         return inertia('Dashboard/Guests/Index', [
             'invitation' => [
                 'id' => $invitation->id,
                 'status' => $invitation->status,
             ],
+            'activeTab' => $activeTab,
             'guests' => $guests->through(fn ($guest) => [
                 'id' => $guest->id,
                 'name' => $guest->name,
@@ -76,6 +101,24 @@ class GuestController extends Controller
                 ] : null,
             ]),
             'stats' => $stats,
+            'rsvps' => $rsvps->through(fn ($rsvp) => [
+                'id' => $rsvp->id,
+                'name' => $rsvp->name ?? $rsvp->guest?->name ?? 'Tamu',
+                'attendance' => $rsvp->attendance,
+                'pax_count' => $rsvp->pax_count,
+                'message' => $rsvp->message,
+                'is_hidden' => $rsvp->is_hidden,
+                'is_orphan' => $rsvp->guest_id === null,
+                'created_at' => $rsvp->created_at,
+                'guest' => $rsvp->guest ? [
+                    'id' => $rsvp->guest->id,
+                    'name' => $rsvp->guest->name,
+                    'phone' => $rsvp->guest->phone,
+                    'category' => $rsvp->guest->category,
+                ] : null,
+            ]),
+            'rsvpStats' => $rsvpStats,
+            'unlinkedGuests' => $unlinkedGuests,
             'filters' => [
                 'search' => $request->search,
                 'category' => $request->category ?? 'all',

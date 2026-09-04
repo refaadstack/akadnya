@@ -149,10 +149,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('dashboard/guests/export', [GuestController::class, 'export'])->name('dashboard.guests.export');
         Route::get('dashboard/guests/{guest}/whatsapp', [GuestController::class, 'sendWhatsApp'])->name('dashboard.guests.whatsapp');
 
-        // RSVP management
+        // RSVP management (list lives as a tab on the Guests page)
         Route::get('dashboard/rsvp', [RsvpController::class, 'index'])->name('dashboard.rsvp');
         Route::post('dashboard/rsvp/{rsvp}/hide', [RsvpController::class, 'hide'])->name('dashboard.rsvp.hide');
         Route::post('dashboard/rsvp/{rsvp}/show', [RsvpController::class, 'show'])->name('dashboard.rsvp.show');
+        Route::post('dashboard/rsvp/{rsvp}/link', [RsvpController::class, 'link'])->name('dashboard.rsvp.link');
 
         // Guest book (venue)
         Route::get('dashboard/guest-book', [GuestBookController::class, 'index'])->name('dashboard.guest-book');

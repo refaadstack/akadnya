@@ -103,9 +103,9 @@ test('auto wish does not pollute rsvp analytics and roster', function () {
         );
 
     $this->actingAs($invitation->user)
-        ->get('/dashboard/rsvp')
+        ->get('/dashboard/guests?tab=rsvp')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->where('stats.total', 0));
+        ->assertInertia(fn ($page) => $page->where('rsvpStats.total', 0));
 });
 
 test('backfill seeds the Akadnya wish for published invitations that lack one', function () {

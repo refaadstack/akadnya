@@ -35,29 +35,36 @@ function inviteWithWishesToggle(bool $showWishes): Invitation
 
 test('rsvp stores the guest message when wishes are shown', function () {
     $invitation = inviteWithWishesToggle(true);
+    $guest = $invitation->guests()->where('name', 'Budi Santoso')->firstOrFail();
 
-    $response = $this->post("/i/{$invitation->subdomain}/rsvp", [
-        'name' => 'Tamu Baik',
-        'attendance' => 'yes',
-        'pax_count' => 2,
-        'message' => 'Selamat menempati hidup baru!',
-    ]);
+    $response = $this
+        ->withSession(['invitation_guest.'.$invitation->id => $guest->id])
+        ->post("/i/{$invitation->subdomain}/rsvp", [
+            'name' => 'Tamu Baik',
+            'attendance' => 'yes',
+            'pax_count' => 2,
+            'message' => 'Selamat menempati hidup baru!',
+        ]);
 
     $response->assertRedirect();
 
     $rsvp = Rsvp::where('invitation_id', $invitation->id)->first();
     expect($rsvp)->not->toBeNull();
+    expect($rsvp->guest_id)->toBe($guest->id);
     expect($rsvp->message)->toBe('Selamat menempati hidup baru!');
 });
 
 test('rsvp drops the message when the couple hides wishes', function () {
     $invitation = inviteWithWishesToggle(false);
+    $guest = $invitation->guests()->where('name', 'Budi Santoso')->firstOrFail();
 
-    $response = $this->post("/i/{$invitation->subdomain}/rsvp", [
-        'name' => 'Tamu Isekai',
-        'attendance' => 'no',
-        'message' => '<script>alert("spam")</script> promosi judi',
-    ]);
+    $response = $this
+        ->withSession(['invitation_guest.'.$invitation->id => $guest->id])
+        ->post("/i/{$invitation->subdomain}/rsvp", [
+            'name' => 'Tamu Isekai',
+            'attendance' => 'no',
+            'message' => '<script>alert("spam")</script> promosi judi',
+        ]);
 
     $response->assertRedirect();
 

@@ -83,16 +83,6 @@ const logout = () => {
                         >
                             Tamu
                         </Link>
-                        <Link
-                            href="/dashboard/rsvp"
-                            class="font-medium text-gray-700 transition hover:text-pink-600"
-                            :class="{
-                                'text-pink-600':
-                                    $page.url.startsWith('/dashboard/rsvp'),
-                            }"
-                        >
-                            RSVP
-                        </Link>
                     </div>
 
                     <!-- User Menu -->

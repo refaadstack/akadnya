@@ -2,7 +2,6 @@
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
     BookOpen,
-    CalendarCheck,
     ChevronDown,
     ClipboardCheck,
     Image,
@@ -24,6 +23,7 @@ interface NavItem {
     icon: Component;
     requiresInvitation?: boolean;
     requiresFeature?: string;
+    locked?: boolean;
 }
 
 const showUserMenu = ref(false);
@@ -80,12 +80,6 @@ const navItems = computed<NavItem[]>(() => {
             requiresFeature: 'guest_book',
         },
         {
-            label: 'RSVP',
-            href: '/dashboard/rsvp',
-            icon: CalendarCheck,
-            requiresInvitation: true,
-        },
-        {
             label: 'Transaksi',
             href: '/dashboard/transactions',
             icon: ReceiptText,
@@ -104,7 +98,14 @@ const navItems = computed<NavItem[]>(() => {
         }
 
         if (item.requiresFeature && !features.includes(item.requiresFeature)) {
-            return false;
+            // Paid venue toolkit: show a locked upsell entry instead of
+            // hiding the feature entirely.
+            if (item.requiresFeature === 'guest_book' && hasInvitation) {
+                item.locked = true;
+                item.href = '/produk';
+            } else {
+                return false;
+            }
         }
 
         return true;
@@ -127,7 +128,9 @@ const logout = () => {
 <template>
     <div class="min-h-screen bg-[var(--my-background)] pt-16 md:pt-20">
         <!-- Floating Navigation -->
-        <nav class="fixed top-3 right-3 left-3 z-40 md:top-5 md:right-5 md:left-5">
+        <nav
+            class="fixed top-3 right-3 left-3 z-40 md:top-5 md:right-5 md:left-5"
+        >
             <div
                 class="mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-full border border-[var(--my-border)]/60 bg-[var(--my-background)]/95 px-3 py-2 shadow-lg shadow-black/5 md:px-5 md:py-2.5"
             >
@@ -160,6 +163,10 @@ const logout = () => {
                         "
                     >
                         {{ item.label }}
+                        <LockKeyhole
+                            v-if="item.locked"
+                            class="ml-1 inline size-3"
+                        />
                     </Link>
                 </div>
 
@@ -209,9 +216,7 @@ const logout = () => {
                                     .toUpperCase() || 'U'
                             }}
                         </span>
-                        <ChevronDown
-                            class="size-4 text-[var(--my-muted)]"
-                        />
+                        <ChevronDown class="size-4 text-[var(--my-muted)]" />
                     </button>
 
                     <div
@@ -227,9 +232,7 @@ const logout = () => {
                             >
                                 {{ $page.props.auth?.user?.name }}
                             </p>
-                            <p
-                                class="truncate text-xs text-[var(--my-muted)]"
-                            >
+                            <p class="truncate text-xs text-[var(--my-muted)]">
                                 {{ $page.props.auth?.user?.email }}
                             </p>
                         </div>
@@ -291,13 +294,15 @@ const logout = () => {
                     >
                         <component :is="item.icon" class="size-5" />
                         {{ item.label }}
+                        <LockKeyhole
+                            v-if="item.locked"
+                            class="ml-auto size-4"
+                        />
                     </Link>
                 </div>
                 <div class="mt-4 border-t border-[var(--my-border)] pt-4">
                     <div class="mb-3 px-3">
-                        <p
-                            class="text-sm font-bold text-[var(--my-neutral)]"
-                        >
+                        <p class="text-sm font-bold text-[var(--my-neutral)]">
                             {{ $page.props.auth?.user?.name }}
                         </p>
                         <p class="text-xs text-[var(--my-muted)]">

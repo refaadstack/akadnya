@@ -253,7 +253,7 @@ const structuredData = computed(() => {
                                             {{ question.question }}
                                         </h3>
                                         <svg
-                                            class="h-6 w-6 flex-shrink-0 text-[var(--my-primary)] transition-transform"
+                                            class="h-6 w-6 shrink-0 text-[var(--my-primary)] transition-transform"
                                             :class="{
                                                 'rotate-180': isExpanded(
                                                     categoryIndex,

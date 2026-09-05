@@ -118,9 +118,7 @@ const props = defineProps<{
                                     backgroundImage: `url(${invitation.content.cover_photo_url})`,
                                 }"
                             >
-                                <div
-                                    class="bg-opacity-40 absolute inset-0 bg-black"
-                                ></div>
+                                <div class="absolute inset-0 bg-black/40"></div>
                             </div>
                             <div
                                 v-else

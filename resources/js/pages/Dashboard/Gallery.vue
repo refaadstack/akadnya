@@ -250,7 +250,7 @@ const onDrop = (event: DragEvent, dropIndex: number) => {
 
                         <!-- Overlay -->
                         <div
-                            class="bg-opacity-0 group-hover:bg-opacity-50 absolute inset-0 flex items-center justify-center bg-black transition"
+                            class="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/50"
                         >
                             <div
                                 class="space-x-2 opacity-0 transition group-hover:opacity-100"
@@ -308,7 +308,7 @@ const onDrop = (event: DragEvent, dropIndex: number) => {
 
                         <!-- Sort Order Badge -->
                         <div
-                            class="bg-opacity-75 absolute top-2 left-2 rounded bg-gray-900 px-2 py-1 text-xs font-semibold text-white"
+                            class="absolute top-2 left-2 rounded bg-gray-900/75 px-2 py-1 text-xs font-semibold text-white"
                         >
                             #{{ index + 1 }}
                         </div>
@@ -320,7 +320,7 @@ const onDrop = (event: DragEvent, dropIndex: number) => {
         <!-- Edit Caption Modal -->
         <div
             v-if="editingCaption !== null"
-            class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
             @click.self="editingCaption = null"
         >
             <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">

@@ -78,7 +78,7 @@ const formatTime = (datetime: string) => {
                         <!-- Date -->
                         <div class="flex items-start">
                             <svg
-                                class="mt-1 mr-3 h-6 w-6 flex-shrink-0 text-amber-600"
+                                class="mt-1 mr-3 h-6 w-6 shrink-0 text-amber-600"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -103,7 +103,7 @@ const formatTime = (datetime: string) => {
                         <!-- Venue -->
                         <div class="flex items-start">
                             <svg
-                                class="mt-1 mr-3 h-6 w-6 flex-shrink-0 text-amber-600"
+                                class="mt-1 mr-3 h-6 w-6 shrink-0 text-amber-600"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -179,7 +179,7 @@ const formatTime = (datetime: string) => {
                         <!-- Date -->
                         <div class="flex items-start">
                             <svg
-                                class="mt-1 mr-3 h-6 w-6 flex-shrink-0 text-amber-600"
+                                class="mt-1 mr-3 h-6 w-6 shrink-0 text-amber-600"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -204,7 +204,7 @@ const formatTime = (datetime: string) => {
                         <!-- Venue -->
                         <div class="flex items-start">
                             <svg
-                                class="mt-1 mr-3 h-6 w-6 flex-shrink-0 text-amber-600"
+                                class="mt-1 mr-3 h-6 w-6 shrink-0 text-amber-600"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"

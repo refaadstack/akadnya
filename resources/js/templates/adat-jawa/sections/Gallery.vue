@@ -113,7 +113,7 @@ const closeLightbox = () => {
             <div
                 v-if="selectedPhoto"
                 @click="closeLightbox"
-                class="bg-opacity-90 fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
             >
                 <!-- Close Button -->
                 <button

@@ -887,7 +887,7 @@ const toggleWishVisibility = (rsvp: RsvpItem) => {
         <!-- Add Modal -->
         <div
             v-if="showAddModal"
-            class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
         >
             <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
                 <h2 class="mb-6 text-2xl font-bold text-gray-900">
@@ -947,7 +947,7 @@ const toggleWishVisibility = (rsvp: RsvpItem) => {
         <!-- Edit Modal -->
         <div
             v-if="showEditModal"
-            class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
         >
             <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
                 <h2 class="mb-6 text-2xl font-bold text-gray-900">Edit Tamu</h2>
@@ -1005,7 +1005,7 @@ const toggleWishVisibility = (rsvp: RsvpItem) => {
         <!-- Import Modal -->
         <div
             v-if="showImportModal"
-            class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
         >
             <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
                 <h2 class="mb-6 text-2xl font-bold text-gray-900">

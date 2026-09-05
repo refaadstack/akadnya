@@ -8,7 +8,6 @@ import {
     ChevronDown,
     ChevronUp,
     CircleHelp,
-    Edit3,
     Eye,
     Image,
     LayoutDashboard,
@@ -105,14 +104,6 @@ interface StatCard {
     icon: Component;
 }
 
-interface AllTemplate {
-    id: number;
-    slug: string;
-    name: string;
-    thumbnail_url: string | null;
-    is_owned: boolean;
-}
-
 const props = defineProps<{
     stats: Stats;
     invitation: InvitationData | null;
@@ -120,7 +111,6 @@ const props = defineProps<{
     recentRsvps: RecentRsvp[];
     recentWishes: RecentWish[];
     invitationOptions: InvitationOption[];
-    allTemplates: AllTemplate[];
 }>();
 
 const showQuickStartGuide = ref(true);
@@ -213,16 +203,6 @@ const unpublishInvitation = () => {
 const selectInvitation = (invitationId: number) => {
     router.post(
         `/dashboard/invitations/${invitationId}/select`,
-        {},
-        {
-            preserveScroll: true,
-        },
-    );
-};
-
-const selectTemplate = (template: AllTemplate) => {
-    router.post(
-        `/dashboard/templates/${template.id}/select`,
         {},
         {
             preserveScroll: true,
@@ -352,86 +332,20 @@ const selectTemplate = (template: AllTemplate) => {
                 </div>
             </section>
 
-            <section v-if="allTemplates.length > 0" class="my-card mb-8 p-6">
+            <section class="my-card mb-8 p-6">
                 <div
-                    class="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between"
+                    class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
                 >
                     <div>
-                        <h2 class="my-heading text-2xl">Semua Template</h2>
+                        <h2 class="my-heading text-2xl">Cari gaya lain?</h2>
                         <p class="mt-1 text-[var(--my-muted)]">
-                            Pilih dan pakai template apapun untuk membuat
-                            undangan baru, lalu kustomisasi section-nya
-                            sesukamu.
+                            Lihat katalog template lengkap dengan preview dan
+                            harga.
                         </p>
                     </div>
-                    <span class="text-sm font-bold text-[var(--my-primary)]"
-                        >{{ allTemplates.length }} template tersedia</span
-                    >
-                </div>
-
-                <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    <div
-                        v-for="template in allTemplates"
-                        :key="template.id"
-                        class="flex flex-col rounded-lg border border-[var(--my-border)] bg-white/60 p-4 transition hover:-translate-y-0.5 hover:border-[var(--my-primary)]"
-                    >
-                        <div class="flex gap-4">
-                            <div
-                                class="grid h-20 w-16 shrink-0 place-items-center overflow-hidden rounded-lg bg-[var(--my-surface-soft)]"
-                            >
-                                <img
-                                    v-if="template.thumbnail_url"
-                                    :src="template.thumbnail_url"
-                                    :alt="template.name"
-                                    class="h-full w-full object-cover"
-                                />
-                                <span
-                                    v-else
-                                    class="font-display text-xl font-bold text-[var(--my-primary)]"
-                                    >My</span
-                                >
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <div class="mb-1 flex items-center gap-2">
-                                    <h3
-                                        class="truncate font-bold text-[var(--my-neutral)]"
-                                    >
-                                        {{ template.name }}
-                                    </h3>
-                                    <span
-                                        v-if="template.is_owned"
-                                        class="rounded-full bg-[var(--my-primary)]/12 px-2 py-0.5 text-xs font-bold text-[var(--my-primary)]"
-                                    >
-                                        Dimiliki
-                                    </span>
-                                </div>
-                                <p
-                                    class="truncate text-xs text-[var(--my-muted)]"
-                                >
-                                    {{ template.slug }}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <a
-                                v-if="!template.is_owned"
-                                :href="`/templates/${template.slug}`"
-                                class="my-btn-primary w-full gap-2"
-                            >
-                                <Eye class="size-4" />
-                                Lihat & Beli
-                            </a>
-                            <button
-                                v-else
-                                type="button"
-                                class="my-btn-primary w-full gap-2"
-                                @click="selectTemplate(template)"
-                            >
-                                <Edit3 class="size-4" />
-                                Pakai Template Ini
-                            </button>
-                        </div>
-                    </div>
+                    <Link href="/templates" class="my-btn-primary w-fit">
+                        Lihat Katalog Template
+                    </Link>
                 </div>
             </section>
 

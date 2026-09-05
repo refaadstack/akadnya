@@ -78,11 +78,10 @@ test('dashboard analytics include attendance rate, check-ins and rsvp trend', fu
         );
 });
 
-test('dashboard exposes all active templates with ownership flags', function () {
+test('dashboard no longer exposes the template catalog', function () {
     $user = User::factory()->create();
     $owned = Template::factory()->create(['name' => 'Owned Template']);
     $other = Template::factory()->create(['name' => 'Another Template']);
-    Template::factory()->inactive()->create(['name' => 'Hidden Template']);
 
     Invitation::factory()->for($user)->for($owned)->create([
         'subdomain' => 'owned-'.strtolower(str()->random(6)),
@@ -92,93 +91,7 @@ test('dashboard exposes all active templates with ownership flags', function () 
         ->get(route('dashboard'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->where('allTemplates.0.name', 'Another Template')
-            ->where('allTemplates.0.is_owned', false)
-            ->where('allTemplates.1.name', 'Owned Template')
-            ->where('allTemplates.1.is_owned', true)
-            ->has('allTemplates', 2)
+            ->missing('allTemplates')
+            ->has('invitationOptions', 1)
         );
-});
-
-test('user cannot adopt a template they do not own', function () {
-    $user = User::factory()->create();
-    $template = Template::factory()->create();
-
-    $this->actingAs($user)
-        ->post(route('dashboard.templates.select', $template))
-        ->assertRedirect(route('templates.show', ['slug' => $template->slug]));
-
-    expect(Invitation::where('template_id', $template->id)->exists())->toBeFalse();
-    expect($user->fresh()->active_invitation_id)->toBeNull();
-});
-
-test('user can adopt a template they own via a paid order', function () {
-    $user = User::factory()->create();
-    $template = Template::factory()->create();
-
-    $order = \App\Models\Order::create([
-        'user_id' => $user->id,
-        'order_number' => 'ORD-TEST-'.strtoupper(str()->random(6)),
-        'status' => 'paid',
-        'total_amount' => $template->price,
-        'subtotal_amount' => $template->price,
-        'payment_gateway_fee' => 0,
-        'tax_amount' => 0,
-        'paid_at' => now(),
-    ]);
-    $order->items()->create([
-        'item_type' => 'template',
-        'item_id' => $template->id,
-        'name' => $template->name,
-        'price' => $template->price,
-    ]);
-
-    $this->actingAs($user)
-        ->post(route('dashboard.templates.select', $template))
-        ->assertRedirect(route('dashboard.editor'));
-
-    $invitation = Invitation::where('template_id', $template->id)->first();
-    expect($invitation)->not->toBeNull()
-        ->and($invitation->user_id)->toBe($user->id)
-        ->and($user->fresh()->active_invitation_id)->toBe($invitation->id);
-});
-
-test('selecting an inactive template is forbidden', function () {
-    $user = User::factory()->create();
-    $template = Template::factory()->inactive()->create();
-
-    $this->actingAs($user)
-        ->post(route('dashboard.templates.select', $template))
-        ->assertNotFound();
-});
-
-test('selecting an already-owned template just switches to it without duplicating', function () {
-    $user = User::factory()->create();
-    $template = Template::factory()->create();
-    $order = \App\Models\Order::create([
-        'user_id' => $user->id,
-        'order_number' => 'ORD-TEST-'.strtoupper(str()->random(6)),
-        'status' => 'paid',
-        'total_amount' => $template->price,
-        'subtotal_amount' => $template->price,
-        'payment_gateway_fee' => 0,
-        'tax_amount' => 0,
-        'paid_at' => now(),
-    ]);
-    $order->items()->create([
-        'item_type' => 'template',
-        'item_id' => $template->id,
-        'name' => $template->name,
-        'price' => $template->price,
-    ]);
-    $invitation = Invitation::factory()->for($user)->for($template)->create([
-        'subdomain' => 'already-'.strtolower(str()->random(6)),
-    ]);
-
-    $this->actingAs($user)
-        ->post(route('dashboard.templates.select', $template))
-        ->assertRedirect(route('dashboard.editor'));
-
-    expect(Invitation::where('template_id', $template->id)->count())->toBe(1)
-        ->and($user->fresh()->active_invitation_id)->toBe($invitation->id);
 });

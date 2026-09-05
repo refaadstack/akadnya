@@ -104,7 +104,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard/transactions', [TransactionHistoryController::class, 'index'])->name('dashboard.transactions');
     Route::post('dashboard/invitations/{invitation}/select', [DashboardController::class, 'selectInvitation'])->name('dashboard.invitations.select');
-    Route::post('dashboard/templates/{template}/select', [DashboardController::class, 'selectTemplate'])->name('dashboard.templates.select');
 
     // Admin panel is now handled by Filament at /admin
 

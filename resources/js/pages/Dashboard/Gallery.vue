@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { Field, TextInput } from '@/components/form';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
 
 interface Photo {
@@ -29,13 +30,16 @@ const draggedItem = ref<number | null>(null);
 const handleFileChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
+
     if (file) {
         uploadForm.file = file;
     }
 };
 
 const uploadPhoto = () => {
-    if (!uploadForm.file) return;
+    if (!uploadForm.file) {
+return;
+}
 
     const formData = new FormData();
     formData.append('file', uploadForm.file);
@@ -48,7 +52,10 @@ const uploadPhoto = () => {
             const fileInput = document.getElementById(
                 'photo-upload',
             ) as HTMLInputElement;
-            if (fileInput) fileInput.value = '';
+
+            if (fileInput) {
+fileInput.value = '';
+}
         },
     });
 };
@@ -84,7 +91,9 @@ const onDragOver = (event: DragEvent) => {
 const onDrop = (event: DragEvent, dropIndex: number) => {
     event.preventDefault();
 
-    if (draggedItem.value === null) return;
+    if (draggedItem.value === null) {
+return;
+}
 
     const items = [...props.gallery];
     const draggedPhoto = items[draggedItem.value];
@@ -142,43 +151,34 @@ const onDrop = (event: DragEvent, dropIndex: number) => {
 
                     <form @submit.prevent="uploadPhoto">
                         <div class="space-y-4">
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Pilih Foto</label
-                                >
+                            <Field
+                                label="Pilih Foto"
+                                input-id="photo-upload"
+                                hint="Format: JPG, PNG, WebP. Maksimal 5MB"
+                            >
                                 <input
                                     type="file"
                                     @change="handleFileChange"
                                     accept="image/*"
                                     id="photo-upload"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 transition focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     required
                                 />
-                                <p class="mt-1 text-xs text-gray-500">
-                                    Format: JPG, PNG, WebP. Maksimal 5MB
-                                </p>
-                            </div>
+                            </Field>
 
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Caption (Opsional)</label
-                                >
-                                <input
+                            <Field label="Caption (Opsional)">
+                                <TextInput
                                     v-model="uploadForm.caption"
-                                    type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Deskripsi foto..."
                                 />
-                            </div>
+                            </Field>
 
                             <button
                                 type="submit"
                                 :disabled="
                                     uploadForm.processing || !uploadForm.file
                                 "
-                                class="rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-2 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
+                                class="rounded-lg bg-[#AD7F35] px-6 py-2 font-semibold text-white transition hover:bg-[#5A1B24] disabled:opacity-50"
                             >
                                 {{
                                     uploadForm.processing
@@ -328,23 +328,19 @@ const onDrop = (event: DragEvent, dropIndex: number) => {
 
                 <form @submit.prevent="saveCaption(editingCaption)">
                     <div class="mb-4">
-                        <label
-                            class="mb-2 block text-sm font-medium text-gray-700"
-                            >Caption</label
-                        >
-                        <input
-                            v-model="editCaptionForm.caption"
-                            type="text"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
-                            placeholder="Deskripsi foto..."
-                        />
+                        <Field label="Caption">
+                            <TextInput
+                                v-model="editCaptionForm.caption"
+                                placeholder="Deskripsi foto..."
+                            />
+                        </Field>
                     </div>
 
                     <div class="flex items-center space-x-3">
                         <button
                             type="submit"
                             :disabled="editCaptionForm.processing"
-                            class="flex-1 rounded-lg bg-[#AD7F35] px-4 py-2 font-semibold text-white transition hover:bg-[#9f6b61] disabled:opacity-50"
+                            class="flex-1 rounded-lg bg-[#AD7F35] px-4 py-2 font-semibold text-white transition hover:bg-[#5A1B24] disabled:opacity-50"
                         >
                             {{
                                 editCaptionForm.processing
@@ -355,7 +351,7 @@ const onDrop = (event: DragEvent, dropIndex: number) => {
                         <button
                             type="button"
                             @click="editingCaption = null"
-                            class="flex-1 rounded-lg bg-gray-600 px-4 py-2 font-semibold text-white transition hover:bg-gray-700"
+                            class="flex-1 rounded-lg border-2 border-gray-300 px-4 py-2 font-semibold text-gray-700 transition hover:border-gray-400"
                         >
                             Batal
                         </button>

@@ -1,7 +1,17 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { Field, SelectInput, TextArea, TextInput } from '@/components/form';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
+
+const coverNameDisplayOptions = [
+    {
+        value: 'full',
+        label: 'Nama Lengkap (Contoh: Siti Nurhaliza & Raffi Ahmad)',
+    },
+    { value: 'nickname', label: 'Nama Panggilan (Contoh: Yeli & Redho)' },
+    { value: 'initials', label: 'Inisial (Contoh: S & R)' },
+];
 
 defineOptions({
     layout: undefined,
@@ -496,65 +506,43 @@ const submit = () => {
                         </h2>
 
                         <div class="space-y-4">
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Nama Lengkap *</label
-                                >
-                                <input
+                            <Field
+                                label="Nama Lengkap"
+                                required
+                                :error="form.errors.bride_name"
+                            >
+                                <TextInput
                                     v-model="form.bride_name"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Siti Nurhaliza"
                                     required
                                 />
-                                <p
-                                    v-if="form.errors.bride_name"
-                                    class="mt-1 text-sm text-red-600"
-                                >
-                                    {{ form.errors.bride_name }}
-                                </p>
-                            </div>
+                            </Field>
 
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Nama Panggilan</label
-                                >
-                                <input
+                            <Field label="Nama Panggilan">
+                                <TextInput
                                     v-model="form.bride_nickname"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Yeli"
                                 />
-                            </div>
+                            </Field>
 
                             <div class="grid gap-4 md:grid-cols-2">
-                                <div>
-                                    <label
-                                        class="mb-2 block text-sm font-medium text-gray-700"
-                                        >Nama Ayah</label
-                                    >
-                                    <input
+                                <Field label="Nama Ayah">
+                                    <TextInput
                                         v-model="form.bride_father"
                                         type="text"
-                                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                         placeholder="Contoh: Bapak Ahmad"
                                     />
-                                </div>
+                                </Field>
 
-                                <div>
-                                    <label
-                                        class="mb-2 block text-sm font-medium text-gray-700"
-                                        >Nama Ibu</label
-                                    >
-                                    <input
+                                <Field label="Nama Ibu">
+                                    <TextInput
                                         v-model="form.bride_mother"
                                         type="text"
-                                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                         placeholder="Contoh: Ibu Siti"
                                     />
-                                </div>
+                                </Field>
                             </div>
 
                             <!-- Bride Photo -->
@@ -648,65 +636,43 @@ const submit = () => {
                         </h2>
 
                         <div class="space-y-4">
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Nama Lengkap *</label
-                                >
-                                <input
+                            <Field
+                                label="Nama Lengkap"
+                                required
+                                :error="form.errors.groom_name"
+                            >
+                                <TextInput
                                     v-model="form.groom_name"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Muhammad Rizki"
                                     required
                                 />
-                                <p
-                                    v-if="form.errors.groom_name"
-                                    class="mt-1 text-sm text-red-600"
-                                >
-                                    {{ form.errors.groom_name }}
-                                </p>
-                            </div>
+                            </Field>
 
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Nama Panggilan</label
-                                >
-                                <input
+                            <Field label="Nama Panggilan">
+                                <TextInput
                                     v-model="form.groom_nickname"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Redho"
                                 />
-                            </div>
+                            </Field>
 
                             <div class="grid gap-4 md:grid-cols-2">
-                                <div>
-                                    <label
-                                        class="mb-2 block text-sm font-medium text-gray-700"
-                                        >Nama Ayah</label
-                                    >
-                                    <input
+                                <Field label="Nama Ayah">
+                                    <TextInput
                                         v-model="form.groom_father"
                                         type="text"
-                                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                         placeholder="Contoh: Bapak Budi"
                                     />
-                                </div>
+                                </Field>
 
-                                <div>
-                                    <label
-                                        class="mb-2 block text-sm font-medium text-gray-700"
-                                        >Nama Ibu</label
-                                    >
-                                    <input
+                                <Field label="Nama Ibu">
+                                    <TextInput
                                         v-model="form.groom_mother"
                                         type="text"
-                                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                         placeholder="Contoh: Ibu Ani"
                                     />
-                                </div>
+                                </Field>
                             </div>
 
                             <!-- Groom Photo -->
@@ -883,63 +849,41 @@ const submit = () => {
                         </h2>
 
                         <div class="space-y-4">
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Tanggal & Waktu *</label
-                                >
-                                <input
+                            <Field
+                                label="Tanggal & Waktu"
+                                required
+                                :error="form.errors.akad_datetime"
+                            >
+                                <TextInput
                                     v-model="form.akad_datetime"
                                     type="datetime-local"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     required
                                 />
-                                <p
-                                    v-if="form.errors.akad_datetime"
-                                    class="mt-1 text-sm text-red-600"
-                                >
-                                    {{ form.errors.akad_datetime }}
-                                </p>
-                            </div>
+                            </Field>
 
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Nama Tempat *</label
-                                >
-                                <input
+                            <Field
+                                label="Nama Tempat"
+                                required
+                                :error="form.errors.akad_venue"
+                            >
+                                <TextInput
                                     v-model="form.akad_venue"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Masjid Al-Ikhlas"
                                     required
                                 />
-                                <p
-                                    v-if="form.errors.akad_venue"
-                                    class="mt-1 text-sm text-red-600"
-                                >
-                                    {{ form.errors.akad_venue }}
-                                </p>
-                            </div>
+                            </Field>
 
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Link Google Maps</label
-                                >
-                                <input
+                            <Field
+                                label="Link Google Maps"
+                                :error="form.errors.akad_maps_url"
+                            >
+                                <TextInput
                                     v-model="form.akad_maps_url"
                                     type="url"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="https://maps.google.com/..."
                                 />
-                                <p
-                                    v-if="form.errors.akad_maps_url"
-                                    class="mt-1 text-sm text-red-600"
-                                >
-                                    {{ form.errors.akad_maps_url }}
-                                </p>
-                            </div>
+                            </Field>
                         </div>
                     </div>
 
@@ -974,43 +918,28 @@ const submit = () => {
                         </p>
 
                         <div v-if="form.show_reception" class="space-y-4">
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Tanggal & Waktu</label
-                                >
-                                <input
+                            <Field label="Tanggal & Waktu">
+                                <TextInput
                                     v-model="form.reception_datetime"
                                     type="datetime-local"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                 />
-                            </div>
+                            </Field>
 
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Nama Tempat</label
-                                >
-                                <input
+                            <Field label="Nama Tempat">
+                                <TextInput
                                     v-model="form.reception_venue"
                                     type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Gedung Serbaguna"
                                 />
-                            </div>
+                            </Field>
 
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Link Google Maps</label
-                                >
-                                <input
+                            <Field label="Link Google Maps">
+                                <TextInput
                                     v-model="form.reception_maps_url"
                                     type="url"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="https://maps.google.com/..."
                                 />
-                            </div>
+                            </Field>
                         </div>
                     </div>
 
@@ -1185,53 +1114,27 @@ const submit = () => {
                             </div>
 
                             <!-- Video Prewedding -->
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Video Prewedding (YouTube)</label
-                                >
-                                <input
-                                    type="url"
+                            <Field
+                                label="Video Prewedding (YouTube)"
+                                hint="Tempel link video YouTube (mis. video prewedding). Video akan diputar otomatis sebagai background di halaman pembuka (hero). Kosongkan jika hanya ingin memakai Foto Cover."
+                            >
+                                <TextInput
                                     v-model="form.video_url"
+                                    type="url"
                                     placeholder="https://www.youtube.com/watch?v=..."
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-[#AD7F35] focus:outline-none"
                                 />
-                                <p class="mt-2 text-xs text-gray-500">
-                                    Tempel link video YouTube (mis. video
-                                    prewedding). Video akan diputar otomatis
-                                    sebagai background di halaman pembuka
-                                    (hero). Kosongkan jika hanya ingin memakai
-                                    Foto Cover.
-                                </p>
-                            </div>
+                            </Field>
 
                             <!-- Cover Name Display -->
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Tampilan Nama di Cover</label
-                                >
-                                <select
+                            <Field
+                                label="Tampilan Nama di Cover"
+                                hint="Nama yang tampil di halaman pembuka undangan."
+                            >
+                                <SelectInput
                                     v-model="form.cover_name_display"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
-                                >
-                                    <option value="full">
-                                        Nama Lengkap (Contoh: Siti Nurhaliza
-                                        &amp; Raffi Ahmad)
-                                    </option>
-                                    <option value="nickname">
-                                        Nama Panggilan (Contoh: Yeli &amp;
-                                        Redho)
-                                    </option>
-                                    <option value="initials">
-                                        Inisial (Contoh: S &amp; R)
-                                    </option>
-                                </select>
-                                <p class="mt-2 text-xs text-gray-500">
-                                    Nama yang tampil di halaman pembuka
-                                    undangan.
-                                </p>
-                            </div>
+                                    :options="coverNameDisplayOptions"
+                                />
+                            </Field>
 
                             <!-- Music -->
                             <div>
@@ -1335,28 +1238,16 @@ const submit = () => {
                             </div>
 
                             <!-- Music Title -->
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Judul Musik</label
-                                >
-                                <input
+                            <Field
+                                label="Judul Musik"
+                                :error="form.errors.music_title"
+                                hint="Nama lagu yang tampil di kontrol musik undangan"
+                            >
+                                <TextInput
                                     v-model="form.music_title"
-                                    type="text"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Contoh: Sepanjang Hidup - Maher Zain"
                                 />
-                                <p
-                                    v-if="form.errors.music_title"
-                                    class="mt-1 text-sm text-red-600"
-                                >
-                                    {{ form.errors.music_title }}
-                                </p>
-                                <p class="mt-1 text-xs text-gray-500">
-                                    Nama lagu yang tampil di kontrol musik
-                                    undangan
-                                </p>
-                            </div>
+                            </Field>
 
                             <!-- Gallery Photos -->
                             <div class="border-t pt-6">
@@ -1475,31 +1366,21 @@ const submit = () => {
                         </h2>
 
                         <div class="space-y-4">
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Cerita Cinta</label
-                                >
-                                <textarea
+                            <Field label="Cerita Cinta">
+                                <TextArea
                                     v-model="form.love_story"
-                                    rows="5"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Ceritakan kisah cinta Anda..."
-                                ></textarea>
-                            </div>
+                                    :rows="5"
+                                />
+                            </Field>
 
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Pesan Khusus</label
-                                >
-                                <textarea
+                            <Field label="Pesan Khusus">
+                                <TextArea
                                     v-model="form.special_message"
-                                    rows="3"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                     placeholder="Pesan untuk tamu undangan..."
-                                ></textarea>
-                            </div>
+                                    :rows="3"
+                                />
+                            </Field>
                         </div>
                     </div>
 
@@ -1573,44 +1454,29 @@ const submit = () => {
                                 </h3>
 
                                 <div class="grid gap-4 md:grid-cols-3">
-                                    <div>
-                                        <label
-                                            class="mb-2 block text-sm font-medium text-gray-700"
-                                            >Nama Bank</label
-                                        >
-                                        <input
+                                    <Field label="Nama Bank">
+                                        <TextInput
                                             v-model="form.bank_name"
                                             type="text"
-                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="Contoh: BCA"
                                         />
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <label
-                                            class="mb-2 block text-sm font-medium text-gray-700"
-                                            >Nomor Rekening</label
-                                        >
-                                        <input
+                                    <Field label="Nomor Rekening">
+                                        <TextInput
                                             v-model="form.account_number"
                                             type="text"
-                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="1234567890"
                                         />
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <label
-                                            class="mb-2 block text-sm font-medium text-gray-700"
-                                            >Nama Pemilik Rekening</label
-                                        >
-                                        <input
+                                    <Field label="Nama Pemilik Rekening">
+                                        <TextInput
                                             v-model="form.account_name"
                                             type="text"
-                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="Nama sesuai rekening"
                                         />
-                                    </div>
+                                    </Field>
                                 </div>
                             </div>
 
@@ -1742,10 +1608,8 @@ const submit = () => {
                                             >
                                             Nomor HP
                                         </label>
-                                        <input
+                                        <TextInput
                                             v-model="form.gopay_number"
-                                            type="text"
-                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="08123456789"
                                         />
                                     </div>
@@ -1760,10 +1624,8 @@ const submit = () => {
                                             >
                                             Nomor HP
                                         </label>
-                                        <input
+                                        <TextInput
                                             v-model="form.ovo_number"
-                                            type="text"
-                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="08123456789"
                                         />
                                     </div>
@@ -1778,10 +1640,8 @@ const submit = () => {
                                             >
                                             Nomor HP
                                         </label>
-                                        <input
+                                        <TextInput
                                             v-model="form.dana_number"
-                                            type="text"
-                                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                                             placeholder="08123456789"
                                         />
                                     </div>
@@ -1789,26 +1649,16 @@ const submit = () => {
                             </div>
 
                             <div class="border-t pt-4">
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Alamat Kirim Hadiah</label
+                                <Field
+                                    label="Alamat Kirim Hadiah"
+                                    :error="form.errors.gift_address"
+                                    hint="Alamat pengiriman kado, tampil di section Amplop Digital / Hadiah undangan"
                                 >
-                                <textarea
-                                    v-model="form.gift_address"
-                                    rows="3"
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
-                                    placeholder="Contoh: Jl. Melati No. 12, Kec. Telanaipura, Kota Jambi"
-                                ></textarea>
-                                <p
-                                    v-if="form.errors.gift_address"
-                                    class="mt-1 text-sm text-red-600"
-                                >
-                                    {{ form.errors.gift_address }}
-                                </p>
-                                <p class="mt-1 text-xs text-gray-500">
-                                    Alamat pengiriman kado, tampil di section
-                                    Amplop Digital / Hadiah undangan
-                                </p>
+                                    <TextArea
+                                        v-model="form.gift_address"
+                                        placeholder="Contoh: Jl. Melati No. 12, Kec. Telanaipura, Kota Jambi"
+                                    />
+                                </Field>
                             </div>
                         </div>
                     </div>
@@ -1819,7 +1669,7 @@ const submit = () => {
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-8 py-3 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
+                                class="rounded-lg bg-[#AD7F35] px-8 py-3 font-semibold text-white transition hover:bg-[#5A1B24] disabled:opacity-50"
                             >
                                 {{
                                     form.processing

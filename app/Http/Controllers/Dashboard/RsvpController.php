@@ -39,31 +39,6 @@ class RsvpController extends Controller
         return back()->with('success', 'Ucapan ditampilkan kembali di undangan');
     }
 
-    /**
-     * Link a legacy orphan RSVP (no guest_id) to a guest on the list.
-     */
-    public function link(Request $request, Rsvp $rsvp): RedirectResponse
-    {
-        $this->authorizeOwner($request, $rsvp);
-
-        $validated = $request->validate([
-            'guest_id' => 'required|integer',
-        ]);
-
-        $guest = $rsvp->invitation->guests()->whereKey($validated['guest_id'])->firstOrFail();
-
-        if ($guest->rsvp()->whereKeyNot($rsvp->id)->exists()) {
-            abort(422, 'Tamu tersebut sudah memiliki konfirmasi lain.');
-        }
-
-        $rsvp->update([
-            'guest_id' => $guest->id,
-            'name' => $guest->name,
-        ]);
-
-        return back()->with('success', "RSVP dihubungkan ke {$guest->name}");
-    }
-
     private function authorizeOwner(Request $request, Rsvp $rsvp): void
     {
         // The Invitation global scope hides other users' invitations, so a

@@ -27,7 +27,7 @@ class GalleryController extends Controller
         return Inertia::render('Dashboard/Gallery', [
             'gallery' => $invitation->gallery->map(fn ($photo) => [
                 'id' => $photo->id,
-                'image_url' => $photo->image_url,
+                'image_url' => MediaService::displayUrl($photo->image_url),
                 'caption' => $photo->caption,
                 'sort_order' => $photo->sort_order,
             ])->sortBy('sort_order')->values(),

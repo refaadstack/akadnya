@@ -76,3 +76,18 @@ test('background upload rejects non-image files', function () {
     expect(fn () => $this->service->upload($file, 'background'))
         ->toThrow(InvalidArgumentException::class);
 });
+
+test('displayUrl returns host-relative path for app storage urls', function () {
+    expect(MediaService::displayUrl('https://akadnya.com/storage/invitations/gallery/foto.jpeg'))
+        ->toBe('/storage/invitations/gallery/foto.jpeg');
+});
+
+test('displayUrl leaves external urls untouched', function () {
+    expect(MediaService::displayUrl('https://cdn.example.com/foto.jpg'))
+        ->toBe('https://cdn.example.com/foto.jpg');
+});
+
+test('displayUrl passes through null and empty values', function () {
+    expect(MediaService::displayUrl(null))->toBeNull();
+    expect(MediaService::displayUrl(''))->toBe('');
+});

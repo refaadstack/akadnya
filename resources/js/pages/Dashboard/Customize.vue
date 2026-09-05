@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
+import { ChevronDown, ChevronUp } from 'lucide-vue-next';
 import { ref } from 'vue';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
 
@@ -39,6 +40,21 @@ const props = defineProps<{
 const sections = ref([...props.sections]);
 const ornaments = ref([...props.ornaments]);
 const draggedSection = ref<number | null>(null);
+const saveStatus = ref<'idle' | 'saving' | 'saved' | 'error'>('idle');
+
+let saveStatusTimer: ReturnType<typeof setTimeout> | null = null;
+
+const flashSaveStatus = (status: 'saved' | 'error') => {
+    saveStatus.value = status;
+
+    if (saveStatusTimer) {
+        clearTimeout(saveStatusTimer);
+    }
+
+    saveStatusTimer = setTimeout(() => {
+        saveStatus.value = 'idle';
+    }, 3000);
+};
 
 // Drag and drop handlers
 const handleDragStart = (index: number) => {
@@ -75,8 +91,10 @@ const saveOrder = async () => {
             ?.split('=')[1] ?? '',
     );
 
+    saveStatus.value = 'saving';
+
     try {
-        await fetch('/dashboard/sections/reorder', {
+        const response = await fetch('/dashboard/sections/reorder', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -86,10 +104,31 @@ const saveOrder = async () => {
             },
             body: JSON.stringify({ section_ids: sectionIds }),
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        flashSaveStatus('saved');
     } catch (error) {
         console.error('Failed to save order:', error);
-        alert('Gagal menyimpan urutan section');
+        flashSaveStatus('error');
     }
+};
+
+const moveSection = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+
+    if (target < 0 || target >= sections.value.length) {
+        return;
+    }
+
+    const items = [...sections.value];
+    const [moved] = items.splice(index, 1);
+    items.splice(target, 0, moved);
+
+    sections.value = items;
+    saveOrder();
 };
 
 const toggleSection = async (sectionId: number) => {
@@ -239,7 +278,25 @@ const getPositionLabel = (position: string) => {
                                         d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
                                     />
                                 </svg>
-                                Drag untuk reorder
+                                Drag atau tombol panah untuk reorder
+                                <span
+                                    v-if="saveStatus === 'saving'"
+                                    class="ml-2 font-semibold text-gray-500"
+                                >
+                                    Menyimpan…
+                                </span>
+                                <span
+                                    v-else-if="saveStatus === 'saved'"
+                                    class="ml-2 font-semibold text-green-700"
+                                >
+                                    Urutan tersimpan
+                                </span>
+                                <span
+                                    v-else-if="saveStatus === 'error'"
+                                    class="ml-2 font-semibold text-red-600"
+                                >
+                                    Gagal menyimpan, coba lagi
+                                </span>
                             </div>
                         </div>
 
@@ -278,19 +335,43 @@ const getPositionLabel = (position: string) => {
                                     </div>
                                 </div>
 
-                                <label
-                                    class="relative inline-flex cursor-pointer items-center"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        :checked="section.is_visible"
-                                        @change="toggleSection(section.id)"
-                                        class="peer sr-only"
-                                    />
-                                    <div
-                                        class="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-[#AD7F35] peer-focus:ring-4 peer-focus:ring-[#AD7F35]/40 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"
-                                    ></div>
-                                </label>
+                                <div class="flex items-center gap-1">
+                                    <button
+                                        type="button"
+                                        :disabled="index === 0"
+                                        class="rounded-lg p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800 disabled:cursor-not-allowed disabled:opacity-30"
+                                        title="Pindahkan ke atas"
+                                        aria-label="Pindahkan section ke atas"
+                                        @click="moveSection(index, -1)"
+                                    >
+                                        <ChevronUp class="size-4" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        :disabled="
+                                            index === sections.length - 1
+                                        "
+                                        class="rounded-lg p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800 disabled:cursor-not-allowed disabled:opacity-30"
+                                        title="Pindahkan ke bawah"
+                                        aria-label="Pindahkan section ke bawah"
+                                        @click="moveSection(index, 1)"
+                                    >
+                                        <ChevronDown class="size-4" />
+                                    </button>
+                                    <label
+                                        class="relative inline-flex cursor-pointer items-center"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            :checked="section.is_visible"
+                                            @change="toggleSection(section.id)"
+                                            class="peer sr-only"
+                                        />
+                                        <div
+                                            class="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-[#AD7F35] peer-focus:ring-4 peer-focus:ring-[#AD7F35]/40 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"
+                                        ></div>
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
@@ -400,7 +481,7 @@ const getPositionLabel = (position: string) => {
                         :href="`/templates/${invitation.template.slug}/render`"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="inline-flex items-center rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-8 py-3 font-semibold text-white transition hover:shadow-lg"
+                        class="inline-flex items-center rounded-lg bg-[#AD7F35] px-8 py-3 font-semibold text-white transition hover:bg-[#5A1B24]"
                     >
                         <svg
                             class="mr-2 h-5 w-5"

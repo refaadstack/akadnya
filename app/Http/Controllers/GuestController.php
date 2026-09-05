@@ -72,12 +72,6 @@ class GuestController extends Controller
             'tanpa_kode' => Rsvp::where('invitation_id', $invitation->id)->whereNull('guest_id')->count(),
         ];
 
-        $unlinkedGuests = $invitation->guests()
-            ->whereDoesntHave('rsvp')
-            ->orderBy('name')
-            ->limit(200)
-            ->get(['id', 'name']);
-
         return inertia('Dashboard/Guests/Index', [
             'invitation' => [
                 'id' => $invitation->id,
@@ -118,7 +112,6 @@ class GuestController extends Controller
                 ] : null,
             ]),
             'rsvpStats' => $rsvpStats,
-            'unlinkedGuests' => $unlinkedGuests,
             'filters' => [
                 'search' => $request->search,
                 'category' => $request->category ?? 'all',

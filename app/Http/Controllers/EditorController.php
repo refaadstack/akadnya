@@ -6,6 +6,7 @@ use App\Http\Requests\InvitationContentRequest;
 use App\Services\BladeRenderService;
 use App\Services\CustomerInvitationService;
 use App\Services\DataContractBuilder;
+use App\Services\MediaService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -43,14 +44,14 @@ class EditorController extends Controller
                 'bride_nickname' => $invitation->content->bride_nickname,
                 'bride_father' => $invitation->content->bride_father,
                 'bride_mother' => $invitation->content->bride_mother,
-                'bride_photo_url' => $invitation->content->bride_photo_url,
+                'bride_photo_url' => MediaService::displayUrl($invitation->content->bride_photo_url),
                 'groom_name' => $invitation->content->groom_name,
                 'groom_nickname' => $invitation->content->groom_nickname,
                 'groom_father' => $invitation->content->groom_father,
                 'groom_mother' => $invitation->content->groom_mother,
-                'groom_photo_url' => $invitation->content->groom_photo_url,
+                'groom_photo_url' => MediaService::displayUrl($invitation->content->groom_photo_url),
                 'cover_name_display' => $invitation->content->cover_name_display ?? 'full',
-                'couple_photo_url' => $invitation->content->couple_photo_url,
+                'couple_photo_url' => MediaService::displayUrl($invitation->content->couple_photo_url),
                 'akad_datetime' => $invitation->content->akad_datetime?->format('Y-m-d\TH:i'),
                 'akad_venue' => $invitation->content->akad_venue,
                 'akad_maps_url' => $invitation->content->akad_maps_url,
@@ -61,16 +62,19 @@ class EditorController extends Controller
                 'show_wishes' => $invitation->content->show_wishes ?? true,
                 'love_story' => $invitation->content->love_story,
                 'special_message' => $invitation->content->special_message,
-                'cover_photo_url' => $invitation->content->cover_photo_url,
+                'cover_photo_url' => MediaService::displayUrl($invitation->content->cover_photo_url),
                 'video_url' => $invitation->content->video_url,
-                'background_url' => $invitation->content->background_url,
-                'music_url' => $invitation->content->music_url,
+                'background_url' => MediaService::displayUrl($invitation->content->background_url),
+                'music_url' => MediaService::displayUrl($invitation->content->music_url),
                 'music_title' => $invitation->content->music_title,
-                'gallery_photos' => $invitation->content->gallery_photos ?? [],
+                'gallery_photos' => collect($invitation->content->gallery_photos ?? [])->map(fn ($photo) => [
+                    'url' => MediaService::displayUrl($photo['url'] ?? null),
+                    'caption' => $photo['caption'] ?? null,
+                ])->values()->all(),
                 'bank_name' => $invitation->content->bank_name,
                 'account_number' => $invitation->content->account_number,
                 'account_name' => $invitation->content->account_name,
-                'qris_image_url' => $invitation->content->qris_image_url,
+                'qris_image_url' => MediaService::displayUrl($invitation->content->qris_image_url),
                 'gopay_number' => $invitation->content->gopay_number,
                 'ovo_number' => $invitation->content->ovo_number,
                 'dana_number' => $invitation->content->dana_number,

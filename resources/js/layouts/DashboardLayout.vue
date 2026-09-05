@@ -132,7 +132,7 @@ const logout = () => {
             class="fixed top-3 right-3 left-3 z-40 md:top-5 md:right-5 md:left-5"
         >
             <div
-                class="mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-full border border-[var(--my-border)]/60 bg-[var(--my-background)]/95 px-3 py-2 shadow-lg shadow-black/5 md:px-5 md:py-2.5"
+                class="mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-full border border-white/10 bg-[var(--ink)] px-3 py-2 shadow-lg shadow-black/20 md:px-5 md:py-2.5"
             >
                 <!-- Logo -->
                 <Link
@@ -140,13 +140,11 @@ const logout = () => {
                     class="flex shrink-0 items-center"
                     aria-label="Akadnya.com - Dashboard"
                 >
-                    <span
-                        class="font-display text-xl leading-none font-bold text-[var(--my-primary)] md:text-2xl"
-                    >
-                        Akadnya<span class="text-[var(--my-secondary)]"
-                            >.com</span
-                        >
-                    </span>
+                    <img
+                        src="/images/logo.svg"
+                        alt="Akadnya.com"
+                        class="h-8 w-auto md:h-9"
+                    />
                 </Link>
 
                 <!-- Desktop Nav -->
@@ -158,8 +156,8 @@ const logout = () => {
                         class="relative rounded-full px-4 py-1.5 text-sm font-semibold transition"
                         :class="
                             isActive(item.href)
-                                ? 'bg-[var(--my-primary)]/10 text-[var(--my-primary)]'
-                                : 'text-[var(--my-muted)] hover:text-[var(--my-primary)]'
+                                ? 'bg-white/10 text-[var(--gold-light)]'
+                                : 'text-white/85 hover:text-[var(--gold-light)]'
                         "
                     >
                         {{ item.label }}
@@ -173,7 +171,7 @@ const logout = () => {
                 <!-- Mobile Menu Button -->
                 <button
                     type="button"
-                    class="inline-flex size-9 items-center justify-center rounded-full text-[var(--my-neutral)] transition hover:bg-[var(--my-primary)]/10 lg:hidden"
+                    class="inline-flex size-9 items-center justify-center rounded-full text-white/85 transition hover:bg-white/10 lg:hidden"
                     aria-label="Buka menu"
                     @click="showMobileMenu = !showMobileMenu"
                 >
@@ -204,7 +202,7 @@ const logout = () => {
                 <div class="relative hidden lg:block">
                     <button
                         type="button"
-                        class="flex items-center gap-2 rounded-full py-1 pr-2 pl-1 transition hover:bg-[var(--my-primary)]/10"
+                        class="flex items-center gap-2 rounded-full py-1 pr-2 pl-1 transition hover:bg-white/10"
                         @click="showUserMenu = !showUserMenu"
                     >
                         <span
@@ -216,7 +214,7 @@ const logout = () => {
                                     .toUpperCase() || 'U'
                             }}
                         </span>
-                        <ChevronDown class="size-4 text-[var(--my-muted)]" />
+                        <ChevronDown class="size-4 text-white/85" />
                     </button>
 
                     <div

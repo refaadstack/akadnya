@@ -172,6 +172,26 @@ class MediaService
     }
 
     /**
+     * Convert a stored absolute storage URL to a host-relative path so
+     * images render on whatever host serves the app (dev, staging,
+     * production). External URLs are returned untouched.
+     */
+    public static function displayUrl(?string $url): ?string
+    {
+        if (! is_string($url) || $url === '') {
+            return $url;
+        }
+
+        $path = parse_url($url, PHP_URL_PATH);
+
+        if (! is_string($path) || ! str_starts_with($path, '/storage/')) {
+            return $url;
+        }
+
+        return $path;
+    }
+
+    /**
      * Validate file MIME type using finfo.
      */
     private function validateMimeType(UploadedFile $file, string $type): void

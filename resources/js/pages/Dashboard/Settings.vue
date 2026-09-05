@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { Field, TextInput } from '@/components/form';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
 
 interface Invitation {
@@ -172,7 +173,7 @@ const unpublish = () => {
                         <button
                             v-if="!invitation.is_published"
                             @click="publish"
-                            class="rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-2 font-semibold text-white transition hover:shadow-lg"
+                            class="rounded-lg bg-[#AD7F35] px-6 py-2 font-semibold text-white transition hover:bg-[#5A1B24]"
                         >
                             Publikasikan
                         </button>
@@ -420,40 +421,30 @@ const unpublish = () => {
 
                     <form @submit.prevent="updateSubdomain">
                         <div class="space-y-4">
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Subdomain Akadnya.com</label
-                                >
+                            <Field
+                                label="Subdomain Akadnya.com"
+                                :error="subdomainForm.errors.subdomain"
+                                hint="Hanya huruf kecil, angka, dan tanda hubung (-). Min 3 karakter."
+                            >
                                 <div class="flex items-center space-x-2">
-                                    <input
-                                        v-model="subdomainForm.subdomain"
-                                        type="text"
-                                        class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
-                                        placeholder="nama-undangan"
-                                        required
-                                    />
+                                    <div class="flex-1">
+                                        <TextInput
+                                            v-model="subdomainForm.subdomain"
+                                            placeholder="nama-undangan"
+                                            required
+                                        />
+                                    </div>
                                     <span class="text-gray-600"
                                         >.{{ app_domain }}</span
                                     >
                                 </div>
-                                <p
-                                    v-if="subdomainForm.errors.subdomain"
-                                    class="mt-1 text-sm text-red-600"
-                                >
-                                    {{ subdomainForm.errors.subdomain }}
-                                </p>
-                                <p class="mt-2 text-xs text-gray-500">
-                                    Hanya huruf kecil, angka, dan tanda hubung
-                                    (-). Min 3 karakter.
-                                </p>
-                            </div>
+                            </Field>
 
                             <div class="flex items-center space-x-3">
                                 <button
                                     type="submit"
                                     :disabled="subdomainForm.processing"
-                                    class="rounded-lg bg-[#AD7F35] px-6 py-2 font-semibold text-white transition hover:bg-[#9f6b61] disabled:opacity-50"
+                                    class="rounded-lg bg-[#AD7F35] px-6 py-2 font-semibold text-white transition hover:bg-[#5A1B24] disabled:opacity-50"
                                 >
                                     {{
                                         subdomainForm.processing
@@ -718,32 +709,20 @@ const unpublish = () => {
 
                     <form @submit.prevent="updateCustomDomain">
                         <div class="space-y-4">
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Domain Kustom</label
-                                >
-                                <input
+                            <Field
+                                label="Domain Kustom"
+                                :error="customDomainForm.errors.custom_domain"
+                                hint="Contoh: undangan.example.com atau wedding.mydomain.id"
+                            >
+                                <TextInput
                                     v-model="customDomainForm.custom_domain"
-                                    type="text"
                                     :disabled="
                                         !props.has_custom_domain &&
                                         !props.invitation.custom_domain
                                     "
-                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35] disabled:bg-gray-100 disabled:text-gray-400"
                                     placeholder="undangan.example.com"
                                 />
-                                <p
-                                    v-if="customDomainForm.errors.custom_domain"
-                                    class="mt-1 text-sm text-red-600"
-                                >
-                                    {{ customDomainForm.errors.custom_domain }}
-                                </p>
-                                <p class="mt-2 text-xs text-gray-500">
-                                    Contoh: undangan.example.com atau
-                                    wedding.mydomain.id
-                                </p>
-                            </div>
+                            </Field>
 
                             <div
                                 v-if="

@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Eye, EyeOff } from 'lucide-vue-next';
 import { ref, computed, watch } from 'vue';
+import {
+    Field,
+    FormButtons,
+    SelectInput,
+    TextArea,
+    TextInput,
+} from '@/components/form';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
 
 interface Guest {
@@ -63,11 +71,6 @@ interface Paginated<T> {
     total: number;
 }
 
-interface UnlinkedGuest {
-    id: number;
-    name: string;
-}
-
 const props = defineProps<{
     invitation: {
         id: number;
@@ -84,7 +87,6 @@ const props = defineProps<{
     stats: Stats;
     rsvps: Paginated<RsvpItem>;
     rsvpStats: RsvpStats;
-    unlinkedGuests: UnlinkedGuest[];
     filters: {
         search: string | null;
         category: string;
@@ -141,6 +143,13 @@ const categoryLabels: Record<string, string> = {
     others: 'Lainnya',
 };
 
+const categoryOptions = [
+    { value: 'family', label: 'Keluarga' },
+    { value: 'friends', label: 'Teman' },
+    { value: 'colleagues', label: 'Rekan Kerja' },
+    { value: 'others', label: 'Lainnya' },
+];
+
 const categoryColors: Record<string, string> = {
     family: 'bg-[#AD7F35]/10 text-[#5A1B24]',
     friends: 'bg-[#5A1B24]/10 text-[#5A1B24]',
@@ -184,8 +193,8 @@ const closeEditModal = () => {
 
 const submitEdit = () => {
     if (!editingGuest.value) {
-return;
-}
+        return;
+    }
 
     editForm.put(`/dashboard/guests/${editingGuest.value.id}`, {
         onSuccess: () => {
@@ -325,24 +334,6 @@ const toggleWishVisibility = (rsvp: RsvpItem) => {
         router.post(`/dashboard/rsvp/${rsvp.id}/${hide ? 'hide' : 'show'}`);
     }
 };
-
-const linkSelections = ref<Record<number, number | ''>>({});
-
-const linkOrphan = (rsvp: RsvpItem) => {
-    const guestId = linkSelections.value[rsvp.id];
-
-    if (!guestId) {
-        alert('Pilih tamu dari daftar terlebih dahulu.');
-
-        return;
-    }
-
-    if (confirm(`Hubungkan konfirmasi "${rsvp.name}" ke tamu yang dipilih?`)) {
-        router.post(`/dashboard/rsvp/${rsvp.id}/link`, {
-            guest_id: guestId,
-        });
-    }
-};
 </script>
 
 <template>
@@ -375,7 +366,7 @@ const linkOrphan = (rsvp: RsvpItem) => {
                         </button>
                         <button
                             @click="openAddModal"
-                            class="rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-3 font-semibold text-white transition hover:shadow-lg"
+                            class="rounded-lg bg-[#AD7F35] px-6 py-3 font-semibold text-white transition hover:bg-[#5A1B24]"
                         >
                             + Tambah Tamu
                         </button>
@@ -417,7 +408,7 @@ const linkOrphan = (rsvp: RsvpItem) => {
                         class="rounded-lg px-5 py-2.5 font-semibold transition"
                         :class="
                             activeTab === 'daftar'
-                                ? 'bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] text-white'
+                                ? 'bg-[#AD7F35] text-white hover:bg-[#5A1B24]'
                                 : 'bg-white text-gray-700 shadow-md hover:bg-gray-100'
                         "
                     >
@@ -429,7 +420,7 @@ const linkOrphan = (rsvp: RsvpItem) => {
                         class="rounded-lg px-5 py-2.5 font-semibold transition"
                         :class="
                             activeTab === 'rsvp'
-                                ? 'bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] text-white'
+                                ? 'bg-[#AD7F35] text-white hover:bg-[#5A1B24]'
                                 : 'bg-white text-gray-700 shadow-md hover:bg-gray-100'
                         "
                     >
@@ -495,7 +486,7 @@ const linkOrphan = (rsvp: RsvpItem) => {
                                     class="rounded-lg px-4 py-2 font-medium transition"
                                     :class="
                                         selectedCategory === key
-                                            ? 'bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] text-white'
+                                            ? 'bg-[#AD7F35] text-white hover:bg-[#5A1B24]'
                                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     "
                                 >
@@ -537,7 +528,7 @@ const linkOrphan = (rsvp: RsvpItem) => {
                             </p>
                             <button
                                 @click="openAddModal"
-                                class="rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-3 font-semibold text-white transition hover:shadow-lg"
+                                class="rounded-lg bg-[#AD7F35] px-6 py-3 font-semibold text-white transition hover:bg-[#5A1B24]"
                             >
                                 + Tambah Tamu Pertama
                             </button>
@@ -829,38 +820,6 @@ const linkOrphan = (rsvp: RsvpItem) => {
                                 </p>
 
                                 <div
-                                    v-if="rsvp.is_orphan"
-                                    class="mt-3 flex flex-wrap items-center gap-2 rounded-lg bg-yellow-50 p-3 ring-1 ring-yellow-200"
-                                >
-                                    <span class="text-sm text-yellow-800">
-                                        Konfirmasi lama yang belum terhubung ke
-                                        daftar tamu:
-                                    </span>
-                                    <select
-                                        v-model="linkSelections[rsvp.id]"
-                                        class="rounded-lg border border-yellow-300 bg-white px-3 py-1.5 text-sm"
-                                    >
-                                        <option value="" disabled selected>
-                                            Pilih tamu…
-                                        </option>
-                                        <option
-                                            v-for="guest in unlinkedGuests"
-                                            :key="guest.id"
-                                            :value="guest.id"
-                                        >
-                                            {{ guest.name }}
-                                        </option>
-                                    </select>
-                                    <button
-                                        type="button"
-                                        @click="linkOrphan(rsvp)"
-                                        class="rounded-lg bg-[#AD7F35] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#5A1B24]"
-                                    >
-                                        Hubungkan
-                                    </button>
-                                </div>
-
-                                <div
                                     v-if="rsvp.message"
                                     class="mt-3 rounded-lg p-3 transition"
                                     :class="
@@ -886,19 +845,29 @@ const linkOrphan = (rsvp: RsvpItem) => {
                                         </span>
                                         <button
                                             type="button"
-                                            class="text-xs font-medium hover:underline"
+                                            class="rounded-lg p-1.5 transition"
                                             :class="
                                                 rsvp.is_hidden
-                                                    ? 'text-[#AD7F35] hover:text-[#5A1B24]'
-                                                    : 'text-red-600 hover:text-red-700'
+                                                    ? 'text-[#AD7F35] hover:bg-[#AD7F35]/10'
+                                                    : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
                                             "
-                                            @click="toggleWishVisibility(rsvp)"
-                                        >
-                                            {{
+                                            :title="
                                                 rsvp.is_hidden
                                                     ? 'Tampilkan di undangan'
                                                     : 'Sembunyikan dari undangan'
-                                            }}
+                                            "
+                                            :aria-label="
+                                                rsvp.is_hidden
+                                                    ? 'Tampilkan di undangan'
+                                                    : 'Sembunyikan dari undangan'
+                                            "
+                                            @click="toggleWishVisibility(rsvp)"
+                                        >
+                                            <EyeOff
+                                                v-if="rsvp.is_hidden"
+                                                class="size-4"
+                                            />
+                                            <Eye v-else class="size-4" />
                                         </button>
                                     </div>
                                 </div>
@@ -957,122 +926,51 @@ const linkOrphan = (rsvp: RsvpItem) => {
                 </h2>
 
                 <form @submit.prevent="submitAdd" class="space-y-4">
-                    <div>
-                        <label
-                            class="mb-2 block text-sm font-medium text-gray-700"
-                            >Nama *</label
-                        >
-                        <input
-                            v-model="addForm.name"
-                            type="text"
-                            required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
-                        />
-                        <div
-                            v-if="addForm.errors.name"
-                            class="mt-1 text-sm text-red-600"
-                        >
-                            {{ addForm.errors.name }}
-                        </div>
-                    </div>
+                    <Field label="Nama" required :error="addForm.errors.name">
+                        <TextInput v-model="addForm.name" required />
+                    </Field>
 
-                    <div>
-                        <label
-                            class="mb-2 block text-sm font-medium text-gray-700"
-                            >Telepon</label
-                        >
-                        <input
+                    <Field label="Telepon" :error="addForm.errors.phone">
+                        <TextInput
                             v-model="addForm.phone"
-                            type="text"
                             placeholder="081234567890"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         />
-                        <div
-                            v-if="addForm.errors.phone"
-                            class="mt-1 text-sm text-red-600"
-                        >
-                            {{ addForm.errors.phone }}
-                        </div>
-                    </div>
+                    </Field>
 
-                    <div>
-                        <label
-                            class="mb-2 block text-sm font-medium text-gray-700"
-                            >Kategori *</label
-                        >
-                        <select
+                    <Field
+                        label="Kategori"
+                        required
+                        :error="addForm.errors.category"
+                    >
+                        <SelectInput
                             v-model="addForm.category"
+                            :options="categoryOptions"
                             required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
-                        >
-                            <option value="family">Keluarga</option>
-                            <option value="friends">Teman</option>
-                            <option value="colleagues">Rekan Kerja</option>
-                            <option value="others">Lainnya</option>
-                        </select>
-                        <div
-                            v-if="addForm.errors.category"
-                            class="mt-1 text-sm text-red-600"
-                        >
-                            {{ addForm.errors.category }}
-                        </div>
-                    </div>
+                        />
+                    </Field>
 
-                    <div>
-                        <label
-                            class="mb-2 block text-sm font-medium text-gray-700"
-                            >Maksimal Tamu *</label
-                        >
-                        <input
+                    <Field
+                        label="Maksimal Tamu"
+                        required
+                        :error="addForm.errors.max_pax"
+                    >
+                        <TextInput
                             v-model.number="addForm.max_pax"
                             type="number"
                             min="1"
                             max="10"
                             required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         />
-                        <div
-                            v-if="addForm.errors.max_pax"
-                            class="mt-1 text-sm text-red-600"
-                        >
-                            {{ addForm.errors.max_pax }}
-                        </div>
-                    </div>
+                    </Field>
 
-                    <div>
-                        <label
-                            class="mb-2 block text-sm font-medium text-gray-700"
-                            >Catatan</label
-                        >
-                        <textarea
-                            v-model="addForm.notes"
-                            rows="3"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
-                        ></textarea>
-                        <div
-                            v-if="addForm.errors.notes"
-                            class="mt-1 text-sm text-red-600"
-                        >
-                            {{ addForm.errors.notes }}
-                        </div>
-                    </div>
+                    <Field label="Catatan" :error="addForm.errors.notes">
+                        <TextArea v-model="addForm.notes" />
+                    </Field>
 
-                    <div class="flex gap-3 pt-4">
-                        <button
-                            type="button"
-                            @click="closeAddModal"
-                            class="flex-1 rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            type="submit"
-                            :disabled="addForm.processing"
-                            class="flex-1 rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-3 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
-                        >
-                            {{ addForm.processing ? 'Menyimpan...' : 'Simpan' }}
-                        </button>
-                    </div>
+                    <FormButtons
+                        :processing="addForm.processing"
+                        @cancel="closeAddModal"
+                    />
                 </form>
             </div>
         </div>
@@ -1086,124 +984,51 @@ const linkOrphan = (rsvp: RsvpItem) => {
                 <h2 class="mb-6 text-2xl font-bold text-gray-900">Edit Tamu</h2>
 
                 <form @submit.prevent="submitEdit" class="space-y-4">
-                    <div>
-                        <label
-                            class="mb-2 block text-sm font-medium text-gray-700"
-                            >Nama *</label
-                        >
-                        <input
-                            v-model="editForm.name"
-                            type="text"
-                            required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
-                        />
-                        <div
-                            v-if="editForm.errors.name"
-                            class="mt-1 text-sm text-red-600"
-                        >
-                            {{ editForm.errors.name }}
-                        </div>
-                    </div>
+                    <Field label="Nama" required :error="editForm.errors.name">
+                        <TextInput v-model="editForm.name" required />
+                    </Field>
 
-                    <div>
-                        <label
-                            class="mb-2 block text-sm font-medium text-gray-700"
-                            >Telepon</label
-                        >
-                        <input
+                    <Field label="Telepon" :error="editForm.errors.phone">
+                        <TextInput
                             v-model="editForm.phone"
-                            type="text"
                             placeholder="081234567890"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         />
-                        <div
-                            v-if="editForm.errors.phone"
-                            class="mt-1 text-sm text-red-600"
-                        >
-                            {{ editForm.errors.phone }}
-                        </div>
-                    </div>
+                    </Field>
 
-                    <div>
-                        <label
-                            class="mb-2 block text-sm font-medium text-gray-700"
-                            >Kategori *</label
-                        >
-                        <select
+                    <Field
+                        label="Kategori"
+                        required
+                        :error="editForm.errors.category"
+                    >
+                        <SelectInput
                             v-model="editForm.category"
+                            :options="categoryOptions"
                             required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
-                        >
-                            <option value="family">Keluarga</option>
-                            <option value="friends">Teman</option>
-                            <option value="colleagues">Rekan Kerja</option>
-                            <option value="others">Lainnya</option>
-                        </select>
-                        <div
-                            v-if="editForm.errors.category"
-                            class="mt-1 text-sm text-red-600"
-                        >
-                            {{ editForm.errors.category }}
-                        </div>
-                    </div>
+                        />
+                    </Field>
 
-                    <div>
-                        <label
-                            class="mb-2 block text-sm font-medium text-gray-700"
-                            >Maksimal Tamu *</label
-                        >
-                        <input
+                    <Field
+                        label="Maksimal Tamu"
+                        required
+                        :error="editForm.errors.max_pax"
+                    >
+                        <TextInput
                             v-model.number="editForm.max_pax"
                             type="number"
                             min="1"
                             max="10"
                             required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
                         />
-                        <div
-                            v-if="editForm.errors.max_pax"
-                            class="mt-1 text-sm text-red-600"
-                        >
-                            {{ editForm.errors.max_pax }}
-                        </div>
-                    </div>
+                    </Field>
 
-                    <div>
-                        <label
-                            class="mb-2 block text-sm font-medium text-gray-700"
-                            >Catatan</label
-                        >
-                        <textarea
-                            v-model="editForm.notes"
-                            rows="3"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#AD7F35]"
-                        ></textarea>
-                        <div
-                            v-if="editForm.errors.notes"
-                            class="mt-1 text-sm text-red-600"
-                        >
-                            {{ editForm.errors.notes }}
-                        </div>
-                    </div>
+                    <Field label="Catatan" :error="editForm.errors.notes">
+                        <TextArea v-model="editForm.notes" />
+                    </Field>
 
-                    <div class="flex gap-3 pt-4">
-                        <button
-                            type="button"
-                            @click="closeEditModal"
-                            class="flex-1 rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            type="submit"
-                            :disabled="editForm.processing"
-                            class="flex-1 rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-3 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
-                        >
-                            {{
-                                editForm.processing ? 'Menyimpan...' : 'Simpan'
-                            }}
-                        </button>
-                    </div>
+                    <FormButtons
+                        :processing="editForm.processing"
+                        @cancel="closeEditModal"
+                    />
                 </form>
             </div>
         </div>
@@ -1269,7 +1094,7 @@ const linkOrphan = (rsvp: RsvpItem) => {
                         <button
                             type="submit"
                             :disabled="importForm.processing"
-                            class="flex-1 rounded-lg bg-gradient-to-r from-[#AD7F35] to-[#D8BA82] px-6 py-3 font-semibold text-white transition hover:shadow-lg disabled:opacity-50"
+                            class="flex-1 rounded-lg bg-[#AD7F35] px-6 py-3 font-semibold text-white transition hover:bg-[#5A1B24] disabled:opacity-50"
                         >
                             {{
                                 importForm.processing

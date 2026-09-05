@@ -96,3 +96,10 @@ test('welcome page exposes guest book add-on with demo qr', function () {
         ->where('guestBook.demo_qr_svg', fn (string $svg) => str_contains($svg, '<svg'))
     );
 });
+
+test('app shell includes the google site verification meta tag', function () {
+    $response = $this->get('/');
+
+    $response->assertOk();
+    $response->assertSee('<meta name="google-site-verification" content="fRdaf0bY_EBBqDXRmkGD_N5YmUgyLQ5xCEytYSWjBnE" />', false);
+});

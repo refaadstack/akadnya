@@ -253,7 +253,7 @@ test('rendered template embeds background url from invitation content', function
     $data = (new DataContractBuilder)->build($invitation);
     $html = (new BladeRenderService)->renderInvitation($invitation, $data);
 
-    expect($html)->toContain('url("https://example.com/storage/invitations/backgrounds/bg.jpg")');
+    expect($html)->toContain('url("/storage/invitations/backgrounds/bg.jpg")');
 });
 
 test('rendered template omits background block when background url is empty', function () {

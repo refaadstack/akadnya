@@ -56,7 +56,7 @@ Route::get('/health', function () {
 
 // Public invitation routes (must be before other routes to catch subdomains)
 Route::get('/i/{subdomain}', [PublicInvitationController::class, 'show'])->name('invitation.show');
-Route::post('/i/{subdomain}/rsvp', [PublicInvitationController::class, 'rsvp'])->name('invitation.rsvp');
+Route::post('/i/{subdomain}/rsvp', [PublicInvitationController::class, 'rsvp'])->middleware('throttle:30,1')->name('invitation.rsvp');
 Route::get('/i/{subdomain}/wishes', [PublicInvitationController::class, 'wishes'])->name('invitation.wishes');
 
 // API routes for invitations

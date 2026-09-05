@@ -363,26 +363,14 @@ const removeGalleryPhoto = (index: number) => {
 };
 
 const submit = () => {
-    console.log('Submitting form with data:', form.data());
-    console.log('Form errors before submit:', form.errors);
-
     form.post('/dashboard/editor', {
         preserveScroll: true,
-        onBefore: () => {
-            console.log('Form submission started');
-        },
-        onError: (errors) => {
-            console.error('Validation errors:', errors);
-
+        onError: () => {
             // Scroll to top to show error summary
             window.scrollTo({ top: 0, behavior: 'smooth' });
         },
-        onSuccess: (page) => {
-            console.log('Form submitted successfully', page);
+        onSuccess: () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        },
-        onFinish: () => {
-            console.log('Form submission finished');
         },
     });
 };

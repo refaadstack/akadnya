@@ -128,12 +128,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('dashboard/sections/{section}/toggle', [InvitationController::class, 'toggleSection'])->name('dashboard.sections.toggle');
         Route::post('dashboard/ornaments/{ornament}/toggle', [InvitationController::class, 'toggleOrnament'])->name('dashboard.ornaments.toggle');
 
-        // Gallery management
+        // Gallery management (static segments must precede {photo} wildcards)
         Route::get('dashboard/gallery', [GalleryController::class, 'index'])->name('dashboard.gallery');
         Route::post('dashboard/gallery', [GalleryController::class, 'store'])->name('dashboard.gallery.store');
+        Route::post('dashboard/gallery/reorder', [GalleryController::class, 'reorder'])->name('dashboard.gallery.reorder');
         Route::post('dashboard/gallery/{photo}', [GalleryController::class, 'update'])->name('dashboard.gallery.update');
         Route::delete('dashboard/gallery/{photo}', [GalleryController::class, 'destroy'])->name('dashboard.gallery.destroy');
-        Route::post('dashboard/gallery/reorder', [GalleryController::class, 'reorder'])->name('dashboard.gallery.reorder');
 
         // Publishing
         Route::post('dashboard/publish', [InvitationController::class, 'publish'])->name('dashboard.publish');

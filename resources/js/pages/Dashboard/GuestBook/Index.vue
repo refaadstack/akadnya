@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
 
 interface Entry {
@@ -90,39 +91,36 @@ const drawRaffle = () => {
     <DashboardLayout>
         <Head title="Buku Tamu" />
 
-        <div class="container mx-auto space-y-6 px-4 py-8">
-            <div class="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-[var(--my-neutral)]">
-                        Buku Tamu
-                    </h1>
-                    <p class="mt-1 text-sm text-[var(--my-muted)]">
-                        Check-in, souvenir, dan undian untuk acara Anda.
-                    </p>
-                </div>
-                <Link
-                    href="/dashboard/guest-book/scan"
-                    class="my-btn-primary inline-flex items-center gap-2"
-                >
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+        <main class="my-container space-y-6 py-10">
+            <PageHeader
+                title="Buku Tamu"
+                description="Check-in, souvenir, dan undian untuk acara Anda."
+            >
+                <template #actions>
+                    <Link
+                        href="/dashboard/guest-book/scan"
+                        class="my-btn-primary inline-flex items-center gap-2"
                     >
-                        <path d="M3 7V5a2 2 0 0 1 2-2h2" />
-                        <path d="M17 3h2a2 2 0 0 1 2 2v2" />
-                        <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
-                        <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
-                        <path d="M7 12h10" />
-                    </svg>
-                    Scan Barcode Tamu
-                </Link>
-            </div>
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+                            <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                            <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+                            <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+                            <path d="M7 12h10" />
+                        </svg>
+                        Scan Barcode Tamu
+                    </Link>
+                </template>
+            </PageHeader>
 
             <div
                 v-if="$page.props.flash?.success"
@@ -138,9 +136,7 @@ const drawRaffle = () => {
             </div>
 
             <section class="grid gap-4 sm:grid-cols-3">
-                <article
-                    class="rounded-xl border border-[var(--my-border)] bg-white/60 p-6"
-                >
+                <article class="my-card p-6">
                     <p class="text-sm text-[var(--my-muted)]">Check-in</p>
                     <p class="mt-2 text-3xl font-bold text-[var(--my-primary)]">
                         {{ stats.checked_in }}
@@ -149,9 +145,7 @@ const drawRaffle = () => {
                         tamu sudah check-in
                     </p>
                 </article>
-                <article
-                    class="rounded-xl border border-[var(--my-border)] bg-white/60 p-6"
-                >
+                <article class="my-card p-6">
                     <p class="text-sm text-[var(--my-muted)]">Souvenir</p>
                     <p class="mt-2 text-3xl font-bold text-amber-600">
                         {{ stats.souvenirs }}
@@ -160,9 +154,7 @@ const drawRaffle = () => {
                         souvenir sudah diambil
                     </p>
                 </article>
-                <article
-                    class="rounded-xl border border-[var(--my-border)] bg-white/60 p-6"
-                >
+                <article class="my-card p-6">
                     <p class="text-sm text-[var(--my-muted)]">Undian</p>
                     <p class="mt-2 text-3xl font-bold text-purple-600">
                         {{ stats.raffles }}
@@ -174,9 +166,7 @@ const drawRaffle = () => {
             </section>
 
             <section class="grid gap-6 lg:grid-cols-3">
-                <article
-                    class="rounded-xl border border-[var(--my-border)] bg-white/60 p-6 lg:col-span-1"
-                >
+                <article class="my-card p-6 lg:col-span-1">
                     <h2 class="mb-4 font-bold text-[var(--my-neutral)]">
                         Check-in Manual
                     </h2>
@@ -231,9 +221,7 @@ const drawRaffle = () => {
                     </div>
                 </article>
 
-                <article
-                    class="rounded-xl border border-[var(--my-border)] bg-white/60 p-6 lg:col-span-2"
-                >
+                <article class="my-card p-6 lg:col-span-2">
                     <h2 class="mb-4 font-bold text-[var(--my-neutral)]">
                         Riwayat Aktivitas
                     </h2>
@@ -281,6 +269,6 @@ const drawRaffle = () => {
                     </p>
                 </article>
             </section>
-        </div>
+        </main>
     </DashboardLayout>
 </template>

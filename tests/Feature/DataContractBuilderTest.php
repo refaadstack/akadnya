@@ -186,6 +186,36 @@ test('build includes gallery array with correct structure', function () {
     expect($contract['gallery'][0]['caption'])->toBe('Photo 1');
 });
 
+test('build exposes storage media urls as host-relative paths', function () {
+    $user = User::factory()->create();
+    $template = Template::factory()->create();
+    $invitation = Invitation::factory()->create([
+        'user_id' => $user->id,
+        'template_id' => $template->id,
+    ]);
+
+    InvitationGallery::create([
+        'invitation_id' => $invitation->id,
+        'image_url' => 'https://akadnya.com/storage/invitations/gallery/foto.jpeg',
+        'caption' => 'Foto',
+        'sort_order' => 1,
+    ]);
+
+    InvitationContent::create([
+        'invitation_id' => $invitation->id,
+        'bride_name' => 'Nadia',
+        'groom_name' => 'Raka',
+        'cover_photo_url' => 'https://akadnya.com/storage/invitations/covers/cover.jpg',
+        'bride_photo_url' => 'https://cdn.example.com/bride.jpg',
+    ]);
+
+    $contract = $this->builder->build($invitation);
+
+    expect($contract['gallery'][0]['url'])->toBe('/storage/invitations/gallery/foto.jpeg');
+    expect($contract['cover_photo_url'])->toBe('/storage/invitations/covers/cover.jpg');
+    expect($contract['bride_photo_url'])->toBe('https://cdn.example.com/bride.jpg');
+});
+
 test('build includes love stories with correct structure', function () {
     $user = User::factory()->create();
     $template = Template::factory()->create();

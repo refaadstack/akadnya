@@ -95,7 +95,11 @@ const unpublish = () => {
         <Head title="Pengaturan Undangan" />
 
         <!-- Content -->
-        <div class="container mx-auto px-4 py-8">
+        <main class="my-container py-10">
+            <PageHeader
+                title="Pengaturan Undangan"
+                description="Kelola subdomain, domain kustom, dan publikasi undangan."
+            />
             <!-- Flash Messages -->
             <div
                 v-if="$page.props.flash?.success"
@@ -135,7 +139,7 @@ const unpublish = () => {
 
             <div class="max-w-3xl">
                 <!-- Status & Publish -->
-                <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
+                <div class="my-card mb-6 p-6">
                     <h2 class="mb-4 text-xl font-bold text-gray-900">
                         Status Publikasi
                     </h2>
@@ -246,7 +250,7 @@ const unpublish = () => {
                 </div>
 
                 <!-- Subdomain -->
-                <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
+                <div class="my-card mb-6 p-6">
                     <div class="mb-4 flex items-center justify-between">
                         <h2 class="text-xl font-bold text-gray-900">
                             Subdomain
@@ -466,7 +470,7 @@ const unpublish = () => {
                 </div>
 
                 <!-- Custom Domain -->
-                <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
+                <div class="my-card mb-6 p-6">
                     <div class="mb-4 flex items-center justify-between">
                         <div class="flex items-center">
                             <div>
@@ -790,6 +794,6 @@ const unpublish = () => {
                     </form>
                 </div>
             </div>
-        </div>
+        </main>
     </DashboardLayout>
 </template>

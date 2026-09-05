@@ -34,14 +34,14 @@ class DataContractBuilder
             ->orderBy('sort_order')
             ->get()
             ->map(fn ($item) => [
-                'url' => $item->image_url,
+                'url' => MediaService::displayUrl($item->image_url),
                 'caption' => $item->caption,
             ]);
 
         $contentGallery = collect($content?->gallery_photos ?? [])
             ->filter(fn ($item) => is_array($item) && ! empty($item['url']))
             ->map(fn ($item) => [
-                'url' => $item['url'],
+                'url' => MediaService::displayUrl($item['url']),
                 'caption' => $item['caption'] ?? null,
             ]);
 
@@ -78,7 +78,7 @@ class DataContractBuilder
             'bride_nickname' => $content?->bride_nickname ?? null,
             'bride_father' => $content?->bride_father ?? null,
             'bride_mother' => $content?->bride_mother ?? null,
-            'bride_photo_url' => $content?->bride_photo_url ?? null,
+            'bride_photo_url' => MediaService::displayUrl($content?->bride_photo_url),
             'bride_initial' => $brideInitial,
 
             // Groom
@@ -86,7 +86,7 @@ class DataContractBuilder
             'groom_nickname' => $content?->groom_nickname ?? null,
             'groom_father' => $content?->groom_father ?? null,
             'groom_mother' => $content?->groom_mother ?? null,
-            'groom_photo_url' => $content?->groom_photo_url ?? null,
+            'groom_photo_url' => MediaService::displayUrl($content?->groom_photo_url),
             'groom_initial' => $groomInitial,
             'cover_name_display' => $content?->cover_name_display ?? 'full',
             'show_wishes' => $content?->show_wishes ?? true,
@@ -99,7 +99,7 @@ class DataContractBuilder
                 $brideInitial,
                 $groomInitial
             ),
-            'couple_photo_url' => $content?->couple_photo_url ?? null,
+            'couple_photo_url' => MediaService::displayUrl($content?->couple_photo_url),
             'couple_initials' => $groomInitial && $brideInitial ? "{$groomInitial} & {$brideInitial}" : null,
 
             // Akad venue
@@ -112,11 +112,11 @@ class DataContractBuilder
             'show_reception' => $content?->show_reception ?? true,
 
             // Media
-            'cover_photo_url' => $content?->cover_photo_url ?? null,
+            'cover_photo_url' => MediaService::displayUrl($content?->cover_photo_url),
             'video_url' => $content?->video_url ?? null,
             'video_youtube_id' => $this->extractYoutubeId($content?->video_url),
-            'background_url' => $content?->background_url ?? null,
-            'music_url' => $content?->music_url ?? null,
+            'background_url' => MediaService::displayUrl($content?->background_url),
+            'music_url' => MediaService::displayUrl($content?->music_url),
             'music_title' => $content?->music_title ?? null,
 
             // Content
@@ -127,7 +127,7 @@ class DataContractBuilder
             'bank_name' => $content?->bank_name ?? null,
             'account_number' => $content?->account_number ?? null,
             'account_name' => $content?->account_name ?? null,
-            'qris_image_url' => $content?->qris_image_url ?? null,
+            'qris_image_url' => MediaService::displayUrl($content?->qris_image_url),
             'gopay_number' => $content?->gopay_number ?? null,
             'ovo_number' => $content?->ovo_number ?? null,
             'dana_number' => $content?->dana_number ?? null,

@@ -2,6 +2,7 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { Html5Qrcode } from 'html5-qrcode';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
 
 defineProps<{
@@ -110,22 +111,20 @@ onBeforeUnmount(() => {
     <DashboardLayout>
         <Head title="Scan Barcode Tamu" />
 
-        <div class="container mx-auto px-4 py-8">
+        <main class="my-container py-10">
             <div class="mx-auto max-w-xl space-y-6">
-                <div class="flex items-center justify-between gap-4">
-                    <div>
-                        <h1 class="text-2xl font-bold text-[var(--my-neutral)]">
-                            Scan Barcode Tamu
-                        </h1>
-                        <p class="mt-1 text-sm text-[var(--my-muted)]">
-                            Arahkan kamera ke barcode tamu untuk check-in
-                            otomatis.
-                        </p>
-                    </div>
-                    <Link href="/dashboard/guest-book" class="my-btn-secondary"
-                        >Kembali</Link
-                    >
-                </div>
+                <PageHeader
+                    title="Scan Barcode Tamu"
+                    description="Arahkan kamera ke barcode tamu untuk check-in otomatis."
+                >
+                    <template #actions>
+                        <Link
+                            href="/dashboard/guest-book"
+                            class="my-btn-secondary"
+                            >Kembali</Link
+                        >
+                    </template>
+                </PageHeader>
 
                 <div
                     v-if="$page.props.flash?.success"
@@ -140,9 +139,7 @@ onBeforeUnmount(() => {
                     {{ $page.props.flash.error }}
                 </div>
 
-                <article
-                    class="rounded-xl border border-[var(--my-border)] bg-white/60 p-6"
-                >
+                <article class="my-card p-6">
                     <div
                         id="guest-book-scanner"
                         class="overflow-hidden rounded-lg bg-black"
@@ -264,6 +261,6 @@ onBeforeUnmount(() => {
                     </form>
                 </article>
             </div>
-        </div>
+        </main>
     </DashboardLayout>
 </template>

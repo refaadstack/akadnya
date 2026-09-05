@@ -2,6 +2,7 @@
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { Field, SelectInput, TextArea, TextInput } from '@/components/form';
+import PageHeader from '@/components/layout/PageHeader.vue';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
 
 const coverNameDisplayOptions = [
@@ -391,65 +392,76 @@ const submit = () => {
     <DashboardLayout>
         <Head title="Edit Konten Undangan" />
 
-        <div class="min-h-screen bg-gray-50">
-            <!-- Main Content -->
-            <div class="container mx-auto px-4 py-8">
-                <!-- Header -->
-                <div class="mb-8 flex items-center justify-between">
-                    <div>
-                        <Link
-                            href="/dashboard"
-                            class="mb-2 inline-flex items-center text-sm text-gray-600 hover:text-[#AD7F35]"
-                        >
-                            <svg
-                                class="mr-1 h-4 w-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M15 19l-7-7 7-7"
-                                />
-                            </svg>
-                            Kembali ke Dashboard
-                        </Link>
-                        <h1 class="text-3xl font-bold text-gray-900">
-                            Edit Konten Undangan
-                        </h1>
-                        <p class="mt-1 text-gray-600">
-                            Template: {{ invitation.template.name }}
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Flash Messages -->
-                <div
-                    v-if="$page.props.flash?.success"
-                    class="mb-6 flex items-center rounded-lg border border-[#AD7F35]/30 bg-[#AD7F35]/10 px-4 py-3 text-[#5A1B24]"
+        <main class="my-container py-10">
+            <Link
+                href="/dashboard"
+                class="mb-4 inline-flex items-center text-sm text-gray-600 hover:text-[#AD7F35]"
+            >
+                <svg
+                    class="mr-1 h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                 >
-                    <svg
-                        class="mr-2 h-5 w-5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                    >
-                        <path
-                            fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                            clip-rule="evenodd"
-                        />
-                    </svg>
-                    {{ $page.props.flash.success }}
-                </div>
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 19l-7-7 7-7"
+                    />
+                </svg>
+                Kembali ke Dashboard
+            </Link>
+            <PageHeader
+                title="Edit Konten Undangan"
+                :description="`Template: ${invitation.template.name}`"
+            />
 
-                <div
-                    v-if="$page.props.flash?.error"
-                    class="mb-6 flex items-center rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800"
+            <!-- Flash Messages -->
+            <div
+                v-if="$page.props.flash?.success"
+                class="mb-6 flex items-center rounded-lg border border-[#AD7F35]/30 bg-[#AD7F35]/10 px-4 py-3 text-[#5A1B24]"
+            >
+                <svg
+                    class="mr-2 h-5 w-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
                 >
+                    <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                    />
+                </svg>
+                {{ $page.props.flash.success }}
+            </div>
+
+            <div
+                v-if="$page.props.flash?.error"
+                class="mb-6 flex items-center rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800"
+            >
+                <svg
+                    class="mr-2 h-5 w-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                >
+                    <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clip-rule="evenodd"
+                    />
+                </svg>
+                {{ $page.props.flash.error }}
+            </div>
+
+            <!-- Validation Errors Summary -->
+            <div
+                v-if="Object.keys(form.errors).length > 0"
+                class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4"
+            >
+                <div class="flex items-start">
                     <svg
-                        class="mr-2 h-5 w-5"
+                        class="mt-0.5 mr-2 h-5 w-5 text-red-600"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                     >
@@ -459,696 +471,95 @@ const submit = () => {
                             clip-rule="evenodd"
                         />
                     </svg>
-                    {{ $page.props.flash.error }}
-                </div>
-
-                <!-- Validation Errors Summary -->
-                <div
-                    v-if="Object.keys(form.errors).length > 0"
-                    class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4"
-                >
-                    <div class="flex items-start">
-                        <svg
-                            class="mt-0.5 mr-2 h-5 w-5 text-red-600"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
+                    <div class="flex-1">
+                        <h3 class="mb-2 text-sm font-semibold text-red-800">
+                            Terdapat kesalahan pada form:
+                        </h3>
+                        <ul
+                            class="list-inside list-disc space-y-1 text-sm text-red-700"
                         >
-                            <path
-                                fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                clip-rule="evenodd"
+                            <li
+                                v-for="(error, field) in form.errors"
+                                :key="field"
+                            >
+                                {{ error }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form @submit.prevent="submit" class="max-w-4xl">
+                <!-- Mempelai Wanita -->
+                <div class="my-card mb-6 p-6">
+                    <h2 class="mb-4 text-xl font-bold text-gray-900">
+                        Mempelai Wanita
+                    </h2>
+
+                    <div class="space-y-4">
+                        <Field
+                            label="Nama Lengkap"
+                            required
+                            :error="form.errors.bride_name"
+                        >
+                            <TextInput
+                                v-model="form.bride_name"
+                                type="text"
+                                placeholder="Contoh: Siti Nurhaliza"
+                                required
                             />
-                        </svg>
-                        <div class="flex-1">
-                            <h3 class="mb-2 text-sm font-semibold text-red-800">
-                                Terdapat kesalahan pada form:
-                            </h3>
-                            <ul
-                                class="list-inside list-disc space-y-1 text-sm text-red-700"
-                            >
-                                <li
-                                    v-for="(error, field) in form.errors"
-                                    :key="field"
-                                >
-                                    {{ error }}
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                        </Field>
 
-                <!-- Form -->
-                <form @submit.prevent="submit" class="max-w-4xl">
-                    <!-- Mempelai Wanita -->
-                    <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
-                        <h2 class="mb-4 text-xl font-bold text-gray-900">
-                            Mempelai Wanita
-                        </h2>
+                        <Field label="Nama Panggilan">
+                            <TextInput
+                                v-model="form.bride_nickname"
+                                type="text"
+                                placeholder="Contoh: Yeli"
+                            />
+                        </Field>
 
-                        <div class="space-y-4">
-                            <Field
-                                label="Nama Lengkap"
-                                required
-                                :error="form.errors.bride_name"
-                            >
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <Field label="Nama Ayah">
                                 <TextInput
-                                    v-model="form.bride_name"
+                                    v-model="form.bride_father"
                                     type="text"
-                                    placeholder="Contoh: Siti Nurhaliza"
-                                    required
+                                    placeholder="Contoh: Bapak Ahmad"
                                 />
                             </Field>
 
-                            <Field label="Nama Panggilan">
+                            <Field label="Nama Ibu">
                                 <TextInput
-                                    v-model="form.bride_nickname"
+                                    v-model="form.bride_mother"
                                     type="text"
-                                    placeholder="Contoh: Yeli"
-                                />
-                            </Field>
-
-                            <div class="grid gap-4 md:grid-cols-2">
-                                <Field label="Nama Ayah">
-                                    <TextInput
-                                        v-model="form.bride_father"
-                                        type="text"
-                                        placeholder="Contoh: Bapak Ahmad"
-                                    />
-                                </Field>
-
-                                <Field label="Nama Ibu">
-                                    <TextInput
-                                        v-model="form.bride_mother"
-                                        type="text"
-                                        placeholder="Contoh: Ibu Siti"
-                                    />
-                                </Field>
-                            </div>
-
-                            <!-- Bride Photo -->
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Foto Mempelai Wanita</label
-                                >
-                                <div class="flex items-start space-x-4">
-                                    <div
-                                        v-if="form.bride_photo_url"
-                                        class="relative h-40 w-32 overflow-hidden rounded-lg border-2 border-gray-200"
-                                    >
-                                        <img
-                                            :src="form.bride_photo_url"
-                                            alt="Bride"
-                                            class="h-full w-full object-cover"
-                                        />
-                                        <button
-                                            type="button"
-                                            @click="form.bride_photo_url = ''"
-                                            class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
-                                        >
-                                            <svg
-                                                class="h-4 w-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M6 18L18 6M6 6l12 12"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div class="flex-1">
-                                        <input
-                                            type="file"
-                                            @change="uploadBridePhoto"
-                                            accept="image/*"
-                                            class="hidden"
-                                            id="bride-upload"
-                                            :disabled="uploadingBride"
-                                        />
-                                        <label
-                                            for="bride-upload"
-                                            class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
-                                            :class="{
-                                                'cursor-not-allowed opacity-50':
-                                                    uploadingBride,
-                                            }"
-                                        >
-                                            <svg
-                                                class="mr-2 h-5 w-5"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                                />
-                                            </svg>
-                                            {{
-                                                uploadingBride
-                                                    ? 'Uploading...'
-                                                    : 'Pilih Foto'
-                                            }}
-                                        </label>
-                                        <p class="mt-2 text-xs text-gray-500">
-                                            Format: JPG, PNG, WebP. Maksimal
-                                            5MB. Rasio potret (3:4)
-                                            direkomendasikan
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Mempelai Pria -->
-                    <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
-                        <h2 class="mb-4 text-xl font-bold text-gray-900">
-                            Mempelai Pria
-                        </h2>
-
-                        <div class="space-y-4">
-                            <Field
-                                label="Nama Lengkap"
-                                required
-                                :error="form.errors.groom_name"
-                            >
-                                <TextInput
-                                    v-model="form.groom_name"
-                                    type="text"
-                                    placeholder="Contoh: Muhammad Rizki"
-                                    required
-                                />
-                            </Field>
-
-                            <Field label="Nama Panggilan">
-                                <TextInput
-                                    v-model="form.groom_nickname"
-                                    type="text"
-                                    placeholder="Contoh: Redho"
-                                />
-                            </Field>
-
-                            <div class="grid gap-4 md:grid-cols-2">
-                                <Field label="Nama Ayah">
-                                    <TextInput
-                                        v-model="form.groom_father"
-                                        type="text"
-                                        placeholder="Contoh: Bapak Budi"
-                                    />
-                                </Field>
-
-                                <Field label="Nama Ibu">
-                                    <TextInput
-                                        v-model="form.groom_mother"
-                                        type="text"
-                                        placeholder="Contoh: Ibu Ani"
-                                    />
-                                </Field>
-                            </div>
-
-                            <!-- Groom Photo -->
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Foto Mempelai Pria</label
-                                >
-                                <div class="flex items-start space-x-4">
-                                    <div
-                                        v-if="form.groom_photo_url"
-                                        class="relative h-40 w-32 overflow-hidden rounded-lg border-2 border-gray-200"
-                                    >
-                                        <img
-                                            :src="form.groom_photo_url"
-                                            alt="Groom"
-                                            class="h-full w-full object-cover"
-                                        />
-                                        <button
-                                            type="button"
-                                            @click="form.groom_photo_url = ''"
-                                            class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
-                                        >
-                                            <svg
-                                                class="h-4 w-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M6 18L18 6M6 6l12 12"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div class="flex-1">
-                                        <input
-                                            type="file"
-                                            @change="uploadGroomPhoto"
-                                            accept="image/*"
-                                            class="hidden"
-                                            id="groom-upload"
-                                            :disabled="uploadingGroom"
-                                        />
-                                        <label
-                                            for="groom-upload"
-                                            class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
-                                            :class="{
-                                                'cursor-not-allowed opacity-50':
-                                                    uploadingGroom,
-                                            }"
-                                        >
-                                            <svg
-                                                class="mr-2 h-5 w-5"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                                />
-                                            </svg>
-                                            {{
-                                                uploadingGroom
-                                                    ? 'Uploading...'
-                                                    : 'Pilih Foto'
-                                            }}
-                                        </label>
-                                        <p class="mt-2 text-xs text-gray-500">
-                                            Format: JPG, PNG, WebP. Maksimal
-                                            5MB. Rasio potret (3:4)
-                                            direkomendasikan
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Couple Photo -->
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Foto Pasangan</label
-                                >
-                                <div class="flex items-start space-x-4">
-                                    <div
-                                        v-if="form.couple_photo_url"
-                                        class="relative h-40 w-32 overflow-hidden rounded-lg border-2 border-gray-200"
-                                    >
-                                        <img
-                                            :src="form.couple_photo_url"
-                                            alt="Couple"
-                                            class="h-full w-full object-cover"
-                                        />
-                                        <button
-                                            type="button"
-                                            @click="form.couple_photo_url = ''"
-                                            class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
-                                        >
-                                            <svg
-                                                class="h-4 w-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M6 18L18 6M6 6l12 12"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div class="flex-1">
-                                        <input
-                                            type="file"
-                                            @change="uploadCouplePhoto"
-                                            accept="image/*"
-                                            class="hidden"
-                                            id="couple-upload"
-                                            :disabled="uploadingCouple"
-                                        />
-                                        <label
-                                            for="couple-upload"
-                                            class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
-                                            :class="{
-                                                'cursor-not-allowed opacity-50':
-                                                    uploadingCouple,
-                                            }"
-                                        >
-                                            <svg
-                                                class="mr-2 h-5 w-5"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                                />
-                                            </svg>
-                                            {{
-                                                uploadingCouple
-                                                    ? 'Uploading...'
-                                                    : 'Pilih Foto'
-                                            }}
-                                        </label>
-                                        <p class="mt-2 text-xs text-gray-500">
-                                            Format: JPG, PNG, WebP. Maksimal
-                                            5MB. Foto ini tampil sebagai
-                                            transisi di section Foto Pasangan
-                                            dan di bagian Closing undangan
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Akad Nikah -->
-                    <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
-                        <h2 class="mb-4 text-xl font-bold text-gray-900">
-                            Akad Nikah
-                        </h2>
-
-                        <div class="space-y-4">
-                            <Field
-                                label="Tanggal & Waktu"
-                                required
-                                :error="form.errors.akad_datetime"
-                            >
-                                <TextInput
-                                    v-model="form.akad_datetime"
-                                    type="datetime-local"
-                                    required
-                                />
-                            </Field>
-
-                            <Field
-                                label="Nama Tempat"
-                                required
-                                :error="form.errors.akad_venue"
-                            >
-                                <TextInput
-                                    v-model="form.akad_venue"
-                                    type="text"
-                                    placeholder="Contoh: Masjid Al-Ikhlas"
-                                    required
-                                />
-                            </Field>
-
-                            <Field
-                                label="Link Google Maps"
-                                :error="form.errors.akad_maps_url"
-                            >
-                                <TextInput
-                                    v-model="form.akad_maps_url"
-                                    type="url"
-                                    placeholder="https://maps.google.com/..."
+                                    placeholder="Contoh: Ibu Siti"
                                 />
                             </Field>
                         </div>
-                    </div>
 
-                    <!-- Resepsi -->
-                    <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
-                        <div
-                            class="mb-4 flex items-center justify-between gap-4"
-                        >
-                            <h2 class="text-xl font-bold text-gray-900">
-                                Resepsi (Opsional)
-                            </h2>
+                        <!-- Bride Photo -->
+                        <div>
                             <label
-                                class="flex cursor-pointer items-center gap-2"
+                                class="mb-2 block text-sm font-medium text-gray-700"
+                                >Foto Mempelai Wanita</label
                             >
-                                <input
-                                    v-model="form.show_reception"
-                                    type="checkbox"
-                                    class="h-5 w-5 rounded border-gray-300 text-[#AD7F35] focus:ring-[#AD7F35]"
-                                />
-                                <span class="text-sm font-medium text-gray-700"
-                                    >Tampilkan Resepsi di undangan</span
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    v-if="form.bride_photo_url"
+                                    class="relative h-40 w-32 overflow-hidden rounded-lg border-2 border-gray-200"
                                 >
-                            </label>
-                        </div>
-
-                        <p
-                            v-if="!form.show_reception"
-                            class="mb-4 rounded-lg bg-gray-100 p-3 text-sm text-gray-600"
-                        >
-                            Resepsi disembunyikan. Undangan hanya menampilkan
-                            akad nikah.
-                        </p>
-
-                        <div v-if="form.show_reception" class="space-y-4">
-                            <Field label="Tanggal & Waktu">
-                                <TextInput
-                                    v-model="form.reception_datetime"
-                                    type="datetime-local"
-                                />
-                            </Field>
-
-                            <Field label="Nama Tempat">
-                                <TextInput
-                                    v-model="form.reception_venue"
-                                    type="text"
-                                    placeholder="Contoh: Gedung Serbaguna"
-                                />
-                            </Field>
-
-                            <Field label="Link Google Maps">
-                                <TextInput
-                                    v-model="form.reception_maps_url"
-                                    type="url"
-                                    placeholder="https://maps.google.com/..."
-                                />
-                            </Field>
-                        </div>
-                    </div>
-
-                    <!-- Media -->
-                    <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
-                        <h2 class="mb-4 text-xl font-bold text-gray-900">
-                            Media
-                        </h2>
-
-                        <div class="space-y-6">
-                            <!-- Cover Photo -->
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Foto Cover</label
-                                >
-                                <div class="flex items-start space-x-4">
-                                    <div
-                                        v-if="form.cover_photo_url"
-                                        class="relative h-32 w-48 overflow-hidden rounded-lg border-2 border-gray-200"
-                                    >
-                                        <img
-                                            :src="form.cover_photo_url"
-                                            alt="Cover"
-                                            class="h-full w-full object-cover"
-                                        />
-                                        <button
-                                            type="button"
-                                            @click="form.cover_photo_url = ''"
-                                            class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
-                                        >
-                                            <svg
-                                                class="h-4 w-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M6 18L18 6M6 6l12 12"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div class="flex-1">
-                                        <input
-                                            type="file"
-                                            @change="uploadCover"
-                                            accept="image/*"
-                                            class="hidden"
-                                            id="cover-upload"
-                                            :disabled="uploadingCover"
-                                        />
-                                        <label
-                                            for="cover-upload"
-                                            class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
-                                            :class="{
-                                                'cursor-not-allowed opacity-50':
-                                                    uploadingCover,
-                                            }"
-                                        >
-                                            <svg
-                                                class="mr-2 h-5 w-5"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                                />
-                                            </svg>
-                                            {{
-                                                uploadingCover
-                                                    ? 'Uploading...'
-                                                    : 'Pilih Foto'
-                                            }}
-                                        </label>
-                                        <p class="mt-2 text-xs text-gray-500">
-                                            Format: JPG, PNG, WebP. Maksimal 5MB
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Page Background -->
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Background Halaman</label
-                                >
-                                <div class="flex items-start space-x-4">
-                                    <div
-                                        v-if="form.background_url"
-                                        class="relative h-32 w-48 overflow-hidden rounded-lg border-2 border-gray-200"
-                                    >
-                                        <img
-                                            :src="form.background_url"
-                                            alt="Background"
-                                            class="h-full w-full object-cover"
-                                        />
-                                        <button
-                                            type="button"
-                                            @click="form.background_url = ''"
-                                            class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
-                                        >
-                                            <svg
-                                                class="h-4 w-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M6 18L18 6M6 6l12 12"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div class="flex-1">
-                                        <input
-                                            type="file"
-                                            @change="uploadBackground"
-                                            accept="image/*"
-                                            class="hidden"
-                                            id="background-upload"
-                                            :disabled="uploadingBackground"
-                                        />
-                                        <label
-                                            for="background-upload"
-                                            class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
-                                            :class="{
-                                                'cursor-not-allowed opacity-50':
-                                                    uploadingBackground,
-                                            }"
-                                        >
-                                            <svg
-                                                class="mr-2 h-5 w-5"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                                />
-                                            </svg>
-                                            {{
-                                                uploadingBackground
-                                                    ? 'Uploading...'
-                                                    : 'Pilih Gambar'
-                                            }}
-                                        </label>
-                                        <p class="mt-2 text-xs text-gray-500">
-                                            Gambar latar halaman undangan
-                                            (terlihat di area sekitar undangan
-                                            dan layar pembuka). Format: JPG,
-                                            PNG, WebP. Maksimal 5MB
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Video Prewedding -->
-                            <Field
-                                label="Video Prewedding (YouTube)"
-                                hint="Tempel link video YouTube (mis. video prewedding). Video akan diputar otomatis sebagai background di halaman pembuka (hero). Kosongkan jika hanya ingin memakai Foto Cover."
-                            >
-                                <TextInput
-                                    v-model="form.video_url"
-                                    type="url"
-                                    placeholder="https://www.youtube.com/watch?v=..."
-                                />
-                            </Field>
-
-                            <!-- Cover Name Display -->
-                            <Field
-                                label="Tampilan Nama di Cover"
-                                hint="Nama yang tampil di halaman pembuka undangan."
-                            >
-                                <SelectInput
-                                    v-model="form.cover_name_display"
-                                    :options="coverNameDisplayOptions"
-                                />
-                            </Field>
-
-                            <!-- Music -->
-                            <div>
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Musik Latar</label
-                                >
-                                <div class="space-y-3">
-                                    <div
-                                        v-if="form.music_url"
-                                        class="flex items-center space-x-3 rounded-lg bg-gray-50 p-3"
+                                    <img
+                                        :src="form.bride_photo_url"
+                                        alt="Bride"
+                                        class="h-full w-full object-cover"
+                                    />
+                                    <button
+                                        type="button"
+                                        @click="form.bride_photo_url = ''"
+                                        class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
                                     >
                                         <svg
-                                            class="h-6 w-6 text-[#AD7F35]"
+                                            class="h-4 w-4"
                                             fill="none"
                                             stroke="currentColor"
                                             viewBox="0 0 24 24"
@@ -1157,177 +568,27 @@ const submit = () => {
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
                                                 stroke-width="2"
-                                                d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+                                                d="M6 18L18 6M6 6l12 12"
                                             />
                                         </svg>
-                                        <div class="flex-1">
-                                            <p
-                                                class="text-sm font-medium text-gray-900"
-                                            >
-                                                Musik telah diupload
-                                            </p>
-                                            <audio controls class="mt-2 w-full">
-                                                <source
-                                                    :src="form.music_url"
-                                                    type="audio/mpeg"
-                                                />
-                                            </audio>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            @click="form.music_url = ''"
-                                            class="text-red-600 hover:text-red-700"
-                                        >
-                                            <svg
-                                                class="h-5 w-5"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div>
-                                        <input
-                                            type="file"
-                                            @change="uploadMusic"
-                                            accept="audio/*"
-                                            class="hidden"
-                                            id="music-upload"
-                                            :disabled="uploadingMusic"
-                                        />
-                                        <label
-                                            for="music-upload"
-                                            class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
-                                            :class="{
-                                                'cursor-not-allowed opacity-50':
-                                                    uploadingMusic,
-                                            }"
-                                        >
-                                            <svg
-                                                class="mr-2 h-5 w-5"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                                                />
-                                            </svg>
-                                            {{
-                                                uploadingMusic
-                                                    ? 'Uploading...'
-                                                    : 'Upload Musik'
-                                            }}
-                                        </label>
-                                        <p class="mt-2 text-xs text-gray-500">
-                                            Format: MP3, WAV. Maksimal 10MB
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Music Title -->
-                            <Field
-                                label="Judul Musik"
-                                :error="form.errors.music_title"
-                                hint="Nama lagu yang tampil di kontrol musik undangan"
-                            >
-                                <TextInput
-                                    v-model="form.music_title"
-                                    placeholder="Contoh: Sepanjang Hidup - Maher Zain"
-                                />
-                            </Field>
-
-                            <!-- Gallery Photos -->
-                            <div class="border-t pt-6">
-                                <label
-                                    class="mb-2 block text-sm font-medium text-gray-700"
-                                    >Galeri Foto</label
-                                >
-
-                                <!-- Gallery Grid -->
-                                <div
-                                    v-if="
-                                        Array.isArray(form.gallery_photos) &&
-                                        form.gallery_photos.length > 0
-                                    "
-                                    class="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4"
-                                >
-                                    <div
-                                        v-for="(
-                                            photo, index
-                                        ) in form.gallery_photos"
-                                        :key="index"
-                                        class="group relative"
-                                    >
-                                        <div
-                                            class="aspect-square overflow-hidden rounded-lg border-2 border-gray-200"
-                                        >
-                                            <img
-                                                :src="photo.url"
-                                                :alt="
-                                                    photo.caption ||
-                                                    `Gallery ${index + 1}`
-                                                "
-                                                class="h-full w-full object-cover"
-                                            />
-                                        </div>
-                                        <button
-                                            type="button"
-                                            @click="removeGalleryPhoto(index)"
-                                            class="absolute top-2 right-2 rounded-full bg-red-500 p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
-                                        >
-                                            <svg
-                                                class="h-4 w-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                />
-                                            </svg>
-                                        </button>
-                                        <!-- Caption Input -->
-                                        <input
-                                            v-model="photo.caption"
-                                            type="text"
-                                            class="mt-2 w-full rounded border border-gray-300 px-2 py-1 text-xs focus:border-transparent focus:ring-1 focus:ring-[#AD7F35]"
-                                            placeholder="Caption (opsional)"
-                                        />
-                                    </div>
+                                    </button>
                                 </div>
 
-                                <!-- Upload Button -->
-                                <div>
+                                <div class="flex-1">
                                     <input
                                         type="file"
-                                        @change="uploadGalleryPhoto"
+                                        @change="uploadBridePhoto"
                                         accept="image/*"
                                         class="hidden"
-                                        id="gallery-upload"
-                                        :disabled="uploadingGallery"
+                                        id="bride-upload"
+                                        :disabled="uploadingBride"
                                     />
                                     <label
-                                        for="gallery-upload"
+                                        for="bride-upload"
                                         class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
                                         :class="{
                                             'cursor-not-allowed opacity-50':
-                                                uploadingGallery,
+                                                uploadingBride,
                                         }"
                                     >
                                         <svg
@@ -1340,153 +601,538 @@ const submit = () => {
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
                                                 stroke-width="2"
-                                                d="M12 4v16m8-8H4"
+                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                                             />
                                         </svg>
                                         {{
-                                            uploadingGallery
+                                            uploadingBride
                                                 ? 'Uploading...'
-                                                : 'Tambah Foto Galeri'
+                                                : 'Pilih Foto'
                                         }}
                                     </label>
                                     <p class="mt-2 text-xs text-gray-500">
-                                        Format: JPG, PNG, WebP. Maksimal 5MB per
-                                        foto. Rasio persegi (1:1)
-                                        direkomendasikan
+                                        Format: JPG, PNG, WebP. Maksimal 5MB.
+                                        Rasio potret (3:4) direkomendasikan
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Cerita & Pesan -->
-                    <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
-                        <h2 class="mb-4 text-xl font-bold text-gray-900">
-                            Cerita & Pesan
-                        </h2>
+                <!-- Mempelai Pria -->
+                <div class="my-card mb-6 p-6">
+                    <h2 class="mb-4 text-xl font-bold text-gray-900">
+                        Mempelai Pria
+                    </h2>
 
-                        <div class="space-y-4">
-                            <Field label="Cerita Cinta">
-                                <TextArea
-                                    v-model="form.love_story"
-                                    placeholder="Ceritakan kisah cinta Anda..."
-                                    :rows="5"
+                    <div class="space-y-4">
+                        <Field
+                            label="Nama Lengkap"
+                            required
+                            :error="form.errors.groom_name"
+                        >
+                            <TextInput
+                                v-model="form.groom_name"
+                                type="text"
+                                placeholder="Contoh: Muhammad Rizki"
+                                required
+                            />
+                        </Field>
+
+                        <Field label="Nama Panggilan">
+                            <TextInput
+                                v-model="form.groom_nickname"
+                                type="text"
+                                placeholder="Contoh: Redho"
+                            />
+                        </Field>
+
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <Field label="Nama Ayah">
+                                <TextInput
+                                    v-model="form.groom_father"
+                                    type="text"
+                                    placeholder="Contoh: Bapak Budi"
                                 />
                             </Field>
 
-                            <Field label="Pesan Khusus">
-                                <TextArea
-                                    v-model="form.special_message"
-                                    placeholder="Pesan untuk tamu undangan..."
-                                    :rows="3"
+                            <Field label="Nama Ibu">
+                                <TextInput
+                                    v-model="form.groom_mother"
+                                    type="text"
+                                    placeholder="Contoh: Ibu Ani"
                                 />
                             </Field>
                         </div>
+
+                        <!-- Groom Photo -->
+                        <div>
+                            <label
+                                class="mb-2 block text-sm font-medium text-gray-700"
+                                >Foto Mempelai Pria</label
+                            >
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    v-if="form.groom_photo_url"
+                                    class="relative h-40 w-32 overflow-hidden rounded-lg border-2 border-gray-200"
+                                >
+                                    <img
+                                        :src="form.groom_photo_url"
+                                        alt="Groom"
+                                        class="h-full w-full object-cover"
+                                    />
+                                    <button
+                                        type="button"
+                                        @click="form.groom_photo_url = ''"
+                                        class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                                    >
+                                        <svg
+                                            class="h-4 w-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="flex-1">
+                                    <input
+                                        type="file"
+                                        @change="uploadGroomPhoto"
+                                        accept="image/*"
+                                        class="hidden"
+                                        id="groom-upload"
+                                        :disabled="uploadingGroom"
+                                    />
+                                    <label
+                                        for="groom-upload"
+                                        class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
+                                        :class="{
+                                            'cursor-not-allowed opacity-50':
+                                                uploadingGroom,
+                                        }"
+                                    >
+                                        <svg
+                                            class="mr-2 h-5 w-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                        {{
+                                            uploadingGroom
+                                                ? 'Uploading...'
+                                                : 'Pilih Foto'
+                                        }}
+                                    </label>
+                                    <p class="mt-2 text-xs text-gray-500">
+                                        Format: JPG, PNG, WebP. Maksimal 5MB.
+                                        Rasio potret (3:4) direkomendasikan
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Couple Photo -->
+                        <div>
+                            <label
+                                class="mb-2 block text-sm font-medium text-gray-700"
+                                >Foto Pasangan</label
+                            >
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    v-if="form.couple_photo_url"
+                                    class="relative h-40 w-32 overflow-hidden rounded-lg border-2 border-gray-200"
+                                >
+                                    <img
+                                        :src="form.couple_photo_url"
+                                        alt="Couple"
+                                        class="h-full w-full object-cover"
+                                    />
+                                    <button
+                                        type="button"
+                                        @click="form.couple_photo_url = ''"
+                                        class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                                    >
+                                        <svg
+                                            class="h-4 w-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="flex-1">
+                                    <input
+                                        type="file"
+                                        @change="uploadCouplePhoto"
+                                        accept="image/*"
+                                        class="hidden"
+                                        id="couple-upload"
+                                        :disabled="uploadingCouple"
+                                    />
+                                    <label
+                                        for="couple-upload"
+                                        class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
+                                        :class="{
+                                            'cursor-not-allowed opacity-50':
+                                                uploadingCouple,
+                                        }"
+                                    >
+                                        <svg
+                                            class="mr-2 h-5 w-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                        {{
+                                            uploadingCouple
+                                                ? 'Uploading...'
+                                                : 'Pilih Foto'
+                                        }}
+                                    </label>
+                                    <p class="mt-2 text-xs text-gray-500">
+                                        Format: JPG, PNG, WebP. Maksimal 5MB.
+                                        Foto ini tampil sebagai transisi di
+                                        section Foto Pasangan dan di bagian
+                                        Closing undangan
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    <!-- Ucapan & Doa -->
-                    <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
-                        <h2 class="mb-4 text-xl font-bold text-gray-900">
-                            Ucapan &amp; Doa
+                <!-- Akad Nikah -->
+                <div class="my-card mb-6 p-6">
+                    <h2 class="mb-4 text-xl font-bold text-gray-900">
+                        Akad Nikah
+                    </h2>
+
+                    <div class="space-y-4">
+                        <Field
+                            label="Tanggal & Waktu"
+                            required
+                            :error="form.errors.akad_datetime"
+                        >
+                            <TextInput
+                                v-model="form.akad_datetime"
+                                type="datetime-local"
+                                required
+                            />
+                        </Field>
+
+                        <Field
+                            label="Nama Tempat"
+                            required
+                            :error="form.errors.akad_venue"
+                        >
+                            <TextInput
+                                v-model="form.akad_venue"
+                                type="text"
+                                placeholder="Contoh: Masjid Al-Ikhlas"
+                                required
+                            />
+                        </Field>
+
+                        <Field
+                            label="Link Google Maps"
+                            :error="form.errors.akad_maps_url"
+                        >
+                            <TextInput
+                                v-model="form.akad_maps_url"
+                                type="url"
+                                placeholder="https://maps.google.com/..."
+                            />
+                        </Field>
+                    </div>
+                </div>
+
+                <!-- Resepsi -->
+                <div class="my-card mb-6 p-6">
+                    <div class="mb-4 flex items-center justify-between gap-4">
+                        <h2 class="text-xl font-bold text-gray-900">
+                            Resepsi (Opsional)
                         </h2>
-
-                        <label class="flex items-center gap-3">
+                        <label class="flex cursor-pointer items-center gap-2">
                             <input
-                                v-model="form.show_wishes"
+                                v-model="form.show_reception"
                                 type="checkbox"
                                 class="h-5 w-5 rounded border-gray-300 text-[#AD7F35] focus:ring-[#AD7F35]"
                             />
                             <span class="text-sm font-medium text-gray-700"
-                                >Tampilkan ucapan &amp; doa di undangan</span
+                                >Tampilkan Resepsi di undangan</span
                             >
                         </label>
-
-                        <p
-                            v-if="!form.show_wishes"
-                            class="mt-3 rounded-lg bg-gray-100 p-3 text-sm text-gray-600"
-                        >
-                            Ucapan disembunyikan. Tamu tetap bisa mengisi
-                            konfirmasi kehadiran, tanpa kolom pesan.
-                        </p>
                     </div>
 
-                    <!-- Amplop Digital -->
-                    <div class="mb-6 rounded-xl bg-white p-6 shadow-md">
-                        <div class="mb-4 flex items-center justify-between">
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-900">
-                                    Amplop Digital
-                                </h2>
-                                <p class="mt-1 text-sm text-gray-600">
-                                    Terima hadiah dari tamu secara digital
-                                </p>
-                            </div>
-                            <div
-                                class="rounded-lg bg-gradient-to-r from-[#AD7F35]/10 to-[#D8BA82]/20 px-4 py-2"
+                    <p
+                        v-if="!form.show_reception"
+                        class="mb-4 rounded-lg bg-gray-100 p-3 text-sm text-gray-600"
+                    >
+                        Resepsi disembunyikan. Undangan hanya menampilkan akad
+                        nikah.
+                    </p>
+
+                    <div v-if="form.show_reception" class="space-y-4">
+                        <Field label="Tanggal & Waktu">
+                            <TextInput
+                                v-model="form.reception_datetime"
+                                type="datetime-local"
+                            />
+                        </Field>
+
+                        <Field label="Nama Tempat">
+                            <TextInput
+                                v-model="form.reception_venue"
+                                type="text"
+                                placeholder="Contoh: Gedung Serbaguna"
+                            />
+                        </Field>
+
+                        <Field label="Link Google Maps">
+                            <TextInput
+                                v-model="form.reception_maps_url"
+                                type="url"
+                                placeholder="https://maps.google.com/..."
+                            />
+                        </Field>
+                    </div>
+                </div>
+
+                <!-- Media -->
+                <div class="my-card mb-6 p-6">
+                    <h2 class="mb-4 text-xl font-bold text-gray-900">Media</h2>
+
+                    <div class="space-y-6">
+                        <!-- Cover Photo -->
+                        <div>
+                            <label
+                                class="mb-2 block text-sm font-medium text-gray-700"
+                                >Foto Cover</label
                             >
-                                <span
-                                    class="text-sm font-semibold text-[#9f6b61]"
-                                    >Opsional</span
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    v-if="form.cover_photo_url"
+                                    class="relative h-32 w-48 overflow-hidden rounded-lg border-2 border-gray-200"
                                 >
+                                    <img
+                                        :src="form.cover_photo_url"
+                                        alt="Cover"
+                                        class="h-full w-full object-cover"
+                                    />
+                                    <button
+                                        type="button"
+                                        @click="form.cover_photo_url = ''"
+                                        class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                                    >
+                                        <svg
+                                            class="h-4 w-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="flex-1">
+                                    <input
+                                        type="file"
+                                        @change="uploadCover"
+                                        accept="image/*"
+                                        class="hidden"
+                                        id="cover-upload"
+                                        :disabled="uploadingCover"
+                                    />
+                                    <label
+                                        for="cover-upload"
+                                        class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
+                                        :class="{
+                                            'cursor-not-allowed opacity-50':
+                                                uploadingCover,
+                                        }"
+                                    >
+                                        <svg
+                                            class="mr-2 h-5 w-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                        {{
+                                            uploadingCover
+                                                ? 'Uploading...'
+                                                : 'Pilih Foto'
+                                        }}
+                                    </label>
+                                    <p class="mt-2 text-xs text-gray-500">
+                                        Format: JPG, PNG, WebP. Maksimal 5MB
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="space-y-6">
-                            <!-- Transfer Bank -->
-                            <div class="border-t pt-6">
-                                <h3
-                                    class="mb-4 flex items-center text-lg font-semibold text-gray-900"
+                        <!-- Page Background -->
+                        <div>
+                            <label
+                                class="mb-2 block text-sm font-medium text-gray-700"
+                                >Background Halaman</label
+                            >
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    v-if="form.background_url"
+                                    class="relative h-32 w-48 overflow-hidden rounded-lg border-2 border-gray-200"
                                 >
-                                    <svg
-                                        class="mr-2 h-5 w-5 text-[#AD7F35]"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
+                                    <img
+                                        :src="form.background_url"
+                                        alt="Background"
+                                        class="h-full w-full object-cover"
+                                    />
+                                    <button
+                                        type="button"
+                                        @click="form.background_url = ''"
+                                        class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
                                     >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                                        />
-                                    </svg>
-                                    Transfer Bank
-                                </h3>
+                                        <svg
+                                            class="h-4 w-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
 
-                                <div class="grid gap-4 md:grid-cols-3">
-                                    <Field label="Nama Bank">
-                                        <TextInput
-                                            v-model="form.bank_name"
-                                            type="text"
-                                            placeholder="Contoh: BCA"
-                                        />
-                                    </Field>
-
-                                    <Field label="Nomor Rekening">
-                                        <TextInput
-                                            v-model="form.account_number"
-                                            type="text"
-                                            placeholder="1234567890"
-                                        />
-                                    </Field>
-
-                                    <Field label="Nama Pemilik Rekening">
-                                        <TextInput
-                                            v-model="form.account_name"
-                                            type="text"
-                                            placeholder="Nama sesuai rekening"
-                                        />
-                                    </Field>
+                                <div class="flex-1">
+                                    <input
+                                        type="file"
+                                        @change="uploadBackground"
+                                        accept="image/*"
+                                        class="hidden"
+                                        id="background-upload"
+                                        :disabled="uploadingBackground"
+                                    />
+                                    <label
+                                        for="background-upload"
+                                        class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
+                                        :class="{
+                                            'cursor-not-allowed opacity-50':
+                                                uploadingBackground,
+                                        }"
+                                    >
+                                        <svg
+                                            class="mr-2 h-5 w-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                        {{
+                                            uploadingBackground
+                                                ? 'Uploading...'
+                                                : 'Pilih Gambar'
+                                        }}
+                                    </label>
+                                    <p class="mt-2 text-xs text-gray-500">
+                                        Gambar latar halaman undangan (terlihat
+                                        di area sekitar undangan dan layar
+                                        pembuka). Format: JPG, PNG, WebP.
+                                        Maksimal 5MB
+                                    </p>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- QRIS -->
-                            <div class="border-t pt-6">
-                                <h3
-                                    class="mb-4 flex items-center text-lg font-semibold text-gray-900"
+                        <!-- Video Prewedding -->
+                        <Field
+                            label="Video Prewedding (YouTube)"
+                            hint="Tempel link video YouTube (mis. video prewedding). Video akan diputar otomatis sebagai background di halaman pembuka (hero). Kosongkan jika hanya ingin memakai Foto Cover."
+                        >
+                            <TextInput
+                                v-model="form.video_url"
+                                type="url"
+                                placeholder="https://www.youtube.com/watch?v=..."
+                            />
+                        </Field>
+
+                        <!-- Cover Name Display -->
+                        <Field
+                            label="Tampilan Nama di Cover"
+                            hint="Nama yang tampil di halaman pembuka undangan."
+                        >
+                            <SelectInput
+                                v-model="form.cover_name_display"
+                                :options="coverNameDisplayOptions"
+                            />
+                        </Field>
+
+                        <!-- Music -->
+                        <div>
+                            <label
+                                class="mb-2 block text-sm font-medium text-gray-700"
+                                >Musik Latar</label
+                            >
+                            <div class="space-y-3">
+                                <div
+                                    v-if="form.music_url"
+                                    class="flex items-center space-x-3 rounded-lg bg-gray-50 p-3"
                                 >
                                     <svg
-                                        class="mr-2 h-5 w-5 text-[#AD7F35]"
+                                        class="h-6 w-6 text-[#AD7F35]"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -1495,94 +1141,181 @@ const submit = () => {
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                             stroke-width="2"
-                                            d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"
+                                            d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
                                         />
                                     </svg>
-                                    QRIS
-                                </h3>
+                                    <div class="flex-1">
+                                        <p
+                                            class="text-sm font-medium text-gray-900"
+                                        >
+                                            Musik telah diupload
+                                        </p>
+                                        <audio controls class="mt-2 w-full">
+                                            <source
+                                                :src="form.music_url"
+                                                type="audio/mpeg"
+                                            />
+                                        </audio>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        @click="form.music_url = ''"
+                                        class="text-red-600 hover:text-red-700"
+                                    >
+                                        <svg
+                                            class="h-5 w-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
 
-                                <div class="flex items-start space-x-4">
+                                <div>
+                                    <input
+                                        type="file"
+                                        @change="uploadMusic"
+                                        accept="audio/*"
+                                        class="hidden"
+                                        id="music-upload"
+                                        :disabled="uploadingMusic"
+                                    />
+                                    <label
+                                        for="music-upload"
+                                        class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
+                                        :class="{
+                                            'cursor-not-allowed opacity-50':
+                                                uploadingMusic,
+                                        }"
+                                    >
+                                        <svg
+                                            class="mr-2 h-5 w-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                            />
+                                        </svg>
+                                        {{
+                                            uploadingMusic
+                                                ? 'Uploading...'
+                                                : 'Upload Musik'
+                                        }}
+                                    </label>
+                                    <p class="mt-2 text-xs text-gray-500">
+                                        Format: MP3, WAV. Maksimal 10MB
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Music Title -->
+                        <Field
+                            label="Judul Musik"
+                            :error="form.errors.music_title"
+                            hint="Nama lagu yang tampil di kontrol musik undangan"
+                        >
+                            <TextInput
+                                v-model="form.music_title"
+                                placeholder="Contoh: Sepanjang Hidup - Maher Zain"
+                            />
+                        </Field>
+
+                        <!-- Gallery Photos -->
+                        <div class="border-t pt-6">
+                            <label
+                                class="mb-2 block text-sm font-medium text-gray-700"
+                                >Galeri Foto</label
+                            >
+
+                            <!-- Gallery Grid -->
+                            <div
+                                v-if="
+                                    Array.isArray(form.gallery_photos) &&
+                                    form.gallery_photos.length > 0
+                                "
+                                class="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4"
+                            >
+                                <div
+                                    v-for="(
+                                        photo, index
+                                    ) in form.gallery_photos"
+                                    :key="index"
+                                    class="group relative"
+                                >
                                     <div
-                                        v-if="form.qris_image_url"
-                                        class="relative h-48 w-48 overflow-hidden rounded-lg border-2 border-gray-200"
+                                        class="aspect-square overflow-hidden rounded-lg border-2 border-gray-200"
                                     >
                                         <img
-                                            :src="form.qris_image_url"
-                                            alt="QRIS"
+                                            :src="photo.url"
+                                            :alt="
+                                                photo.caption ||
+                                                `Gallery ${index + 1}`
+                                            "
                                             class="h-full w-full object-cover"
                                         />
-                                        <button
-                                            type="button"
-                                            @click="form.qris_image_url = ''"
-                                            class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
-                                        >
-                                            <svg
-                                                class="h-4 w-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M6 18L18 6M6 6l12 12"
-                                                />
-                                            </svg>
-                                        </button>
                                     </div>
-
-                                    <div class="flex-1">
-                                        <input
-                                            type="file"
-                                            @change="uploadQris"
-                                            accept="image/*"
-                                            class="hidden"
-                                            id="qris-upload"
-                                            :disabled="uploadingQris"
-                                        />
-                                        <label
-                                            for="qris-upload"
-                                            class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
-                                            :class="{
-                                                'cursor-not-allowed opacity-50':
-                                                    uploadingQris,
-                                            }"
+                                    <button
+                                        type="button"
+                                        @click="removeGalleryPhoto(index)"
+                                        class="absolute top-2 right-2 rounded-full bg-red-500 p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
+                                    >
+                                        <svg
+                                            class="h-4 w-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
                                         >
-                                            <svg
-                                                class="mr-2 h-5 w-5"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                                />
-                                            </svg>
-                                            {{
-                                                uploadingQris
-                                                    ? 'Uploading...'
-                                                    : 'Upload QRIS'
-                                            }}
-                                        </label>
-                                        <p class="mt-2 text-xs text-gray-500">
-                                            Upload gambar QR Code untuk
-                                            pembayaran QRIS
-                                        </p>
-                                    </div>
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                            />
+                                        </svg>
+                                    </button>
+                                    <!-- Caption Input -->
+                                    <input
+                                        v-model="photo.caption"
+                                        type="text"
+                                        class="mt-2 w-full rounded border border-gray-300 px-2 py-1 text-xs focus:border-transparent focus:ring-1 focus:ring-[#AD7F35]"
+                                        placeholder="Caption (opsional)"
+                                    />
                                 </div>
                             </div>
 
-                            <!-- E-Wallet -->
-                            <div class="border-t pt-6">
-                                <h3
-                                    class="mb-4 flex items-center text-lg font-semibold text-gray-900"
+                            <!-- Upload Button -->
+                            <div>
+                                <input
+                                    type="file"
+                                    @change="uploadGalleryPhoto"
+                                    accept="image/*"
+                                    class="hidden"
+                                    id="gallery-upload"
+                                    :disabled="uploadingGallery"
+                                />
+                                <label
+                                    for="gallery-upload"
+                                    class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
+                                    :class="{
+                                        'cursor-not-allowed opacity-50':
+                                            uploadingGallery,
+                                    }"
                                 >
                                     <svg
-                                        class="mr-2 h-5 w-5 text-[#AD7F35]"
+                                        class="mr-2 h-5 w-5"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -1591,130 +1324,378 @@ const submit = () => {
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                             stroke-width="2"
-                                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+                                            d="M12 4v16m8-8H4"
                                         />
                                     </svg>
-                                    E-Wallet
-                                </h3>
-
-                                <div class="grid gap-4 md:grid-cols-3">
-                                    <div>
-                                        <label
-                                            class="mb-2 block flex items-center text-sm font-medium text-gray-700"
-                                        >
-                                            <span
-                                                class="mr-2 rounded bg-[#5A1B24] px-2 py-0.5 text-xs font-bold text-white"
-                                                >GoPay</span
-                                            >
-                                            Nomor HP
-                                        </label>
-                                        <TextInput
-                                            v-model="form.gopay_number"
-                                            placeholder="08123456789"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label
-                                            class="mb-2 block flex items-center text-sm font-medium text-gray-700"
-                                        >
-                                            <span
-                                                class="mr-2 rounded bg-[#AD7F35] px-2 py-0.5 text-xs font-bold text-white"
-                                                >OVO</span
-                                            >
-                                            Nomor HP
-                                        </label>
-                                        <TextInput
-                                            v-model="form.ovo_number"
-                                            placeholder="08123456789"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label
-                                            class="mb-2 block flex items-center text-sm font-medium text-gray-700"
-                                        >
-                                            <span
-                                                class="mr-2 rounded bg-[#5A1B24] px-2 py-0.5 text-xs font-bold text-white"
-                                                >DANA</span
-                                            >
-                                            Nomor HP
-                                        </label>
-                                        <TextInput
-                                            v-model="form.dana_number"
-                                            placeholder="08123456789"
-                                        />
-                                    </div>
-                                </div>
+                                    {{
+                                        uploadingGallery
+                                            ? 'Uploading...'
+                                            : 'Tambah Foto Galeri'
+                                    }}
+                                </label>
+                                <p class="mt-2 text-xs text-gray-500">
+                                    Format: JPG, PNG, WebP. Maksimal 5MB per
+                                    foto. Rasio persegi (1:1) direkomendasikan
+                                </p>
                             </div>
+                        </div>
+                    </div>
+                </div>
 
-                            <div class="border-t pt-4">
-                                <Field
-                                    label="Alamat Kirim Hadiah"
-                                    :error="form.errors.gift_address"
-                                    hint="Alamat pengiriman kado, tampil di section Amplop Digital / Hadiah undangan"
+                <!-- Cerita & Pesan -->
+                <div class="my-card mb-6 p-6">
+                    <h2 class="mb-4 text-xl font-bold text-gray-900">
+                        Cerita & Pesan
+                    </h2>
+
+                    <div class="space-y-4">
+                        <Field label="Cerita Cinta">
+                            <TextArea
+                                v-model="form.love_story"
+                                placeholder="Ceritakan kisah cinta Anda..."
+                                :rows="5"
+                            />
+                        </Field>
+
+                        <Field label="Pesan Khusus">
+                            <TextArea
+                                v-model="form.special_message"
+                                placeholder="Pesan untuk tamu undangan..."
+                                :rows="3"
+                            />
+                        </Field>
+                    </div>
+                </div>
+
+                <!-- Ucapan & Doa -->
+                <div class="my-card mb-6 p-6">
+                    <h2 class="mb-4 text-xl font-bold text-gray-900">
+                        Ucapan &amp; Doa
+                    </h2>
+
+                    <label class="flex items-center gap-3">
+                        <input
+                            v-model="form.show_wishes"
+                            type="checkbox"
+                            class="h-5 w-5 rounded border-gray-300 text-[#AD7F35] focus:ring-[#AD7F35]"
+                        />
+                        <span class="text-sm font-medium text-gray-700"
+                            >Tampilkan ucapan &amp; doa di undangan</span
+                        >
+                    </label>
+
+                    <p
+                        v-if="!form.show_wishes"
+                        class="mt-3 rounded-lg bg-gray-100 p-3 text-sm text-gray-600"
+                    >
+                        Ucapan disembunyikan. Tamu tetap bisa mengisi konfirmasi
+                        kehadiran, tanpa kolom pesan.
+                    </p>
+                </div>
+
+                <!-- Amplop Digital -->
+                <div class="my-card mb-6 p-6">
+                    <div class="mb-4 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900">
+                                Amplop Digital
+                            </h2>
+                            <p class="mt-1 text-sm text-gray-600">
+                                Terima hadiah dari tamu secara digital
+                            </p>
+                        </div>
+                        <div
+                            class="rounded-lg bg-gradient-to-r from-[#AD7F35]/10 to-[#D8BA82]/20 px-4 py-2"
+                        >
+                            <span class="text-sm font-semibold text-[#9f6b61]"
+                                >Opsional</span
+                            >
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Transfer Bank -->
+                        <div class="border-t pt-6">
+                            <h3
+                                class="mb-4 flex items-center text-lg font-semibold text-gray-900"
+                            >
+                                <svg
+                                    class="mr-2 h-5 w-5 text-[#AD7F35]"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
                                 >
-                                    <TextArea
-                                        v-model="form.gift_address"
-                                        placeholder="Contoh: Jl. Melati No. 12, Kec. Telanaipura, Kota Jambi"
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                                    />
+                                </svg>
+                                Transfer Bank
+                            </h3>
+
+                            <div class="grid gap-4 md:grid-cols-3">
+                                <Field label="Nama Bank">
+                                    <TextInput
+                                        v-model="form.bank_name"
+                                        type="text"
+                                        placeholder="Contoh: BCA"
+                                    />
+                                </Field>
+
+                                <Field label="Nomor Rekening">
+                                    <TextInput
+                                        v-model="form.account_number"
+                                        type="text"
+                                        placeholder="1234567890"
+                                    />
+                                </Field>
+
+                                <Field label="Nama Pemilik Rekening">
+                                    <TextInput
+                                        v-model="form.account_name"
+                                        type="text"
+                                        placeholder="Nama sesuai rekening"
                                     />
                                 </Field>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Submit Button -->
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <button
-                                type="submit"
-                                :disabled="form.processing"
-                                class="rounded-lg bg-[#AD7F35] px-8 py-3 font-semibold text-white transition hover:bg-[#5A1B24] disabled:opacity-50"
+                        <!-- QRIS -->
+                        <div class="border-t pt-6">
+                            <h3
+                                class="mb-4 flex items-center text-lg font-semibold text-gray-900"
                             >
-                                {{
-                                    form.processing
-                                        ? 'Menyimpan...'
-                                        : 'Simpan Perubahan'
-                                }}
-                            </button>
+                                <svg
+                                    class="mr-2 h-5 w-5 text-[#AD7F35]"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"
+                                    />
+                                </svg>
+                                QRIS
+                            </h3>
 
-                            <Link
-                                href="/dashboard"
-                                class="font-medium text-gray-600 hover:text-gray-800"
-                            >
-                                Batal
-                            </Link>
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    v-if="form.qris_image_url"
+                                    class="relative h-48 w-48 overflow-hidden rounded-lg border-2 border-gray-200"
+                                >
+                                    <img
+                                        :src="form.qris_image_url"
+                                        alt="QRIS"
+                                        class="h-full w-full object-cover"
+                                    />
+                                    <button
+                                        type="button"
+                                        @click="form.qris_image_url = ''"
+                                        class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                                    >
+                                        <svg
+                                            class="h-4 w-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="flex-1">
+                                    <input
+                                        type="file"
+                                        @change="uploadQris"
+                                        accept="image/*"
+                                        class="hidden"
+                                        id="qris-upload"
+                                        :disabled="uploadingQris"
+                                    />
+                                    <label
+                                        for="qris-upload"
+                                        class="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-50"
+                                        :class="{
+                                            'cursor-not-allowed opacity-50':
+                                                uploadingQris,
+                                        }"
+                                    >
+                                        <svg
+                                            class="mr-2 h-5 w-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                        {{
+                                            uploadingQris
+                                                ? 'Uploading...'
+                                                : 'Upload QRIS'
+                                        }}
+                                    </label>
+                                    <p class="mt-2 text-xs text-gray-500">
+                                        Upload gambar QR Code untuk pembayaran
+                                        QRIS
+                                    </p>
+                                </div>
+                            </div>
                         </div>
 
-                        <Link
-                            :href="`/dashboard/editor/preview`"
-                            target="_blank"
-                            class="flex items-center rounded-lg bg-[#5A1B24] px-6 py-3 font-semibold text-white transition hover:bg-[#5A1B24]/80"
-                        >
-                            <svg
-                                class="mr-2 h-5 w-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                        <!-- E-Wallet -->
+                        <div class="border-t pt-6">
+                            <h3
+                                class="mb-4 flex items-center text-lg font-semibold text-gray-900"
                             >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                <svg
+                                    class="mr-2 h-5 w-5 text-[#AD7F35]"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+                                    />
+                                </svg>
+                                E-Wallet
+                            </h3>
+
+                            <div class="grid gap-4 md:grid-cols-3">
+                                <div>
+                                    <label
+                                        class="mb-2 block flex items-center text-sm font-medium text-gray-700"
+                                    >
+                                        <span
+                                            class="mr-2 rounded bg-[#5A1B24] px-2 py-0.5 text-xs font-bold text-white"
+                                            >GoPay</span
+                                        >
+                                        Nomor HP
+                                    </label>
+                                    <TextInput
+                                        v-model="form.gopay_number"
+                                        placeholder="08123456789"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="mb-2 block flex items-center text-sm font-medium text-gray-700"
+                                    >
+                                        <span
+                                            class="mr-2 rounded bg-[#AD7F35] px-2 py-0.5 text-xs font-bold text-white"
+                                            >OVO</span
+                                        >
+                                        Nomor HP
+                                    </label>
+                                    <TextInput
+                                        v-model="form.ovo_number"
+                                        placeholder="08123456789"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="mb-2 block flex items-center text-sm font-medium text-gray-700"
+                                    >
+                                        <span
+                                            class="mr-2 rounded bg-[#5A1B24] px-2 py-0.5 text-xs font-bold text-white"
+                                            >DANA</span
+                                        >
+                                        Nomor HP
+                                    </label>
+                                    <TextInput
+                                        v-model="form.dana_number"
+                                        placeholder="08123456789"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t pt-4">
+                            <Field
+                                label="Alamat Kirim Hadiah"
+                                :error="form.errors.gift_address"
+                                hint="Alamat pengiriman kado, tampil di section Amplop Digital / Hadiah undangan"
+                            >
+                                <TextArea
+                                    v-model="form.gift_address"
+                                    placeholder="Contoh: Jl. Melati No. 12, Kec. Telanaipura, Kota Jambi"
                                 />
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                />
-                            </svg>
-                            Preview
+                            </Field>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <button
+                            type="submit"
+                            :disabled="form.processing"
+                            class="rounded-lg bg-[#AD7F35] px-8 py-3 font-semibold text-white transition hover:bg-[#5A1B24] disabled:opacity-50"
+                        >
+                            {{
+                                form.processing
+                                    ? 'Menyimpan...'
+                                    : 'Simpan Perubahan'
+                            }}
+                        </button>
+
+                        <Link
+                            href="/dashboard"
+                            class="font-medium text-gray-600 hover:text-gray-800"
+                        >
+                            Batal
                         </Link>
                     </div>
-                </form>
-            </div>
-        </div>
+
+                    <Link
+                        :href="`/dashboard/editor/preview`"
+                        target="_blank"
+                        class="flex items-center rounded-lg bg-[#5A1B24] px-6 py-3 font-semibold text-white transition hover:bg-[#5A1B24]/80"
+                    >
+                        <svg
+                            class="mr-2 h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                        </svg>
+                        Preview
+                    </Link>
+                </div>
+            </form>
+        </main>
     </DashboardLayout>
 </template>

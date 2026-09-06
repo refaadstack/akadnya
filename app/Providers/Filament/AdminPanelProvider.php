@@ -28,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('Akadnya.com Admin')
+            ->favicon(asset('favicon.svg?v=20260906'))
             ->colors([
                 'primary' => Color::Hex('#AD7F35'),
             ])

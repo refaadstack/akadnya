@@ -60,6 +60,7 @@ class BladeRenderService
         // Add asset tags
         $assetTags = $this->buildAssetTags($template);
         $csrfToken = $data['csrf_token'] ?? '';
+        $faviconTags = $this->faviconTags();
 
         return <<<HTML
 <!DOCTYPE html>
@@ -70,6 +71,7 @@ class BladeRenderService
     <meta name="color-scheme" content="light">
     <meta name="csrf-token" content="{$csrfToken}">
     <title>{$data['bride_name']} & {$data['groom_name']}</title>
+    {$faviconTags}
     {$assetTags}
 </head>
 <body>
@@ -121,6 +123,7 @@ HTML;
 
         // Add asset tags
         $assetTags = $this->buildAssetTags($template);
+        $faviconTags = $this->faviconTags();
 
         return <<<HTML
 <!DOCTYPE html>
@@ -130,6 +133,7 @@ HTML;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light">
     <title>Preview: {$template->name}</title>
+    {$faviconTags}
     {$assetTags}
 </head>
 <body>
@@ -239,6 +243,20 @@ HTML;
         }
 
         return Blade::render(File::get($path), $data);
+    }
+
+    /**
+     * Brand favicon tags shared by every public invitation / preview page.
+     * Bump the version query when favicon files change to bust browser + CDN cache.
+     */
+    public function faviconTags(): string
+    {
+        $v = '20260906';
+
+        return '<link rel="icon" href="'.e(url('favicon.ico?v='.$v)).'" sizes="any">'."\n"
+            .'    <link rel="icon" href="'.e(url('favicon.svg?v='.$v)).'" type="image/svg+xml">'."\n"
+            .'    <link rel="apple-touch-icon" href="'.e(url('apple-touch-icon.png?v='.$v)).'">'."\n"
+            .'    <meta name="theme-color" content="#141f1a">';
     }
 
     /**

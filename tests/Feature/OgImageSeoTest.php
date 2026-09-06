@@ -89,7 +89,7 @@ test('public invitation renders a landscape og:image generated from a portrait c
     $response->assertSee('<meta property="og:image:width" content="1200">', false);
     $response->assertSee('<meta property="og:image:height" content="630">', false);
     $response->assertSee('<meta property="og:image:type" content="image/jpeg">', false);
-    $response->assertDontSee('favicon', false);
+    $response->assertSee('favicon.svg?v=', false);
 });
 
 test('invitation without a cover photo falls back to an akadnya.com branded placeholder, never localhost', function () {
@@ -118,5 +118,5 @@ test('invitation without a cover photo falls back to an akadnya.com branded plac
 
     $appUrl = rtrim(config('app.url'), '/');
     $response->assertSee('<meta property="og:image" content="'.$appUrl.'/images/placeholder-template.png"', false);
-    $response->assertDontSee('favicon.svg', false);
+    $response->assertSee('favicon.svg?v=', false);
 });

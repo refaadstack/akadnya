@@ -144,11 +144,20 @@ class SeoMetaService
 
         $notes = implode("\n", $imageTags);
 
+        $v = '20260906';
+        $faviconTags = [
+            "<link rel=\"icon\" href=\"".e(url('favicon.ico?v='.$v)).'" sizes="any">',
+            "<link rel=\"icon\" href=\"".e(url('favicon.svg?v='.$v)).'" type="image/svg+xml">',
+            "<link rel=\"apple-touch-icon\" href=\"".e(url('apple-touch-icon.png?v='.$v)).'\">',
+            '<meta name="theme-color" content="#141f1a">',
+        ];
+
         $tags = [
             "<title>{$title}</title>",
             "<meta name=\"description\" content=\"{$description}\">",
             '<meta name="robots" content="index, follow">',
             "<link rel=\"canonical\" href=\"{$url}\">",
+            ...$faviconTags,
             '<meta property="og:type" content="website">',
             "<meta property=\"og:site_name\" content=\"{$siteName}\">",
             "<meta property=\"og:url\" content=\"{$url}\">",

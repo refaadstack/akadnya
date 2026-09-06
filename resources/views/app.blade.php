@@ -45,10 +45,11 @@
             }
         </style>
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-        <link rel="manifest" href="/site.webmanifest">
+        @php($faviconVersion = '20260906')
+        <link rel="icon" href="{{ asset('favicon.ico?v='.$faviconVersion) }}" sizes="any">
+        <link rel="icon" href="{{ asset('favicon.svg?v='.$faviconVersion) }}" type="image/svg+xml">
+        <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png?v='.$faviconVersion) }}">
+        <link rel="manifest" href="{{ asset('site.webmanifest?v='.$faviconVersion) }}">
         <meta name="theme-color" content="#141f1a">
 
         @fonts

@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $content->bride_name }} & {{ $content->groom_name }} - Undangan Pernikahan</title>
+
+    @php($faviconVersion = '20260906')
+    <link rel="icon" href="{{ asset('favicon.ico?v='.$faviconVersion) }}" sizes="any">
+    <link rel="icon" href="{{ asset('favicon.svg?v='.$faviconVersion) }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png?v='.$faviconVersion) }}">
+    <meta name="theme-color" content="#141f1a">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
